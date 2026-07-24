@@ -1,0 +1,90 @@
+<div class="registry">
+
+  @for (c of contacts(); track $index) {
+
+    <article class="record" [class.record--complete]="c.registrationStep === 'COMPLETED'">
+
+      <div class="record__corner record__corner--tl"></div>
+      <div class="record__corner record__corner--tr"></div>
+      <div class="record__corner record__corner--bl"></div>
+      <div class="record__corner record__corner--br"></div>
+
+      <header class="record__header">
+        <div class="record__id">Ficha {{ ($index + 1) }}</div>
+        <h3 class="record__name">{{ c.name }}</h3>
+        <span class="stamp" [class.stamp--pending]="c.registrationStep !== 'COMPLETED'">
+          {{ c.registrationStep === 'COMPLETED' ? 'Datos completos' : 'Incompleto' }}
+        </span>
+      </header>
+
+      <dl class="record__grid">
+        <div class="record__field">
+          <dt>Telefono</dt>
+          <dd>{{ c.phone }}</dd>
+        </div>
+        <div class="record__field">
+          <dt>Email</dt>
+          <dd>{{ c.email }}</dd>
+        </div>
+        <div class="record__field">
+          <dt>Empresa</dt>
+          <dd>{{ c.company }}</dd>
+        </div>
+        <div class="record__field">
+          <dt>Alta</dt>
+          <dd>{{ c.createdAt | date:'dd/MM/yyyy' }}</dd>
+        </div>
+        <div class="record__field">
+          <dt>Primer contacto</dt>
+          <dd>{{ c.firstContact | date:'dd/MM/yyyy' }}</dd>
+        </div>
+        <div class="record__field">
+          <dt>Ultima interaccion</dt>
+          <dd>{{ c.lastInteraction | date:'dd/MM/yyyy' }}</dd>
+        </div>
+      </dl>
+
+      <section class="thread-block">
+        <h4 class="thread-block__title">Conversacion</h4>
+
+        @for (conv of c.conversations; track $index) {
+
+          <div class="thread">
+            <div class="thread__meta">
+              <span class="thread__status" [attr.data-status]="conv.status">{{ conv.status }}</span>
+              <span class="thread__dates">
+                <span>Inicio: {{ conv.startedAt }}</span>
+                <span>Ultimo mensaje: {{ conv.lastMessageAt }}</span>
+              </span>
+            </div>
+
+            <ol class="log">
+              @for (m of conv.messages; track $index) {
+                <li class="log__entry">
+                  <p class="log__body">{{ m.body }}</p>
+                </li>
+              }
+            </ol>
+          </div>
+        }
+      </section>
+
+    </article>
+  }
+
+</div>
+
+<div>
+  <button
+    (click)="sendCampaing()"
+    [disabled]="this.enviado">
+
+    {{ this.enviado ? 'Iniciando campaña...' : 'Enviar campaña' }}
+  </button>
+  <button
+    (click)="descargarExcel()">
+
+    Descargar Excel
+
+</button>
+</div>
