@@ -23,7 +23,8 @@
                 "glob": "_redirects",
                 "input": "src",
                 "output": "/"
-              }
+              },
+              "public/ico.png"
             ],
             "styles": [
               "src/styles.css"
