@@ -74,17 +74,19 @@
 
 </div>
 
-<div>
+<div class="actions">
   <button
+    class="btn btn-warning"
     (click)="sendCampaing()"
-    [disabled]="this.enviado">
+    [disabled]="enviado">
 
-    {{ this.enviado ? 'Iniciando campaña...' : 'Enviar campaña' }}
+    {{ enviado ? 'Iniciando campaña...' : 'Enviar campaña' }}
   </button>
+
   <button
+    class="btn btn-success"
     (click)="descargarExcel()">
 
     Descargar Excel
-
-</button>
+  </button>
 </div>
