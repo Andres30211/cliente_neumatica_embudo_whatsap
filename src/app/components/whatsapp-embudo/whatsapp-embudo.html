@@ -1,92 +1,153 @@
-<div class="registry">
+<article
+  class="record"
+  [class.record--complete]="contact.registrationStep === 'COMPLETED'"
+>
 
-  @for (c of contacts(); track $index) {
+  <div class="record__corner record__corner--tl"></div>
+  <div class="record__corner record__corner--tr"></div>
+  <div class="record__corner record__corner--bl"></div>
+  <div class="record__corner record__corner--br"></div>
 
-    <article class="record" [class.record--complete]="c.registrationStep === 'COMPLETED'">
+  <header class="record__header">
 
-      <div class="record__corner record__corner--tl"></div>
-      <div class="record__corner record__corner--tr"></div>
-      <div class="record__corner record__corner--bl"></div>
-      <div class="record__corner record__corner--br"></div>
+    <div class="record__id">
+      Ficha
+    </div>
 
-      <header class="record__header">
-        <div class="record__id">Ficha {{ ($index + 1) }}</div>
-        <h3 class="record__name">{{ c.name }}</h3>
-        <span class="stamp" [class.stamp--pending]="c.registrationStep !== 'COMPLETED'">
-          {{ c.registrationStep === 'COMPLETED' ? 'Datos completos' : 'Incompleto' }}
-        </span>
-      </header>
+    <h3 class="record__name">
+      {{ contact.name }}
+    </h3>
 
-      <dl class="record__grid">
-        <div class="record__field">
-          <dt>Telefono</dt>
-          <dd>{{ c.phone }}</dd>
-        </div>
-        <div class="record__field">
-          <dt>Email</dt>
-          <dd>{{ c.email }}</dd>
-        </div>
-        <div class="record__field">
-          <dt>Empresa</dt>
-          <dd>{{ c.company }}</dd>
-        </div>
-        <div class="record__field">
-          <dt>Alta</dt>
-          <dd>{{ c.createdAt | date:'dd/MM/yyyy' }}</dd>
-        </div>
-        <div class="record__field">
-          <dt>Primer contacto</dt>
-          <dd>{{ c.firstContact | date:'dd/MM/yyyy' }}</dd>
-        </div>
-        <div class="record__field">
-          <dt>Ultima interaccion</dt>
-          <dd>{{ c.lastInteraction | date:'dd/MM/yyyy' }}</dd>
-        </div>
-      </dl>
+    <span
+      class="stamp"
+      [class.stamp--pending]="
+        contact.registrationStep !== 'COMPLETED'
+      "
+    >
+      {{
+        contact.registrationStep === 'COMPLETED'
+          ? 'Datos completos'
+          : 'Incompleto'
+      }}
+    </span>
 
-      <section class="thread-block">
-        <h4 class="thread-block__title">Conversacion</h4>
+  </header>
 
-        @for (conv of c.conversations; track $index) {
 
-          <div class="thread">
-            <div class="thread__meta">
-              <span class="thread__status" [attr.data-status]="conv.status">{{ conv.status }}</span>
-              <span class="thread__dates">
-                <span>Inicio: {{ conv.startedAt }}</span>
-                <span>Ultimo mensaje: {{ conv.lastMessageAt }}</span>
+  <dl class="record__grid">
+
+    <div class="record__field">
+      <dt>Teléfono</dt>
+      <dd>{{ contact.phone }}</dd>
+    </div>
+
+    <div class="record__field">
+      <dt>Correo electrónico</dt>
+      <dd>{{ contact.email }}</dd>
+    </div>
+
+    <div class="record__field">
+      <dt>Empresa</dt>
+      <dd>{{ contact.company }}</dd>
+    </div>
+
+    <div class="record__field">
+      <dt>Alta</dt>
+      <dd>
+        {{ contact.createdAt | date:'dd/MM/yyyy' }}
+      </dd>
+    </div>
+
+    <div class="record__field">
+      <dt>Primer contacto</dt>
+      <dd>
+        {{ contact.firstContact | date:'dd/MM/yyyy' }}
+      </dd>
+    </div>
+
+    <div class="record__field">
+      <dt>Última interacción</dt>
+      <dd>
+        {{ contact.lastInteraction | date:'dd/MM/yyyy' }}
+      </dd>
+    </div>
+
+  </dl>
+
+
+  <section class="thread-block">
+
+    <h4 class="thread-block__title">
+      Conversación
+    </h4>
+
+
+    @if (contact.conversations?.length) {
+
+      @for (
+        conv of contact.conversations;
+        track conv.id
+      ) {
+
+        <div class="thread">
+
+          <div class="thread__meta">
+
+            <span
+              class="thread__status"
+              [attr.data-status]="conv.status"
+            >
+              {{ conv.status }}
+            </span>
+
+            <span class="thread__dates">
+
+              <span>
+                Inicio:
+                {{ conv.startedAt | date:'yyyy-MM-dd HH:mm' }}
               </span>
-            </div>
 
-            <ol class="log">
-              @for (m of conv.messages; track $index) {
-                <li class="log__entry">
-                  <p class="log__body">{{ m.body }}</p>
-                </li>
-              }
-            </ol>
+              <span>
+                Último mensaje:
+                {{ conv.lastMessageAt | date:'yyyy-MM-dd HH:mm' }}
+              </span>
+
+            </span>
+
           </div>
-        }
-      </section>
 
-    </article>
-  }
 
-</div>
+          <ol class="log">
 
-<div class="actions">
-  <button
-    class="btn btn-warning"
-    (click)="sendCampaing()"
-    [disabled]="enviado">
+            @for (
+              message of conv.messages;
+              track message.id
+            ) {
 
-    {{ enviado ? 'Iniciando campaña...' : 'Enviar campaña' }}
-  </button>
+              <li class="log__entry">
 
-  <button
-    class="btn btn-success"
-    (click)="descargarExcel()">
+                <p class="log__body">
+                  {{ message.body }}
+                </p>
 
-    Descargar Excel
-  </button>
-</div>
+              </li>
+
+            }
+
+          </ol>
+
+        </div>
+
+      }
+
+    } @else {
+
+      <div class="thread thread--empty">
+        No hay conversaciones registradas.
+      </div>
+
+    }
+
+  </section>
+
+</article>

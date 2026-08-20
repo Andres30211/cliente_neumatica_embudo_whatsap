@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Contact } from '../interfaces/Contact';
+import { ContactPage } from '../interfaces/ContactPage';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +13,11 @@ export class ServicesWhatsapp {
 
   constructor(private http: HttpClient){}
 
-  public getContacts():Observable<any>{
-    return this.http.get<Contact[]>(`${this.urlWhatsapp}/contacts`);
+  public getContacts(page: number = 0): Observable<ContactPage> {
+
+    const params = new HttpParams().set('page', page);
+
+    return this.http.get<ContactPage>(`${this.urlWhatsapp}/contacts`,{ params });
   }
 
   public sendCampaing(): Observable<string>{

@@ -1,20 +1,14 @@
-/*@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');*/
-
-/* ---------------------------------------------------------
-   Tokens
---------------------------------------------------------- */
 :host {
+
   --graphite-900: #ffffff;
   --graphite-800: #181e23;
   --graphite-700: #1f262c;
   --bubble-in: #262f36;
-  --bubble-out: #3a2f1a;
   --steel-600: #313c44;
   --steel-500: #465158;
   --steel-400: #7c8890;
   --paper: #e9edf0;
   --paper-dim: #aeb8bf;
-
   --amber: #e2a33d;
   --green: #52a373;
 
@@ -22,242 +16,380 @@
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 
+  display: block;
+  width: 100%;
+
   color-scheme: dark;
 }
 
-/* ---------------------------------------------------------
-   Layout
---------------------------------------------------------- */
-.registry {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-  padding: 24px;
-  background: var(--graphite-900);
-  font-family: var(--font-body);
-}
 
-/* ---------------------------------------------------------
-   Record card (compact)
---------------------------------------------------------- */
+/* CARD */
+
 .record {
+
   position: relative;
+
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
   background: var(--graphite-800);
+
   border: 1px solid var(--steel-600);
   border-top: 2px solid var(--amber);
+
+  border-radius: 6px;
+
   padding: 12px 14px 14px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, .25);
 }
 
-/* ---------------------------------------------------------
-   Header
---------------------------------------------------------- */
+
+/* HEADER */
+
 .record__header {
+
   display: flex;
+
   align-items: center;
   justify-content: space-between;
+
   gap: 8px;
-  margin-bottom: 8px;
+
+  margin-bottom: 10px;
 }
 
 .record__id {
-  display: none; /* omitted in compact view to save space */
+  display: none;
 }
 
 .record__name {
+
   margin: 0;
+
+  min-width: 0;
+
   font-family: var(--font-display);
+
   font-weight: 600;
+
   font-size: 15.5px;
-  letter-spacing: 0.01em;
+
+  letter-spacing: .01em;
+
   color: var(--paper);
+
   text-transform: uppercase;
+
   white-space: nowrap;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
 }
 
+
+/* STATUS */
+
 .stamp {
+
   flex-shrink: 0;
+
   font-family: var(--font-mono);
+
   font-size: 9px;
+
   font-weight: 600;
-  letter-spacing: 0.05em;
+
+  letter-spacing: .05em;
+
   text-transform: uppercase;
 
   background: var(--amber);
+
   color: #000;
+
   border: 1px solid var(--amber);
 
-  padding: 2px 6px;
+  padding: 3px 6px;
+
+  border-radius: 3px;
+
   white-space: nowrap;
 }
 
-/* ---------------------------------------------------------
-   Data strip (compact inline, no boxed grid)
---------------------------------------------------------- */
+.stamp--pending {
+
+  background: #6d6d6d;
+
+  border-color: #6d6d6d;
+
+  color: #fff;
+}
+
+
+/* DATA */
+
 .record__grid {
+
   display: flex;
+
   flex-wrap: wrap;
-  gap: 4px 0;
+
+  gap: 6px 0;
+
   margin: 0 0 10px;
+
   padding-bottom: 10px;
+
   border-bottom: 1px solid var(--steel-600);
 }
 
 .record__field {
+
   flex: 1 1 50%;
+
   min-width: 0;
-  padding-right: 6px;
+
+  padding-right: 8px;
 }
 
 .record__field dt {
+
   font-family: var(--font-mono);
+
   font-size: 8.5px;
-  letter-spacing: 0.06em;
+
+  letter-spacing: .06em;
+
   text-transform: uppercase;
+
   color: var(--steel-400);
-  margin-bottom: 1px;
+
+  margin-bottom: 2px;
 }
 
 .record__field dd {
+
   margin: 0;
+
   font-size: 12px;
+
   color: var(--paper);
+
   white-space: nowrap;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
 }
 
-/* ---------------------------------------------------------
-   Conversation block
---------------------------------------------------------- */
+
+/* CONVERSATION */
+
 .thread-block__title {
+
   font-family: var(--font-mono);
+
   font-size: 9.5px;
-  letter-spacing: 0.1em;
+
+  letter-spacing: .1em;
+
   text-transform: uppercase;
+
   color: var(--steel-400);
+
   margin: 0 0 8px;
 }
 
 .thread-block__title::before {
+
   content: '// ';
+
   color: var(--amber);
 }
 
+
 .thread {
+
   background: var(--graphite-700);
+
   padding: 8px 10px 10px;
+
   margin-bottom: 8px;
+
+  border-radius: 4px;
 }
-.thread:last-child { margin-bottom: 0; }
+
+.thread:last-child {
+  margin-bottom: 0;
+}
+
+.thread--empty {
+
+  font-family: var(--font-mono);
+
+  font-size: 10px;
+
+  color: var(--steel-400);
+
+  text-align: center;
+}
+
+
+/* META */
 
 .thread__meta {
+
   display: flex;
+
   flex-wrap: wrap;
+
   align-items: center;
+
   gap: 6px 10px;
+
   margin-bottom: 8px;
 }
 
 .thread__status {
+
   font-family: var(--font-mono);
+
   font-size: 9px;
+
   font-weight: 600;
-  letter-spacing: 0.05em;
+
+  letter-spacing: .05em;
+
   text-transform: uppercase;
 
   background: var(--amber);
+
   color: #000;
 
   padding: 2px 8px;
+
   border-radius: 3px;
 }
 
 .thread__dates {
+
   display: flex;
-  gap: 8px;
+
+  flex-wrap: wrap;
+
+  gap: 6px 8px;
+
   font-family: var(--font-mono);
-  font-size: 9.5px;
+
+  font-size: 9px;
+
   color: var(--steel-400);
 }
 
-/* ---------------------------------------------------------
-   Message log — WhatsApp-style bubbles
---------------------------------------------------------- */
+
+/* MESSAGES */
+
 .log {
+
   list-style: none;
+
   margin: 0;
+
   padding: 0;
+
   display: flex;
+
   flex-direction: column;
+
   gap: 5px;
 }
 
 .log__entry {
+
   display: flex;
+
+  align-self: flex-start;
+
   max-width: 82%;
 }
 
 .log__body {
+
   margin: 0;
+
   padding: 6px 10px;
+
   font-size: 12px;
+
   line-height: 1.4;
+
   color: var(--paper);
+
   background: var(--bubble-in);
+
   border-radius: 10px 10px 10px 3px;
+
+  overflow-wrap: anywhere;
 }
 
-.log__entry {
-  align-self: flex-start;
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+  .record__field {
+    flex-basis: 50%;
+  }
+
 }
 
-/* ---------------------------------------------------------
-   Responsive
---------------------------------------------------------- */
-@media (max-width: 480px) {
-  .registry { grid-template-columns: 1fr; padding: 14px; gap: 12px; }
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .record {
+    padding: 11px;
+  }
+
+  .record__name {
+    font-size: 14px;
+  }
+
+  .record__field {
+    flex-basis: 100%;
+  }
+
+  .thread__dates {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .log__entry {
+    max-width: 95%;
+  }
+
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 24px;
-}
 
-.btn {
-  padding: 10px 18px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s ease;
-}
+/* VERY SMALL */
 
-.btn-warning {
-  background: #e2a33d;
-  color: #000;
-}
+@media (max-width: 380px) {
 
-.btn-warning:hover:not(:disabled) {
-  background: #f0b74f;
-}
+  .record__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-.btn-warning:disabled {
-  background: #8d8d8d;
-  color: #444;
-  cursor: not-allowed;
-}
+  .stamp {
+    align-self: flex-start;
+  }
 
-.btn-success {
-  background: #2ea44f;
-  color: #fff;
-}
-
-.btn-success:hover {
-  background: #24863f;
 }

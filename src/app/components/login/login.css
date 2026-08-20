@@ -1,0 +1,1783 @@
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+
+    --primary: #2563eb;
+
+    --primary-dark: #1d4ed8;
+
+    --navy: #031a45;
+
+    --text: #111827;
+
+    --text-secondary: #667085;
+
+    --border: #dfe3ea;
+
+    --white: #ffffff;
+
+}
+
+
+/* =========================================================
+   PÁGINA
+========================================================= */
+
+.login-page {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 1rem;
+
+}
+
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
+
+.container-login {
+
+    position: relative;
+
+    width: 99%;
+
+    min-height: calc(100vh - 2rem);
+
+    display: flex;
+
+    align-items: center;
+
+    border-radius: 1rem;
+
+     background:
+        linear-gradient(
+            180deg,
+            rgba(1, 20, 50, 0.96) 100%
+        );
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.12);
+
+}
+
+
+/* =========================================================
+   PANEL IZQUIERDO
+========================================================= */
+
+.brand-content {
+
+    position: relative;
+
+    width: 50%;
+
+    min-height: 100%;
+
+    display: flex;
+
+    overflow: hidden;
+
+    color: white;
+
+    border-radius: 1rem 0 0 1rem;
+
+}
+
+
+/* =========================================================
+   IMAGEN DE FONDO
+========================================================= */
+
+.brand-background {
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image:
+        url("../../../../public/ico.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    opacity: 0.45;
+
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.brand-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(2, 22, 55, 0.98) 0%,
+            rgba(3, 40, 86, 0.88) 45%,
+            rgba(1, 20, 50, 0.96) 100%
+        );
+
+}
+
+
+/* =========================================================
+   CONTENIDO IZQUIERDO
+========================================================= */
+
+.brand-inner {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    min-height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding:
+        4rem 3.2rem 2rem;
+
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.75rem;
+
+}
+
+
+.logo-icon {
+
+    position: relative;
+
+    width: 42px;
+
+    height: 42px;
+
+}
+
+
+.logo-icon span {
+
+    position: absolute;
+
+    width: 23px;
+
+    height: 23px;
+
+    border-radius: 3px;
+
+    transform:
+        rotate(30deg)
+        skewY(-10deg);
+
+    background:
+        linear-gradient(
+            135deg,
+            #5b95ff,
+            #1555db
+        );
+
+}
+
+
+.logo-icon span:nth-child(1) {
+
+    top: 1px;
+    left: 3px;
+
+}
+
+
+.logo-icon span:nth-child(2) {
+
+    top: 9px;
+    right: 2px;
+
+    opacity: 0.8;
+
+}
+
+
+.logo-icon span:nth-child(3) {
+
+    bottom: 0;
+    left: 4px;
+
+    opacity: 0.55;
+
+}
+
+
+.logo-text {
+
+    font-size: 1.7rem;
+
+    font-weight: 700;
+
+    letter-spacing: -1px;
+
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.brand-hero {
+
+    margin-top: 5rem;
+
+    max-width: 430px;
+
+}
+
+
+.brand-hero h1 {
+
+    font-size:
+        clamp(2.3rem, 3.5vw, 3.5rem);
+
+    line-height: 1.05;
+
+    letter-spacing: -2px;
+
+    font-weight: 700;
+
+}
+
+
+.brand-hero h1 span {
+
+    display: block;
+
+    color: #4f8cff;
+
+}
+
+
+.brand-hero p {
+
+    max-width: 400px;
+
+    margin-top: 1.4rem;
+
+    font-size: 1rem;
+
+    line-height: 1.6;
+
+    color:
+        rgba(255,255,255,0.88);
+
+}
+
+
+/* =========================================================
+   BENEFICIOS
+========================================================= */
+
+.benefits {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.5rem;
+
+    max-width: 440px;
+
+    margin-top: 2.8rem;
+
+}
+
+
+.benefit {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 1rem;
+
+}
+
+
+.benefit-icon {
+
+    flex-shrink: 0;
+
+    width: 3.2rem;
+
+    height: 3.2rem;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: white;
+
+    background:
+        rgba(91,143,225,0.18);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+}
+
+
+.benefit-icon svg {
+
+    width: 1.4rem;
+
+    height: 1.4rem;
+
+}
+
+
+.benefit-content h3 {
+
+    margin-bottom: 0.35rem;
+
+    font-size: 0.95rem;
+
+    font-weight: 600;
+
+}
+
+
+.benefit-content p {
+
+    max-width: 310px;
+
+    font-size: 0.82rem;
+
+    line-height: 1.5;
+
+    color:
+        rgba(255,255,255,0.7);
+
+}
+
+
+/* =========================================================
+   TESTIMONIAL
+========================================================= */
+
+.testimonial {
+
+    max-width: 410px;
+
+    margin-top: 2rem;
+
+    padding: 1.3rem;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.18);
+
+    border-radius: 0.9rem;
+
+    background:
+        rgba(255,255,255,0.055);
+
+    backdrop-filter:
+        blur(8px);
+
+}
+
+
+.testimonial-text {
+
+    font-size: 0.85rem;
+
+    line-height: 1.6;
+
+    color:
+        rgba(255,255,255,0.9);
+
+}
+
+
+.testimonial-author {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.8rem;
+
+    margin-top: 1rem;
+
+}
+
+
+.testimonial-author img {
+
+    width: 43px;
+
+    height: 43px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border:
+        2px solid
+        rgba(255,255,255,0.3);
+
+}
+
+
+.testimonial-info strong {
+
+    display: block;
+
+    font-size: 0.8rem;
+
+}
+
+
+.testimonial-info span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 0.7rem;
+
+    color:
+        rgba(255,255,255,0.6);
+
+}
+
+
+/* =========================================================
+   SEGURIDAD
+========================================================= */
+
+.security-message {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.7rem;
+
+    margin-top: 2rem;
+
+    font-size: 0.7rem;
+
+    line-height: 1.5;
+
+    color:
+        rgba(255,255,255,0.8);
+
+}
+
+
+.security-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.security-icon svg {
+
+    width: 1.5rem;
+
+    height: 1.5rem;
+
+}
+
+
+/* =========================================================
+   PANEL DERECHO / FORMULARIO
+========================================================= */
+
+.container-form {
+
+    position: absolute;
+    top: 1%;
+    right: 0.7%;
+    width: 50%;
+    height: 98%;
+    border-radius: 1rem;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* =========================================================
+   CARD DEL FORMULARIO
+========================================================= */
+
+.login-card {
+
+    width: 100%;
+
+    max-width: 600px;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.form-header {
+
+    margin-bottom: 2.2rem;
+
+}
+
+
+.form-header h2 {
+
+    margin-bottom: 0.6rem;
+
+    font-size:
+        clamp(1.8rem, 2.5vw, 2.2rem);
+
+    line-height: 1.2;
+
+    letter-spacing: -1px;
+
+    font-weight: 700;
+
+}
+
+
+.form-header p {
+
+    max-width: 450px;
+
+    font-size: 0.95rem;
+
+    line-height: 1.5;
+
+    color:
+        var(--text-secondary);
+
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+
+    margin-bottom: 1.35rem;
+
+}
+
+
+.form-group label {
+
+    display: block;
+
+    margin-bottom: 0.5rem;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+
+    color: #1d2939;
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.input-wrapper {
+
+    position: relative;
+
+    width: 100%;
+
+}
+
+
+.input-wrapper input {
+
+    width: 100%;
+
+    height: 54px;
+
+    padding:
+        0 3.1rem;
+
+    outline: none;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: var(--text);
+
+    font-family: inherit;
+
+    font-size: 0.85rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.input-wrapper input::placeholder {
+
+    color: #98a2b3;
+
+}
+
+
+.input-wrapper input:focus {
+
+    border-color:
+        var(--primary);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37,99,235,0.08);
+
+}
+
+
+/* =========================================================
+   ICONO INPUT
+========================================================= */
+
+.input-icon {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 1rem;
+
+    display: flex;
+
+    transform:
+        translateY(-50%);
+
+    color: #98a2b3;
+
+}
+
+
+.input-icon svg {
+
+    width: 20px;
+
+    height: 20px;
+
+}
+
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+.password-toggle {
+
+    position: absolute;
+
+    top: 50%;
+
+    right: 1rem;
+
+    display: flex;
+
+    padding: 0;
+
+    transform:
+        translateY(-50%);
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #667085;
+
+    cursor: pointer;
+
+}
+
+
+.password-toggle svg {
+
+    width: 20px;
+
+    height: 20px;
+
+}
+
+
+.eye-closed {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   OPCIONES
+========================================================= */
+
+.form-options {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 1.5rem;
+
+}
+
+
+.remember {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    cursor: pointer;
+
+    font-size: 0.78rem;
+
+    color: #495a74;
+
+}
+
+
+.remember input {
+
+    position: absolute;
+
+    opacity: 0;
+
+}
+
+
+.custom-checkbox {
+
+    width: 18px;
+
+    height: 18px;
+
+    flex-shrink: 0;
+
+    border:
+        1px solid
+        #d0d5dd;
+
+    border-radius: 4px;
+
+    background: white;
+
+}
+
+
+.remember input:checked
++ .custom-checkbox {
+
+    border-color:
+        var(--primary);
+
+    background:
+        var(--primary);
+
+    box-shadow:
+        inset 0 0 0 4px  white;
+
+}
+
+
+.forgot-password {
+
+    color:
+        var(--primary);
+
+    font-size: 0.78rem;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+}
+
+
+/* =========================================================
+   BOTÓN
+========================================================= */
+
+.login-button {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #174ee8,
+            #3774f0
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 0.9rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.login-button:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 8px 22px
+        rgba(37,99,235,.24);
+
+}
+
+
+.button-arrow {
+
+    position: absolute;
+
+    right: 1.2rem;
+
+    font-size: 1.5rem;
+
+}
+
+
+.login-button:hover
+.button-arrow {
+
+    transform:
+        translateX(4px);
+
+}
+
+
+/* =========================================================
+   DIVISOR
+========================================================= */
+
+.divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    margin:
+        1.7rem 0 1.1rem;
+
+}
+
+
+.divider span {
+
+    height: 1px;
+
+    flex: 1;
+
+    background:
+        #e5e7eb;
+
+}
+
+
+.divider p {
+
+    white-space: nowrap;
+
+    font-size: 0.75rem;
+
+    color:
+        #667085;
+
+}
+
+
+/* =========================================================
+   SOCIAL
+========================================================= */
+
+.social-login {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 0.7rem;
+
+}
+
+
+.social-button {
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 0.5rem;
+
+    border:
+        1px solid
+        #dfe3ea;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #344054;
+
+    font-family: inherit;
+
+    font-size: 0.8rem;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+
+}
+
+
+.social-button:hover {
+
+    background:
+        #f8fafc;
+
+    border-color:
+        #cbd5e1;
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* =========================================================
+   GOOGLE
+========================================================= */
+
+.google-icon {
+
+    color:
+        #4285f4;
+
+    font-size: 1.15rem;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   MICROSOFT
+========================================================= */
+
+.microsoft-icon {
+
+    display: grid;
+
+    grid-template-columns:
+        7px 7px;
+
+    grid-template-rows:
+        7px 7px;
+
+    gap: 2px;
+
+}
+
+
+.microsoft-icon i {
+
+    display: block;
+
+    background:
+        #f25022;
+
+}
+
+
+.microsoft-icon i:nth-child(2) {
+
+    background:
+        #7fba00;
+
+}
+
+
+.microsoft-icon i:nth-child(3) {
+
+    background:
+        #00a4ef;
+
+}
+
+
+.microsoft-icon i:nth-child(4) {
+
+    background:
+        #ffb900;
+
+}
+
+
+/* =========================================================
+   LINKEDIN
+========================================================= */
+
+.linkedin-icon {
+
+    width: 21px;
+
+    height: 21px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 2px;
+
+    background:
+        #0a66c2;
+
+    color: white;
+
+    font-size: 0.75rem;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   CREAR CUENTA
+========================================================= */
+
+.create-account {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    margin-top: 1.7rem;
+
+    padding: 1.2rem;
+
+    border-radius: 13px;
+
+    background:
+        #f6f9ff;
+
+}
+
+
+.create-account-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        #e7efff;
+
+    color:
+        var(--primary);
+
+}
+
+
+.create-account-icon svg {
+
+    width: 23px;
+
+    height: 23px;
+
+}
+
+
+.create-account-content {
+
+    flex: 1;
+
+}
+
+
+.create-account-content strong {
+
+    display: block;
+
+    margin-bottom: 0.3rem;
+
+    font-size: 0.8rem;
+
+}
+
+
+.create-account-content p {
+
+    margin-bottom: 0.5rem;
+
+    font-size: 0.7rem;
+
+    line-height: 1.5;
+
+    color:
+        #667085;
+
+}
+
+
+.create-account-content a {
+
+    color:
+        #174bbf;
+
+    font-size: 0.8rem;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+}
+
+
+/* =========================================================
+   SOPORTE
+========================================================= */
+
+.support {
+
+    margin-top: 1.4rem;
+
+    text-align: center;
+
+    font-size: 0.75rem;
+
+    color:
+        #667085;
+
+}
+
+
+.support a {
+
+    margin-left: 3px;
+
+    color:
+        var(--primary);
+
+    text-decoration: none;
+
+    font-weight: 500;
+
+}
+/* =========================================================
+   TABLET GRANDE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    .container-form {
+        padding: 2.5rem 3rem;
+    }
+
+    .brand-inner {
+        padding: 3rem 2.5rem 2rem;
+    }
+
+    .brand-hero {
+        margin-top: 3.5rem;
+    }
+
+    .brand-hero h1 {
+        font-size: clamp(2.1rem, 3.2vw, 3rem);
+    }
+
+    .brand-hero p {
+        max-width: 360px;
+    }
+
+    .benefits {
+        gap: 1.1rem;
+        margin-top: 2rem;
+    }
+
+    .benefit-content p {
+        max-width: 270px;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .container-form {
+        padding: 2rem 2rem;
+    }
+
+    .brand-inner {
+        padding: 2.5rem 2rem 1.5rem;
+    }
+
+    .brand-hero {
+        margin-top: 3rem;
+    }
+
+    .brand-hero h1 {
+        font-size: 2.2rem;
+        letter-spacing: -1.5px;
+    }
+
+    .brand-hero p {
+        font-size: 0.9rem;
+    }
+
+    .benefits {
+        gap: 0.9rem;
+        margin-top: 1.8rem;
+    }
+
+    .benefit-icon {
+        width: 2.8rem;
+        height: 2.8rem;
+    }
+
+    .benefit-content h3 {
+        font-size: 0.85rem;
+    }
+
+    .benefit-content p {
+        font-size: 0.75rem;
+    }
+
+    .testimonial {
+        margin-top: 1.5rem;
+        padding: 1rem;
+    }
+
+    .testimonial-text {
+        font-size: 0.78rem;
+    }
+
+    .form-header {
+        margin-bottom: 1.7rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .form-header p {
+        font-size: 0.85rem;
+    }
+
+    .input-wrapper input {
+        height: 50px;
+    }
+
+    .login-button {
+        height: 52px;
+    }
+
+    .social-button {
+        height: 46px;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET PEQUEÑA
+========================================================= */
+
+@media (max-width: 850px) {
+
+    /*
+     * Todavía mantenemos los dos paneles
+     * lado a lado.
+     */
+
+    .login-page {
+        align-items: flex-start;
+        padding: 0.75rem;
+    }
+
+    .container-login {
+        min-height: calc(100vh - 1.5rem);
+    }
+
+    .brand-inner {
+        padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .logo-text {
+        font-size: 1.45rem;
+    }
+
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .logo-icon span {
+        width: 20px;
+        height: 20px;
+    }
+
+    .brand-hero {
+        margin-top: 2.5rem;
+    }
+
+    .brand-hero h1 {
+        font-size: 1.9rem;
+        letter-spacing: -1px;
+    }
+
+    .brand-hero p {
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    .benefits {
+        gap: 0.7rem;
+        margin-top: 1.5rem;
+    }
+
+    .benefit {
+        gap: 0.7rem;
+    }
+
+    .benefit-icon {
+        width: 2.4rem;
+        height: 2.4rem;
+    }
+
+    .benefit-icon svg {
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+
+    .benefit-content h3 {
+        font-size: 0.78rem;
+    }
+
+    .benefit-content p {
+        font-size: 0.68rem;
+    }
+
+    .testimonial {
+        margin-top: 1rem;
+        padding: 0.8rem;
+    }
+
+    .testimonial-text {
+        font-size: 0.7rem;
+    }
+
+    .testimonial-author img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .container-form {
+        padding: 1.8rem 1.5rem;
+    }
+
+    .form-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .form-header p {
+        font-size: 0.78rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        font-size: 0.78rem;
+    }
+
+    .input-wrapper input {
+        height: 48px;
+        font-size: 0.78rem;
+    }
+
+    .form-options {
+        font-size: 0.7rem;
+    }
+
+    .login-button {
+        height: 50px;
+        font-size: 0.82rem;
+    }
+
+    .divider {
+        margin: 1.3rem 0 1rem;
+    }
+
+    .social-button {
+        height: 44px;
+        font-size: 0.72rem;
+    }
+
+    .create-account {
+        gap: 0.7rem;
+        margin-top: 1.2rem;
+        padding: 0.9rem;
+    }
+
+    .create-account-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .create-account-content strong {
+        font-size: 0.72rem;
+    }
+
+    .create-account-content p {
+        font-size: 0.64rem;
+    }
+
+    .create-account-content a {
+        font-size: 0.72rem;
+    }
+
+    .support {
+        margin-top: 1rem;
+        font-size: 0.68rem;
+    }
+
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 700px) {
+
+    /*
+     * Aquí sí pasamos a una sola columna.
+     */
+
+    .login-page {
+        display: block;
+        min-height: 100vh;
+        padding: 0;
+    }
+
+    .container-login {
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        display: block;
+    }
+
+    .brand-content {
+        position: relative;
+        width: 100%;
+        min-height: 380px;
+        height: 380px;
+        border-radius: 0;
+    }
+
+    .brand-inner {
+        min-height: 380px;
+        height: 380px;
+        padding: 2rem 1.5rem;
+    }
+
+    .brand-hero {
+        margin-top: 2.5rem;
+    }
+
+    .brand-hero h1 {
+        font-size: 2.1rem;
+    }
+
+    .brand-hero p {
+        max-width: 420px;
+        font-size: 0.85rem;
+    }
+
+    /*
+     * Ocultamos estos elementos para que
+     * el panel izquierdo no quede demasiado alto.
+     */
+
+    .benefits {
+        display: none;
+    }
+
+    .testimonial {
+        display: none;
+    }
+
+    .security-message {
+        margin-top: auto;
+    }
+
+    /*
+     * El formulario deja de estar superpuesto
+     * únicamente en móvil para poder apilarlo.
+     */
+
+    .container-form {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        height: auto;
+        min-height: 600px;
+        padding: 3rem 1.5rem;
+        border-radius: 0;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.9rem;
+    }
+
+    .form-header p {
+        font-size: 0.85rem;
+    }
+
+    .input-wrapper input {
+        height: 52px;
+    }
+
+    .login-button {
+        height: 53px;
+    }
+
+    .social-login {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   MÓVIL PEQUEÑO
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .brand-content {
+        min-height: 330px;
+        height: 330px;
+    }
+
+    .brand-inner {
+        min-height: 330px;
+        height: 330px;
+        padding: 1.7rem 1.2rem;
+    }
+
+    .logo-text {
+        font-size: 1.3rem;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .logo-icon span {
+        width: 18px;
+        height: 18px;
+    }
+
+    .brand-hero {
+        margin-top: 2rem;
+    }
+
+    .brand-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .brand-hero p {
+        margin-top: 1rem;
+        font-size: 0.78rem;
+    }
+
+    .security-message {
+        font-size: 0.62rem;
+    }
+
+    .container-form {
+        min-height: 600px;
+        padding: 2.5rem 1rem;
+    }
+
+    .form-header {
+        margin-bottom: 1.7rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.7rem;
+    }
+
+    .form-header p {
+        font-size: 0.78rem;
+    }
+
+    .form-options {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .social-login {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .social-button {
+        height: 48px;
+    }
+
+    .create-account {
+        align-items: flex-start;
+    }
+
+    .create-account-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+}

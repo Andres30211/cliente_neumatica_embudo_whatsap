@@ -1,0 +1,188 @@
+<div class="contacts-layout">
+
+  <app-topbar></app-topbar>
+
+  <main class="main-content">
+
+    <app-sidebar></app-sidebar>
+
+    <section class="page">
+
+      <div class="page__header">
+
+        <h1>
+          Gestor de Embudos de Conversación
+        </h1>
+
+      </div>
+
+
+      <!-- CONTENEDOR PRINCIPAL -->
+
+      <section class="contacts-panel">
+
+
+        <!-- FILTROS -->
+
+        <div class="filters">
+
+          <div class="filter">
+
+            <label for="status">
+              Estado
+            </label>
+
+            <select id="status">
+              <option>All</option>
+              <option>Datos completos</option>
+              <option>Incompleto</option>
+            </select>
+
+          </div>
+
+
+          <div class="filter">
+
+            <label for="date">
+              Fecha
+            </label>
+
+            <select id="date">
+              <option>All</option>
+              <option>Hoy</option>
+              <option>Últimos 7 días</option>
+              <option>Últimos 30 días</option>
+            </select>
+
+          </div>
+
+
+          <div class="filter">
+
+            <label for="channel">
+              Canal
+            </label>
+
+            <select id="channel">
+              <option>All</option>
+              <option>WhatsApp</option>
+              <option>Email</option>
+              <option>Instagram</option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- TARJETAS -->
+
+        <div class="registry">
+
+          @for (contact of contacts(); track contact.id) {
+
+            <whatsapp-embudo
+              [contact]="contact">
+            </whatsapp-embudo>
+
+          }
+
+        </div>
+
+
+        <!-- PAGINACIÓN -->
+
+        <div class="pagination">
+
+
+          <div class="pagination__info">
+
+            <span>
+              Página
+            </span>
+
+            <strong>
+              {{ currentPage() + 1 }}
+            </strong>
+
+            <span>
+              de {{ totalPages() }}
+            </span>
+
+          </div>
+
+
+          <div class="pagination__controls">
+
+
+            <!-- ANTERIOR -->
+
+            <button
+              class="pagination__arrow"
+              type="button"
+              (click)="previousPage()"
+              [disabled]="currentPage() === 0"
+            >
+              ‹
+            </button>
+
+
+            <!-- NÚMEROS -->
+
+            @for (
+              page of pageNumbers;
+              track page
+            ) {
+
+              <button
+                type="button"
+                class="pagination__number"
+                [class.pagination__number--active]="
+                  currentPage() === page
+                "
+                (click)="goToPage(page)"
+              >
+                {{ page + 1 }}
+              </button>
+
+            }
+
+
+            <!-- SIGUIENTE -->
+
+            <button
+              class="pagination__next"
+              type="button"
+              (click)="nextPage()"
+              [disabled]="
+                currentPage() === totalPages() - 1
+              "
+            >
+              Siguiente
+            </button>
+
+
+          </div>
+
+
+          <div class="pagination__size">
+
+            <span>
+              Ver
+            </span>
+
+            <select disabled>
+              <option>5 por página</option>
+            </select>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+</div>

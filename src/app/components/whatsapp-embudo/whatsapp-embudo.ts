@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, signal } from '@angular/core';
 import { ServicesWhatsapp } from '../../services/services-whatsapp';
 import { Contact } from '../../interfaces/Contact';
 import { CommonModule } from '@angular/common';
@@ -14,34 +14,12 @@ export class WhatsappEmbudo implements OnInit{
 
   public enviado!: boolean;
 
-  public contacts = signal<Contact[]>([]);
+  @Input({ required: true })
+  contact!: Contact;
 
-  constructor(private servicesWhat: ServicesWhatsapp,
-      private serviceWebs: ServicesWebsocket){}
+  constructor(private servicesWhat: ServicesWhatsapp){}
 
   ngOnInit(): void {
-    this.getContacts();
-    this.serviceWebs.connect();
-    this.serviceWebs.contacts$.subscribe(contact => {
-
-      this.contacts.update(list => {
-
-        const filtered = list.filter(c => c.id !== contact.id);
-
-        return [contact, ...filtered];
-
-      });
-
-    });
-  }
-
-  public getContacts():any{
-    this.servicesWhat.getContacts().subscribe({
-      next: (cont:Contact[]) => {
-        console.log(cont);
-        this.contacts.set(cont);
-      }
-    });
   }
 
   public sendCampaing(): void{

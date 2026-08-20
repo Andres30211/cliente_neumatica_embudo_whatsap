@@ -1,0 +1,204 @@
+:host {
+
+  display: block;
+
+  width: 100%;
+
+  flex-shrink: 0;
+}
+
+
+.topbar {
+
+  height: 56px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 0 20px;
+
+  box-sizing: border-box;
+
+  background: #fff;
+
+  border-bottom: 1px solid #d8dde2;
+
+  box-shadow:
+    0 1px 5px rgba(0,0,0,.08);
+}
+
+
+/* SEARCH */
+
+.topbar__search {
+
+  position: relative;
+
+  width: 310px;
+
+  max-width: 100%;
+}
+
+.topbar__search input {
+
+  width: 100%;
+
+  height: 35px;
+
+  box-sizing: border-box;
+
+  padding:
+    0 12px 0 39px;
+
+  border: 1px solid #c3cad1;
+
+  border-radius: 7px;
+
+  background: #f3f5f7;
+
+  color: #222;
+
+  outline: none;
+
+  font-size: 14px;
+
+  transition:
+    border .2s ease,
+    box-shadow .2s ease;
+}
+
+.topbar__search input:focus {
+
+  border-color: #5790b8;
+
+  box-shadow:
+    0 0 0 3px rgba(35,104,155,.12);
+}
+
+.topbar__search input::placeholder {
+
+  color: #707880;
+}
+
+
+/* SEARCH ICON */
+
+.topbar__search-icon {
+
+  position: absolute;
+
+  left: 12px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #69737c;
+
+  font-size: 25px;
+
+  pointer-events: none;
+}
+
+
+/* USER */
+
+.topbar__user {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #111;
+
+  font-size: 14px;
+
+  white-space: nowrap;
+}
+
+.topbar__avatar {
+
+  width: 27px;
+
+  height: 27px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #d8dde2;
+
+  color: #717a83;
+
+  font-size: 16px;
+}
+
+.topbar__arrow {
+
+  margin-left: 2px;
+
+  font-size: 18px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 700px) {
+
+  .topbar {
+
+    padding: 0 12px;
+
+  }
+
+  .topbar__search {
+
+    width: 240px;
+
+  }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+
+  .topbar {
+
+    height: 58px;
+
+  }
+
+  .topbar__search {
+
+    flex: 1;
+
+    width: auto;
+
+  }
+
+  .topbar__username {
+
+    display: none;
+
+  }
+
+  .topbar__user {
+
+    gap: 3px;
+
+  }
+
+}
