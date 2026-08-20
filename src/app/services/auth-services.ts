@@ -11,7 +11,8 @@ import { TokensServices } from './tokens-services';
 })
 export class AuthServices {
 
-  private apiUrl:string = 'http://localhost:8080/api/auth';
+  // private apiUrl:string = 'http://localhost:8080/api/auth';
+  private apiUrl:string = 'https://security-service-neumatica.onrender.com/api/auth';
 
   constructor(private http: HttpClient, private tokensServices: TokensServices){}
 
