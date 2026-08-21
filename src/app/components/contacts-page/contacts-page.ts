@@ -5,6 +5,7 @@ import { WhatsappEmbudo } from "../whatsapp-embudo/whatsapp-embudo";
 import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
 import { ServicesWebsocket } from '../../services/services-websocket';
+import { TokensServices } from '../../services/tokens-services';
 
 @Component({
   selector: 'app-contacts-page',
@@ -20,9 +21,13 @@ export class ContactsPage implements OnInit{
   totalPages = signal(0);
   totalElements = signal(0);
 
+  public enviado!: boolean;
+
   readonly pageSize = 5;
 
-  constructor(private servicesWhat: ServicesWhatsapp, private serviceWebs: ServicesWebsocket){}
+  constructor(private servicesWhat: ServicesWhatsapp, 
+    private serviceWebs: ServicesWebsocket,
+    private tokensServices: TokensServices){}
 
   ngOnInit(): void {
     this.loadContacts(0);
@@ -32,6 +37,14 @@ export class ContactsPage implements OnInit{
       this.updateContactFromWebSocket(contact);
 
     });
+    console.log(this.tokensServices.getRoles())
+  }
+
+  public meRol(rol: string): boolean{
+
+    const roles = this.tokensServices.getRoles();
+
+    return roles.includes(rol);
   }
 
   private updateContactFromWebSocket(contact: Contact): void {
@@ -50,6 +63,42 @@ export class ContactsPage implements OnInit{
       }
 
       return [contact, ...list];
+
+    });
+
+  }
+
+  public sendCampaing(): void{
+
+    this.enviado = true;
+
+    this.servicesWhat.sendCampaing().subscribe({
+      next: (message) => {
+        alert(message);
+        this.enviado = false;
+      },
+      error: () => {
+        alert('Error al enviar emails...')
+        this.enviado = false;
+      }
+    });
+  }
+
+  descargarExcel() {
+
+    this.servicesWhat.downloadExcel().subscribe(blob => {
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+
+      a.href = url;
+
+      a.download = 'contactos.xlsx';
+
+      a.click();
+
+      window.URL.revokeObjectURL(url);
 
     });
 

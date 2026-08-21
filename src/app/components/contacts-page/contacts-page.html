@@ -11,7 +11,7 @@
       <div class="page__header">
 
         <h1>
-          Gestor de Embudos de Conversación
+          Gestor de Embudos de Conversación en Whatsapp
         </h1>
 
       </div>
@@ -22,69 +22,38 @@
       <section class="contacts-panel">
 
 
-        <!-- FILTROS -->
+        <!-- MARKETING -->
 
-        <div class="filters">
+        @if(this.meRol('ROLE_ADMIN') || this.meRol('ROLE_PUBLICISTA')){
 
-          <div class="filter">
-
-            <label for="status">
-              Estado
-            </label>
-
-            <select id="status">
-              <option>All</option>
-              <option>Datos completos</option>
-              <option>Incompleto</option>
-            </select>
-
+          <div class="buttons-marketing">
+  
+            <button class="email-marketing">Enviar Email Marketing</button>
+            
+            <button class="excel-contacts">Descargar Contactos en Excel</button>
+  
           </div>
 
-
-          <div class="filter">
-
-            <label for="date">
-              Fecha
-            </label>
-
-            <select id="date">
-              <option>All</option>
-              <option>Hoy</option>
-              <option>Últimos 7 días</option>
-              <option>Últimos 30 días</option>
-            </select>
-
-          </div>
-
-
-          <div class="filter">
-
-            <label for="channel">
-              Canal
-            </label>
-
-            <select id="channel">
-              <option>All</option>
-              <option>WhatsApp</option>
-              <option>Email</option>
-              <option>Instagram</option>
-            </select>
-
-          </div>
-
-        </div>
+        }
 
 
         <!-- TARJETAS -->
 
         <div class="registry">
+          
+          @if (this.contacts().length > 0) {
 
-          @for (contact of contacts(); track contact.id) {
+            @for (contact of contacts(); track contact.id) {
+  
+              <whatsapp-embudo
+                [contact]="contact">
+              </whatsapp-embudo>
+  
+            }
 
-            <whatsapp-embudo
-              [contact]="contact">
-            </whatsapp-embudo>
-
+          }@else {
+            
+            <h3>No hay contactos filtrados...</h3>
           }
 
         </div>
@@ -129,10 +98,7 @@
 
             <!-- NÚMEROS -->
 
-            @for (
-              page of pageNumbers;
-              track page
-            ) {
+            @for (page of pageNumbers; track page) {
 
               <button
                 type="button"

@@ -261,7 +261,7 @@ export class Register {
 
         this.notificationServices.success('Registro completado', 'Tu cuenta ha sido creada correctamente.');
 
-        this.router.navigate(['/whatsapp-embudo']);
+        this.router.navigate(['/home']);
 
       }
 

@@ -89,7 +89,7 @@
 
 /* FILTERS */
 
-.filters {
+.buttons-marketing {
 
   display: flex;
 
@@ -104,45 +104,39 @@
   background: #f7f9fb;
 }
 
-.filter {
+.buttons-marketing .email-marketing{
 
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-}
-
-.filter label {
-
-  color: #16191c;
-
-  font-size: 16px;
-
-  font-weight: 500;
-}
-
-.filter select {
-
-  height: 30px;
-
-  min-width: 125px;
-
-  padding: 0 10px;
-
-  border: 1px solid #bfc7cf;
-
-  border-radius: 5px;
-
-  background: #fff;
-
-  color: #222;
-
-  font-size: 14px;
-
+  padding: 0.6rem;
+  border-style: none;
+  border-radius: 0.4rem;
   cursor: pointer;
+  background-color: rgb(255, 196, 0);
+  transition: 100ms;
+
 }
 
+.buttons-marketing .email-marketing:hover{
+
+  padding: 0.7rem;
+
+}
+
+.buttons-marketing .excel-contacts{
+
+  padding: 0.6rem;
+  border-style: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  background-color: rgb(25, 136, 6);
+  transition: 100ms;
+
+}
+
+.buttons-marketing .excel-contacts:hover{
+
+  padding: 0.7rem;
+
+}
 
 /* REGISTRY */
 
@@ -158,6 +152,14 @@
   padding: 15px;
 
   background: #f4f6f8;
+}
+
+.registry h3{
+
+  text-align: center;
+  padding: 3rem;
+  border-radius: 1rem;
+  background-color: #f8be00;
 }
 
 

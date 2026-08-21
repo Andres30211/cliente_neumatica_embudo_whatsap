@@ -1,5 +1,6 @@
 <header class="topbar">
 
+  <!-- BUSCADOR -->
   <div class="topbar__search">
 
     <span class="topbar__search-icon">
@@ -8,12 +9,13 @@
 
     <input
       type="text"
-      placeholder="Buscar tos contactos..."
+      placeholder="Buscar tus contactos..."
     />
 
   </div>
 
 
+  <!-- USUARIO -->
   <div class="topbar__user">
 
     <div class="topbar__avatar">
@@ -21,12 +23,45 @@
     </div>
 
     <span class="topbar__username">
-      Usuario
+      {{ this.nombre }}
     </span>
 
-    <span class="topbar__arrow">
-     ⌄
-    </span>
+    <!-- BOTÓN DEL MENÚ -->
+    <div class="topbar__menu">
+
+      <button
+        type="button"
+        class="topbar__arrow"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuAbierto"
+        aria-label="Abrir menú de usuario"
+      >
+        ⌄
+      </button>
+
+
+      <!-- MENÚ DESPLEGABLE -->
+      <div
+        class="topbar__dropdown"
+        *ngIf="menuAbierto">
+
+        <button
+          type="button"
+          class="topbar__logout"
+          (click)="cerrarSesion()"
+        >
+          <span class="topbar__logout-icon">
+            ↪
+          </span>
+
+          <span>
+            Cerrar sesión
+          </span>
+        </button>
+
+      </div>
+
+    </div>
 
   </div>
 

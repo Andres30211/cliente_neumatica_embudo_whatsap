@@ -1,0 +1,19 @@
+main{
+
+    display: flex;
+}
+
+main > section{
+    
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+}
+
+main > section > h1{
+    
+    padding: 3rem;
+    background-color: yellow;
+    border-radius: 1rem;
+}

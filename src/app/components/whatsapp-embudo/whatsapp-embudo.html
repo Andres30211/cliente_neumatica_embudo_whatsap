@@ -82,12 +82,9 @@
     </h4>
 
 
-    @if (contact.conversations?.length) {
+    @if (contact.conversations.length > 0) {
 
-      @for (
-        conv of contact.conversations;
-        track conv.id
-      ) {
+      @for (conv of contact.conversations; track conv.id) {
 
         <div class="thread">
 

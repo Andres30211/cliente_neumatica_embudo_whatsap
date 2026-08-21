@@ -8,6 +8,10 @@
 }
 
 
+/* =========================
+   TOPBAR
+   ========================= */
+
 .topbar {
 
   height: 56px;
@@ -33,7 +37,9 @@
 }
 
 
-/* SEARCH */
+/* =========================
+   SEARCH
+   ========================= */
 
 .topbar__search {
 
@@ -43,6 +49,7 @@
 
   max-width: 100%;
 }
+
 
 .topbar__search input {
 
@@ -72,6 +79,7 @@
     box-shadow .2s ease;
 }
 
+
 .topbar__search input:focus {
 
   border-color: #5790b8;
@@ -80,13 +88,16 @@
     0 0 0 3px rgba(35,104,155,.12);
 }
 
+
 .topbar__search input::placeholder {
 
   color: #707880;
 }
 
 
-/* SEARCH ICON */
+/* =========================
+   SEARCH ICON
+   ========================= */
 
 .topbar__search-icon {
 
@@ -106,7 +117,9 @@
 }
 
 
-/* USER */
+/* =========================
+   USER
+   ========================= */
 
 .topbar__user {
 
@@ -122,6 +135,9 @@
 
   white-space: nowrap;
 }
+
+
+/* AVATAR */
 
 .topbar__avatar {
 
@@ -144,15 +160,206 @@
   font-size: 16px;
 }
 
+
+/* =========================
+   USER MENU
+   ========================= */
+
+.topbar__menu {
+
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+}
+
+
+/* ARROW BUTTON */
+
 .topbar__arrow {
 
+  width: 30px;
+
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
   margin-left: 2px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: #555;
+
+  font-size: 18px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+
+.topbar__arrow:hover {
+
+  background: #eef1f4;
+
+  color: #23689b;
+}
+
+
+/* Cuando el menú está abierto */
+
+.topbar__arrow[aria-expanded="true"] {
+
+  background: #eef1f4;
+
+  color: #23689b;
+
+  transform: rotate(180deg);
+}
+
+
+/* =========================
+   DROPDOWN
+   ========================= */
+
+.topbar__dropdown {
+
+  position: absolute;
+
+  top: calc(100% + 8px);
+
+  right: 0;
+
+  min-width: 180px;
+
+  padding: 6px;
+
+  box-sizing: border-box;
+
+  background: #fff;
+
+  border: 1px solid #d8dde2;
+
+  border-radius: 8px;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, .12);
+
+  z-index: 1000;
+
+  animation:
+    dropdownAppear .15s ease-out;
+}
+
+
+/* ANIMACIÓN */
+
+@keyframes dropdownAppear {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(-5px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+  }
+
+}
+
+
+/* =========================
+   LOGOUT BUTTON
+   ========================= */
+
+.topbar__logout {
+
+  width: 100%;
+
+  min-height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 8px 10px;
+
+  box-sizing: border-box;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #333;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease;
+}
+
+
+.topbar__logout:hover {
+
+  background: #f3f5f7;
+
+  color: #d32f2f;
+}
+
+
+/* ICONO LOGOUT */
+
+.topbar__logout-icon {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 20px;
 
   font-size: 18px;
 }
 
 
-/* TABLET */
+/* =========================
+   TABLET
+   ========================= */
 
 @media (max-width: 700px) {
 
@@ -161,6 +368,7 @@
     padding: 0 12px;
 
   }
+
 
   .topbar__search {
 
@@ -171,7 +379,9 @@
 }
 
 
-/* MOBILE */
+/* =========================
+   MOBILE
+   ========================= */
 
 @media (max-width: 500px) {
 
@@ -179,7 +389,12 @@
 
     height: 58px;
 
+    padding: 0 10px;
+
+    gap: 10px;
+
   }
+
 
   .topbar__search {
 
@@ -189,15 +404,79 @@
 
   }
 
+
   .topbar__username {
 
     display: none;
 
   }
 
+
   .topbar__user {
 
     gap: 3px;
+
+  }
+
+
+  .topbar__dropdown {
+
+    right: 0;
+
+    min-width: 170px;
+
+  }
+
+}
+
+
+/* =========================
+   MOBILE PEQUEÑO
+   ========================= */
+
+@media (max-width: 350px) {
+
+  .topbar {
+
+    padding: 0 8px;
+
+  }
+
+
+  .topbar__search input {
+
+    font-size: 13px;
+
+    padding-left: 34px;
+
+  }
+
+
+  .topbar__search-icon {
+
+    left: 9px;
+
+    font-size: 22px;
+
+  }
+
+
+  .topbar__avatar {
+
+    width: 25px;
+
+    height: 25px;
+
+    font-size: 14px;
+
+  }
+
+
+  .topbar__arrow {
+
+    width: 27px;
+
+    height: 27px;
 
   }
 

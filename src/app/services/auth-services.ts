@@ -16,6 +16,10 @@ export class AuthServices {
 
   constructor(private http: HttpClient, private tokensServices: TokensServices){}
 
+  public despertar(): Observable<any>{
+    return this.http.get(`${this.apiUrl}/despertar`, {responseType: 'text'});
+  }
+
   public register(request: RegisterRequest): Observable<AuthResponse> {
 
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`,request).pipe(
@@ -50,7 +54,7 @@ export class AuthServices {
   public logout(): void {
 
     localStorage.removeItem('access_token');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('refresh_token');
   }
   
 }

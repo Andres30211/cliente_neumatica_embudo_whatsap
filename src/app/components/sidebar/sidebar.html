@@ -3,7 +3,7 @@
   <div class="sidebar__brand">
 
     <div class="sidebar__logo">
-      <span>Λ</span>
+      <img src="../../../../public/ico.png" alt="logo">
     </div>
 
   </div>
@@ -11,25 +11,29 @@
 
   <nav class="sidebar__nav">
 
+    @if (!this.meRol('ROLE_USER')) {
+
+      <a
+        [routerLink]="['/whatsapp-embudo']"
+        routerLinkActive="sidebar__item--active"
+        class="sidebar__item"
+      >
+  
+        <span class="sidebar__icon">
+          ▦
+        </span>
+  
+        <span class="sidebar__text">
+          Embudo
+        </span>
+  
+      </a>
+
+    }
+
+
     <a
-      routerLink="/dashboard"
-      routerLinkActive="sidebar__item--active"
-      class="sidebar__item"
-    >
-
-      <span class="sidebar__icon">
-        ▦
-      </span>
-
-      <span class="sidebar__text">
-        Tablero
-      </span>
-
-    </a>
-
-
-    <a
-      routerLink="/contacts"
+      [routerLink]="['/home']"
       routerLinkActive="sidebar__item--active"
       class="sidebar__item"
     >
@@ -39,13 +43,13 @@
       </span>
 
       <span class="sidebar__text">
-        Embudos
+        Tablero
       </span>
 
     </a>
 
 
-    <a
+    <!-- <a
       routerLink="/contacts-list"
       routerLinkActive="sidebar__item--active"
       class="sidebar__item"
@@ -93,7 +97,7 @@
         Ajustes
       </span>
 
-    </a>
+    </a> -->
 
   </nav>
 

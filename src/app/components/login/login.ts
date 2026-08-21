@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthServices } from '../../services/auth-services';
 import { Router, RouterLink } from '@angular/router';
@@ -10,7 +10,7 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit{
 
   public showPassword: boolean = false;
 
@@ -19,7 +19,43 @@ export class Login {
   public loading:boolean = false;
   public errorMessage:string = '';
 
-  constructor(private authService: AuthServices, private router: Router){}
+  public cargandoServidor:boolean = true;
+  public mensajeServidor:string = "Neumática Induatrial está poniendo a disposición el servidor... Esto podría tardar un minúto";
+
+  constructor(private authService: AuthServices, private router: Router, private cdr: ChangeDetectorRef){}
+
+  ngOnInit(): void {
+    this.despertarServidor();
+  }
+
+  public despertarServidor() {
+
+    const intervalo = setInterval(() => {
+
+      this.authService.despertar().subscribe({
+
+        next: () => {
+
+          this.cargandoServidor = false;
+          this.cdr.detectChanges();
+          console.log(this.cargandoServidor);
+
+          clearInterval(intervalo);
+
+        },
+
+        error: (error) => {
+
+          console.log("Servidor aún iniciando..." + error.error);
+
+        }
+
+      });
+
+    }, 5000);
+
+  }
+
 
   loginForm = this.fb.group({
     email: ['',[Validators.required,Validators.email]],
@@ -47,10 +83,10 @@ export class Login {
 
       next: (response) => {
 
-        // this.loading = false;
+        this.loading = false;
 
         // Aquí posteriormente puedes navegar
-        this.router.navigate(['/whatsapp-embudo']);
+        this.router.navigate(['/home']);
 
       }
     });

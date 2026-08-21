@@ -12,8 +12,6 @@ import { ServicesWebsocket } from '../../services/services-websocket';
 })
 export class WhatsappEmbudo implements OnInit{
 
-  public enviado!: boolean;
-
   @Input({ required: true })
   contact!: Contact;
 
@@ -22,39 +20,4 @@ export class WhatsappEmbudo implements OnInit{
   ngOnInit(): void {
   }
 
-  public sendCampaing(): void{
-
-    this.enviado = true;
-
-    this.servicesWhat.sendCampaing().subscribe({
-      next: (message) => {
-        alert(message);
-        this.enviado = false;
-      },
-      error: () => {
-        alert('Error al enviar emails...')
-        this.enviado = false;
-      }
-    });
-  }
-
-  descargarExcel() {
-
-    this.servicesWhat.downloadExcel().subscribe(blob => {
-
-      const url = window.URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-
-      a.href = url;
-
-      a.download = 'contactos.xlsx';
-
-      a.click();
-
-      window.URL.revokeObjectURL(url);
-
-    });
-
-  }
 }
