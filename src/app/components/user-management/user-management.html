@@ -1,0 +1,773 @@
+```html
+<div class="users-card">
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <div class="users-card-header">
+
+    <div class="header-content">
+
+      <div class="header-icon">
+        👥
+      </div>
+
+      <div>
+        <h2>
+          Gestión de usuarios
+        </h2>
+
+        <p>
+          Administra los usuarios registrados en el sistema.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MENSAJE ÉXITO
+  ====================================================== -->
+
+  <div
+    class="alert success-alert"
+    *ngIf="successMessage">
+
+    <span class="alert-icon">
+      ✓
+    </span>
+
+    <span>
+      {{ successMessage }}
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       ERROR
+  ====================================================== -->
+
+  <div
+    class="alert error-alert"
+    *ngIf="errorMessage">
+
+    <span class="alert-icon">
+      !
+    </span>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       FILTROS
+  ====================================================== -->
+
+  <div class="users-filters">
+
+    <!-- BUSCADOR -->
+
+    <div class="search-box">
+
+      <span class="search-icon">
+        🔍
+      </span>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        placeholder="Buscar por nombre, usuario o email..."
+      />
+
+    </div>
+
+
+    <!-- FILTRO POR ROL -->
+
+    <div class="role-filter">
+
+      <select
+        [(ngModel)]="selectedRole"
+        (change)="onRoleFilter()">
+
+        <option value="">
+          Todos los roles
+        </option>
+
+        <option
+          *ngFor="let role of roles"
+          [value]="role">
+
+          {{ getRoleLabel(role) }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  <div
+    class="loading-container"
+    *ngIf="loading">
+
+    <div class="spinner"></div>
+
+    <span>
+      Cargando usuarios...
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       TABLA
+  ====================================================== -->
+
+  <div
+    class="table-container"
+    *ngIf="!loading">
+
+    <table class="users-table">
+
+      <!-- HEADER TABLA -->
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Usuario
+          </th>
+
+          <th>
+            Nombre
+          </th>
+
+          <th>
+            Email
+          </th>
+
+          <th>
+            Rol
+          </th>
+
+          <th>
+            Estado
+          </th>
+
+          <th class="actions-column">
+            Acciones
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <!-- CUERPO TABLA -->
+
+      <tbody>
+
+        <!-- =================================================
+             USUARIOS
+        ================================================== -->
+
+        <tr
+          *ngFor="let user of paginatedUsers">
+
+          <!-- USUARIO -->
+
+          <td>
+
+            <div class="user-info">
+
+              <div class="user-avatar">
+
+                {{ getInitials(user.name) }}
+
+              </div>
+
+              <div class="user-username">
+
+                <span>
+                  {{ user.name }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </td>
+
+
+          <!-- NOMBRE -->
+
+          <td>
+
+            <span class="user-name">
+              {{ user.name }}
+            </span>
+
+          </td>
+
+
+          <!-- EMAIL -->
+
+          <td>
+
+            <span class="user-email">
+              {{ user.email }}
+            </span>
+
+          </td>
+
+
+          <!-- ROL -->
+
+          <td>
+
+            <span
+              class="role-badge"
+              [ngClass]="getRoleClass(user.role)">
+
+              {{ getRoleLabel(user.role) }}
+
+            </span>
+
+          </td>
+
+
+          <!-- ESTADO -->
+
+          <td>
+
+            <span
+              class="status"
+              [class.active]="user.active"
+              [class.inactive]="!user.active">
+
+              <span class="status-dot"></span>
+
+              {{ user.active ? 'Activo' : 'Inactivo' }}
+
+            </span>
+
+          </td>
+
+
+          <!-- ACCIONES -->
+
+          <td class="actions-column">
+
+            <div class="actions">
+
+              <!-- EDITAR -->
+
+              <button
+                type="button"
+                class="action-button edit"
+                title="Editar usuario"
+                aria-label="Editar usuario"
+                (click)="openEditModal(user)">
+
+                ✎
+
+              </button>
+
+
+              <!-- CAMBIAR ROL -->
+
+              <button
+                type="button"
+                class="action-button role"
+                title="Cambiar rol"
+                aria-label="Cambiar rol"
+                (click)="openRoleModal(user)">
+
+                ⇄
+
+              </button>
+
+
+              <!-- ELIMINAR -->
+
+              <button
+                type="button"
+                class="action-button delete"
+                title="Eliminar usuario"
+                aria-label="Eliminar usuario"
+                (click)="openDeleteModal(user)">
+
+                🗑
+
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+
+        <!-- =================================================
+             SIN RESULTADOS
+        ================================================== -->
+
+        <tr
+          *ngIf="paginatedUsers.length === 0">
+
+          <td
+            colspan="6"
+            class="empty-state">
+
+            <div class="empty-icon">
+              👥
+            </div>
+
+            <h3>
+              No se encontraron usuarios
+            </h3>
+
+            <p>
+              Intenta modificar los filtros de búsqueda.
+            </p>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  <!-- =====================================================
+       FOOTER / PAGINACIÓN
+  ====================================================== -->
+
+  <div
+    class="users-card-footer"
+    *ngIf="!loading">
+
+    <span class="pagination-info">
+
+      Mostrando
+
+      <strong>
+        {{
+          filteredUsers.length === 0
+            ? 0
+            : ((currentPage - 1) * pageSize) + 1
+        }}
+      </strong>
+
+      a
+
+      <strong>
+        {{
+          Math.min(
+            currentPage * pageSize,
+            filteredUsers.length
+          )
+        }}
+      </strong>
+
+      de
+
+      <strong>
+        {{ filteredUsers.length }}
+      </strong>
+
+      usuarios
+
+    </span>
+
+
+    <div
+      class="pagination"
+      *ngIf="totalPages > 0">
+
+      <!-- ANTERIOR -->
+
+      <button
+        type="button"
+        class="pagination-arrow"
+        [disabled]="currentPage === 1"
+        (click)="previousPage()"
+        aria-label="Página anterior">
+
+        ‹
+
+      </button>
+
+
+      <!-- PÁGINAS -->
+
+      <button
+        type="button"
+        *ngFor="let page of pages"
+        [class.active-page]="page === currentPage"
+        (click)="goToPage(page)">
+
+        {{ page }}
+
+      </button>
+
+
+      <!-- SIGUIENTE -->
+
+      <button
+        type="button"
+        class="pagination-arrow"
+        [disabled]="
+          currentPage === totalPages ||
+          totalPages === 0
+        "
+        (click)="nextPage()"
+        aria-label="Página siguiente">
+
+        ›
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL EDITAR USUARIO
+====================================================== -->
+
+<div
+  class="modal-overlay"
+  *ngIf="showEditModal"
+  (click)="closeEditModal()">
+
+  <div
+    class="modal"
+    (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+      <div>
+
+        <h3>
+          Editar usuario
+        </h3>
+
+        <p>
+          Actualiza los datos básicos del usuario.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        [disabled]="saving"
+        (click)="closeEditModal()"
+        aria-label="Cerrar">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- BODY -->
+
+    <div class="modal-body">
+
+      <!-- NOMBRE -->
+
+      <div class="form-group">
+
+        <label for="edit-name">
+          Nombre completo
+        </label>
+
+        <input
+          id="edit-name"
+          type="text"
+          [(ngModel)]="editForm.name"
+          placeholder="Nombre completo"
+          autocomplete="name"
+        />
+
+      </div>
+
+
+      <!-- EMAIL -->
+
+      <div class="form-group">
+
+        <label for="edit-email">
+          Email
+        </label>
+
+        <input
+          id="edit-email"
+          type="email"
+          [(ngModel)]="editForm.email"
+          placeholder="correo@empresa.com"
+          autocomplete="email"
+        />
+
+      </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        [disabled]="saving"
+        (click)="closeEditModal()">
+
+        Cancelar
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="saving"
+        (click)="updateUser()">
+
+        {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL CAMBIAR ROL
+====================================================== -->
+
+<div
+  class="modal-overlay"
+  *ngIf="showRoleModal"
+  (click)="closeRoleModal()">
+
+  <div
+    class="modal modal-small"
+    (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+      <div>
+
+        <h3>
+          Cambiar rol
+        </h3>
+
+        <p>
+          {{ selectedUser?.name }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        [disabled]="saving"
+        (click)="closeRoleModal()"
+        aria-label="Cerrar">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- BODY -->
+
+    <div class="modal-body">
+
+      <div class="selected-user">
+
+        <div class="selected-user-avatar">
+
+          {{ getInitials(selectedUser?.name || '') }}
+
+        </div>
+
+        <div>
+
+          <strong>
+            {{ selectedUser?.name }}
+          </strong>
+
+          <span>
+            {{ selectedUser?.email }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="new-role">
+          Nuevo rol
+        </label>
+
+        <select
+          id="new-role"
+          [(ngModel)]="selectedNewRole">
+
+          <option
+            *ngFor="let role of roles"
+            [value]="role">
+
+            {{ getRoleLabel(role) }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        [disabled]="saving"
+        (click)="closeRoleModal()">
+
+        Cancelar
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="saving"
+        (click)="changeRole()">
+
+        {{ saving ? 'Actualizando...' : 'Cambiar rol' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL ELIMINAR
+====================================================== -->
+
+<div
+  class="modal-overlay"
+  *ngIf="showDeleteModal"
+  (click)="closeDeleteModal()">
+
+  <div
+    class="modal modal-small delete-modal"
+    (click)="$event.stopPropagation()">
+
+    <!-- ICONO -->
+
+    <div class="delete-icon">
+      !
+    </div>
+
+
+    <!-- CONTENIDO -->
+
+    <div class="delete-content">
+
+      <h3>
+        ¿Eliminar usuario?
+      </h3>
+
+      <p>
+
+        Estás a punto de eliminar a
+
+        <strong>
+          {{ selectedUser?.name }}
+        </strong>.
+
+        Esta acción no se puede deshacer.
+
+      </p>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        [disabled]="saving"
+        (click)="closeDeleteModal()">
+
+        Cancelar
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-danger"
+        [disabled]="saving"
+        (click)="deleteUser()">
+
+        {{ saving ? 'Eliminando...' : 'Sí, eliminar' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+```
