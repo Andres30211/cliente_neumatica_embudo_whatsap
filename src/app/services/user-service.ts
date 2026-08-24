@@ -15,8 +15,8 @@ export interface ChangeRoleRequest {role: RoleName;}
 })
 export class UserService {
   
-  // private apiUrl:string = 'https://security-service-neumatica.onrender.com';
-  private apiUrl:string = 'http://localhost:8081';
+  private apiUrl:string = 'https://security-service-neumatica.onrender.com';
+  // private apiUrl:string = 'http://localhost:8081';
 
   constructor(private http: HttpClient) {}
 
