@@ -2,8 +2,12 @@
    TARJETA PRINCIPAL
 ===================================================== */
 
-.users-card {
+main{
+
   display: flex;
+}
+
+.users-card {
   width: 100%;
   background: #ffffff;
   border: 1px solid #e5e7eb;
