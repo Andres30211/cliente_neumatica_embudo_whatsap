@@ -115,8 +115,6 @@ export class UserManagement implements OnInit{
 
   ngOnInit(): void {
 
-    console.log('sisi');
-    console.log(this.loadUsers());
     this.loadUsers();
 
   }
@@ -132,8 +130,7 @@ export class UserManagement implements OnInit{
 
     this.errorMessage = '';
 
-    this.userService.getUsers()
-      .subscribe({
+    this.userService.getUsers().subscribe({
 
         next: (users) => {
 
