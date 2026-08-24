@@ -15,7 +15,7 @@ export interface ChangeRoleRequest {role: RoleName;}
 })
 export class UserService {
   
-  private apiUrl:string = 'https://security-service-neumatica.onrender.com/api/users';
+  private apiUrl:string = 'https://security-service-neumatica.onrender.com';
 
   constructor(private http: HttpClient) {}
 
@@ -25,7 +25,7 @@ export class UserService {
 
   getUsers(): Observable<User[]> {
 
-    return this.http.get<User[]>(this.apiUrl);
+    return this.http.get<User[]>(`${this.apiUrl}/api/users`);
   }
 
   // =========================================
