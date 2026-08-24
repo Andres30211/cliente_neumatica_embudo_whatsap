@@ -34,7 +34,7 @@ export class UserService {
 
   getUserById(id: number): Observable<User> {
 
-    return this.http.get<User>(`${this.apiUrl}/${id}`);
+    return this.http.get<User>(`${this.apiUrl}/api/users/${id}`);
   }
 
 
@@ -44,7 +44,7 @@ export class UserService {
 
   updateUser(id: number,data: UpdateUserRequest): Observable<User> {
 
-    return this.http.put<User>(`${this.apiUrl}/${id}`,data);
+    return this.http.put<User>(`${this.apiUrl}/api/users/${id}`,data);
   }
 
   // =========================================
@@ -53,7 +53,7 @@ export class UserService {
 
   changeRole(id: number,role: RoleName): Observable<User> {
 
-    return this.http.patch<User>(`${this.apiUrl}/${id}/role`,{role});
+    return this.http.patch<User>(`${this.apiUrl}/api/users/${id}/role`,{role});
   }
 
   // =========================================
@@ -62,7 +62,7 @@ export class UserService {
 
   deleteUser(id: number): Observable<void> {
 
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/api/users/${id}`);
   }
 
 }
