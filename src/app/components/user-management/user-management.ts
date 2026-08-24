@@ -3,10 +3,12 @@ import { RoleName, User } from '../../interfaces/User';
 import { UpdateUserRequest, UserService } from '../../services/user-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Topbar } from "../topbar/topbar";
+import { Sidebar } from "../sidebar/sidebar";
 
 @Component({
   selector: 'app-user-management',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Topbar, Sidebar],
   templateUrl: './user-management.html',
   styleUrl: './user-management.css',
 })
