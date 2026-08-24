@@ -116,6 +116,7 @@ export class UserManagement implements OnInit{
   ngOnInit(): void {
 
     console.log('sisi');
+    console.log(this.loadUsers());
     this.loadUsers();
 
   }
