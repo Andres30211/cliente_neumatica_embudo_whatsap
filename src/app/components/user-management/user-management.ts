@@ -123,70 +123,50 @@ export class UserManagement implements OnInit{
   ngOnInit(): void {
     this.loadUsers();
     
-  }
-
-  loadUsers(): void {
-
-  this.userService.getUsers().subscribe({
-    next: (users: User[]) => {
-
-      this.users = users.map(user => ({
-        ...user,
-        role: user.role ?? []
-      }));
-
-      console.log(this.users);
-    },
-
-    error: (error) => {
-      console.error('Error cargando usuarios:', error);
-    }
-  });
-}
-  
+  }  
   
   // =====================================================
   // CARGAR USUARIOS
   // =====================================================
   
-  // loadUsers(): void {
+  loadUsers(): void {
     
-  //   this.loading = true;
+    this.loading = true;
 
-  //   this.errorMessage = '';
+    this.errorMessage = '';
     
-  //   this.userService.getUsers().subscribe({
+    this.userService.getUsers().subscribe({
       
-  //     next: (users) => {
+      next: (users) => {
         
-  //       this.users = users;
+        this.users = users;
         
-  //       this.applyFilters();
+        this.applyFilters();
         
-  //       this.loading = false;
-  //       console.log(this.users);
+        this.loading = false;
+        console.log(this.users);
 
-  //       this.dc.detectChanges();
+        this.dc.detectChanges();
 
-  //       },
+        },
 
-  //       error: (error) => {
+        error: (error) => {
 
-  //         console.error(
-  //           'Error cargando usuarios:',
-  //           error
-  //         );
+          console.error(
+            'Error cargando usuarios:',
+            error
+          );
 
-  //         this.errorMessage =
-  //           'No fue posible cargar los usuarios.';
+          this.errorMessage =
+            'No fue posible cargar los usuarios.';
 
-  //         this.loading = false;
+          this.loading = false;
 
-  //       }
+        }
 
-  //     });
+      });
 
-  // }
+  }
 
 
   // =====================================================

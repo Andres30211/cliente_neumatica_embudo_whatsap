@@ -245,10 +245,10 @@
   
             <td>
 
-              @if (this.role != null || this.role != undefined) {
+              @if (user.role != null || user.role != undefined) {
 
-                @for (r of role; track r) {
-                  {{ r }}
+                @for (r of user.role; track r) {
+
                   <span
                     class="role-badge"
                     [ngClass]="getRoleClass(r)">
