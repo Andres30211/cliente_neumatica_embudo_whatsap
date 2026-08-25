@@ -244,15 +244,23 @@
             <!-- ROL -->
   
             <td>
-  
-              <span
-                class="role-badge"
-                [ngClass]="getRoleClass(user.role[0])">
-  
-                {{ getRoleLabel(user.role[0]) }}
-  
-              </span>
-  
+              @if (user.role?.length > 0) {
+
+                <span
+                  class="role-badge"
+                  [ngClass]="getRoleClass(user.role[0])">
+
+                  {{ getRoleLabel(user.role[0]) }}
+
+                </span>
+
+              } @else {
+
+                <span class="role-badge">
+                  Sin rol
+                </span>
+
+              }
             </td>
   
   
