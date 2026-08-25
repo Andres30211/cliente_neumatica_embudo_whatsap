@@ -119,8 +119,8 @@ export class UserManagement implements OnInit{
   // =====================================================
 
   ngOnInit(): void {
-    console.log(this.users);
     this.loadUsers();
+    console.log(this.users);
 
   }
 
