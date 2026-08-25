@@ -248,7 +248,7 @@
               @if (user.role != null || user.role != undefined) {
 
                 @for (r of user.role; track r) {
-
+                  {{ r }}
                   <span
                     class="role-badge"
                     [ngClass]="getRoleClass(r)">
