@@ -120,32 +120,32 @@ export class UserManagement implements OnInit{
 
   ngOnInit(): void {
     this.loadUsers();
-    console.log(this.users);
-
+    
   }
-
-
+  
+  
   // =====================================================
   // CARGAR USUARIOS
   // =====================================================
-
+  
   loadUsers(): void {
-
+    
     this.loading = true;
 
     this.errorMessage = '';
-
+    
     this.userService.getUsers().subscribe({
+      
+      next: (users) => {
+        
+        this.users = users;
+        
+        this.applyFilters();
+        
+        this.loading = false;
+        console.log(this.users);
 
-        next: (users) => {
-
-          this.users = users;
-
-          this.applyFilters();
-
-          this.loading = false;
-
-          this.dc.detectChanges();
+        this.dc.detectChanges();
 
         },
 
