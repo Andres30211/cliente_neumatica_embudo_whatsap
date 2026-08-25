@@ -31,9 +31,6 @@ export class UserManagement implements OnInit{
 
   paginatedUsers: User[] = [];
 
-  role:RoleName[] = [];
-
-
   // =====================================================
   // ESTADOS
   // =====================================================
@@ -229,7 +226,7 @@ export class UserManagement implements OnInit{
         const matchesRole =
           !this.selectedRole ||
 
-          user.role === this.selectedRole;
+          user.roles === this.selectedRole;
 
 
         return (
@@ -486,7 +483,7 @@ export class UserManagement implements OnInit{
 
     this.selectedUser = user;
 
-    this.selectedNewRole = user.role;
+    this.selectedNewRole = user.roles;
 
     this.errorMessage = '';
 
