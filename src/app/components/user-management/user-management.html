@@ -262,12 +262,12 @@
   
               <span
                 class="status"
-                [class.active]="user.active"
-                [class.inactive]="!user.active">
+                [class.active]="user.enabled"
+                [class.inactive]="!user.enabled">
   
                 <span class="status-dot"></span>
   
-                {{ user.active ? 'Activo' : 'Inactivo' }}
+                {{ user.enabled ? 'Activo' : 'Inactivo' }}
   
               </span>
   

@@ -43,7 +43,7 @@ export class UserService {
   // ACTUALIZAR DATOS
   // =========================================
 
-  updateUser(id: number,data: UpdateUserRequest): Observable<User> {
+  updateUser(id: string,data: UpdateUserRequest): Observable<User> {
 
     return this.http.put<User>(`${this.apiUrl}/api/users/${id}`,data);
   }
@@ -52,7 +52,7 @@ export class UserService {
   // CAMBIAR ROL
   // =========================================
 
-  changeRole(id: number,role: RoleName): Observable<User> {
+  changeRole(id: string,role: RoleName): Observable<User> {
 
     return this.http.patch<User>(`${this.apiUrl}/api/users/${id}/role`,{role});
   }
@@ -61,7 +61,7 @@ export class UserService {
   // ELIMINAR
   // =========================================
 
-  deleteUser(id: number): Observable<void> {
+  deleteUser(id: string): Observable<void> {
 
     return this.http.delete<void>(`${this.apiUrl}/api/users/${id}`);
   }
