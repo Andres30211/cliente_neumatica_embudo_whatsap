@@ -27,13 +27,13 @@ export class TokensServices {
     localStorage.setItem(this.REFRESH_TOKEN,refreshToken);
   }
 
-  getToken(): string | null {
+  public getAccesToken(): string | null {
     return localStorage.getItem(this.ACCESS_TOKEN);
   }
 
-  getPayload(): JwtPayload | null {
+  public getPayload(): JwtPayload | null {
 
-    const token = this.getToken();
+    const token = this.getAccesToken();
 
     if (!token) {
       return null;
@@ -47,15 +47,15 @@ export class TokensServices {
     }
   }
 
-  getName(): string | null {
+  public getName(): string | null {
     return this.getPayload()?.name ?? null;
   }
 
-  getRoles(): string[] {
+  public getRoles(): string[] {
     return this.getPayload()?.roles ?? [];
   }
 
-  hasRole(role: string): boolean {
+  public hasRole(role: string): boolean {
     return this.getRoles().includes(role);
   }
 
@@ -73,7 +73,7 @@ export class TokensServices {
 
   public hasAccessToken(): boolean {
 
-    return !!this.getToken();
+    return !!this.getAccesToken();
   }
 
 }

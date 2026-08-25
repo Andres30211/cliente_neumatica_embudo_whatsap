@@ -44,6 +44,13 @@ export class AuthServices {
       );
   }
 
+  public refreshToken(): Observable<AuthResponse> {
+
+    const refreshToken = this.tokensServices.getRefreshToken();
+
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`,{refreshToken: refreshToken});
+  }
+
   public isAuthenticated(): boolean {
 
     const token = localStorage.getItem('access_token');
