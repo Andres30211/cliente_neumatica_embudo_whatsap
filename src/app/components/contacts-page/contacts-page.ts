@@ -37,7 +37,6 @@ export class ContactsPage implements OnInit{
       this.updateContactFromWebSocket(contact);
 
     });
-    console.log(this.tokensServices.getRoles())
   }
 
   public meRol(rol: string): boolean{
