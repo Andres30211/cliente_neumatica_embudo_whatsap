@@ -244,15 +244,20 @@
             <!-- ROL -->
   
             <td>
-              @if (user.role?.length > 0) {
 
-                <span
-                  class="role-badge"
-                  [ngClass]="getRoleClass(user?.role[0])">
+              @if (user.role?.length) {
 
-                  {{ getRoleLabel(user?.role[0]) }}
+                @for (r of user.role; track r) {
 
-                </span>
+                  <span
+                    class="role-badge"
+                    [ngClass]="getRoleClass(r)">
+
+                    {{ getRoleLabel(r) }}
+
+                  </span>
+
+                }
 
               } @else {
 
@@ -261,6 +266,7 @@
                 </span>
 
               }
+
             </td>
   
   
