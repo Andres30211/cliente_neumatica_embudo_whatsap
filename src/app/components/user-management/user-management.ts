@@ -51,7 +51,7 @@ export class UserManagement implements OnInit{
 
   searchTerm = '';
 
-  selectedRole: RoleName | '' = '';
+  selectedRole: RoleName[] | '' = '';
 
 
   // =====================================================
@@ -97,7 +97,7 @@ export class UserManagement implements OnInit{
   // ROL
   // =====================================================
 
-  selectedNewRole: RoleName = 'ROLE_USER';
+  selectedNewRole: RoleName[] = ['ROLE_USER'];
 
 
   // =====================================================

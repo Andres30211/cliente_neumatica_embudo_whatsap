@@ -52,7 +52,7 @@ export class UserService {
   // CAMBIAR ROL
   // =========================================
 
-  changeRole(id: string,role: RoleName): Observable<User> {
+  changeRole(id: string,role: RoleName[]): Observable<User> {
 
     return this.http.patch<User>(`${this.apiUrl}/api/users/${id}/role`,{role});
   }
