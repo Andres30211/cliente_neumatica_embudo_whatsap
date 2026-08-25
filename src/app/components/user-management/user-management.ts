@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RoleName, User } from '../../interfaces/User';
 import { UpdateUserRequest, UserService } from '../../services/user-service';
 import { CommonModule } from '@angular/common';
@@ -108,7 +108,7 @@ export class UserManagement implements OnInit{
   ];
 
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private dc: ChangeDetectorRef) {}
 
 
   // =====================================================
@@ -141,6 +141,8 @@ export class UserManagement implements OnInit{
           this.applyFilters();
 
           this.loading = false;
+
+          this.dc.detectChanges();
 
         },
 
