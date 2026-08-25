@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
+import { TokensServices } from '../../services/tokens-services';
 
 @Component({
   selector: 'app-user-management',
@@ -108,7 +109,9 @@ export class UserManagement implements OnInit{
   ];
 
 
-  constructor(private userService: UserService, private dc: ChangeDetectorRef) {}
+  constructor(private userService: UserService, 
+    private dc: ChangeDetectorRef,
+    public tokensServices: TokensServices) {}
 
 
   // =====================================================
@@ -116,7 +119,7 @@ export class UserManagement implements OnInit{
   // =====================================================
 
   ngOnInit(): void {
-
+    console.log(this.users);
     this.loadUsers();
 
   }
