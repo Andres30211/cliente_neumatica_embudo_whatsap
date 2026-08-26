@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
 import { TokensServices } from '../../services/tokens-services';
+import { NotificationServices } from '../../services/notification-services';
 
 @Component({
   selector: 'app-user-management',
@@ -110,7 +111,7 @@ export class UserManagement implements OnInit{
 
   constructor(private userService: UserService, 
     private dc: ChangeDetectorRef,
-    public tokensServices: TokensServices) {}
+    private notificationService: NotificationServices) {}
 
 
   // =====================================================
@@ -556,9 +557,7 @@ export class UserManagement implements OnInit{
 
         this.saving = false;
 
-        this.showSuccess(
-          'Rol actualizado correctamente.'
-        );
+        this.notificationService.success('Editar Rol', `El rol de ${updatedUser.name} ha sido editado.`);
 
       }
 

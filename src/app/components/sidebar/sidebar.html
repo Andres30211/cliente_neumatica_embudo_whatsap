@@ -48,22 +48,25 @@
 
     </a>
 
+    @if (this.meRol('ROLE_ADMIN')) {
 
-    <a
-      [routerLink]="['/user-management']"
-      routerLinkActive="sidebar__item--active"
-      class="sidebar__item"
-    >
-
-      <span class="sidebar__icon">
-        ●
-      </span>
-
-      <span class="sidebar__text">
-        Usuarios
-      </span>
-
-    </a>
+      <a
+        [routerLink]="['/user-management']"
+        routerLinkActive="sidebar__item--active"
+        class="sidebar__item"
+      >
+  
+        <span class="sidebar__icon">
+          ●
+        </span>
+  
+        <span class="sidebar__text">
+          Usuarios
+        </span>
+  
+      </a>
+      
+    }
 
 
     <!-- <a
