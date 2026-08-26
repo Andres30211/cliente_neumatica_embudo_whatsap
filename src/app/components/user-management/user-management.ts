@@ -522,47 +522,47 @@ export class UserManagement implements OnInit{
       return;
 
     }
-    console.log(this.selectedNewRole);
-
-    // this.saving = true;
-
-    // this.errorMessage = '';
 
 
-    // this.userService.changeRole(this.selectedUser.id,this.selectedNewRole).subscribe({
+    this.saving = true;
 
-    //   next: (updatedUser) => {
-
-    //     const index =
-    //       this.users.findIndex(
-    //         user =>
-    //           user.id === updatedUser.id
-    //       );
+    this.errorMessage = '';
 
 
-    //     if (index !== -1) {
+    this.userService.changeRole(this.selectedUser.id,this.selectedNewRole).subscribe({
 
-    //       this.users[index] =
-    //         updatedUser;
+      next: (updatedUser) => {
 
-    //     }
+        const index =
+          this.users.findIndex(
+            user =>
+              user.id === updatedUser.id
+          );
 
 
-    //     this.applyFilters();
+        if (index !== -1) {
 
-    //     this.showRoleModal = false;
+          this.users[index] =
+            updatedUser;
 
-    //     this.selectedUser = null;
+        }
 
-    //     this.saving = false;
 
-    //     this.showSuccess(
-    //       'Rol actualizado correctamente.'
-    //     );
+        this.applyFilters();
 
-    //   }
+        this.showRoleModal = false;
 
-    // });
+        this.selectedUser = null;
+
+        this.saving = false;
+
+        this.showSuccess(
+          'Rol actualizado correctamente.'
+        );
+
+      }
+
+    });
 
   }
 
