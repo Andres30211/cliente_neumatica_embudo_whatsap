@@ -739,7 +739,7 @@ export class UserManagement implements OnInit{
         return 'Administrador';
 
       case 'ROLE_PUBLICISTA':
-        return 'Editor';
+        return 'Publicista';
 
       case 'ROLE_VENDEDOR':
         return 'vendedor';
