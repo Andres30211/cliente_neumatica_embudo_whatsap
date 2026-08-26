@@ -6,6 +6,7 @@ import { Register } from './components/register/register';
 import { ContactsPage } from './components/contacts-page/contacts-page';
 import { Home } from './components/home/home';
 import { UserManagement } from './components/user-management/user-management';
+import { roleGuard } from './guards/role-guard';
 
 export const routes: Routes = [
 
@@ -13,6 +14,6 @@ export const routes: Routes = [
     {path: 'login', component: Login},
     {path: 'registro', component: Register},
     {path: 'home', component: Home, canActivate: [authGuardGuard]},
-    {path: 'whatsapp-embudo', component: ContactsPage, canActivate: [authGuardGuard]},
-    {path: 'user-management', component: UserManagement, canActivate: [authGuardGuard]}
+    {path: 'whatsapp-embudo', component: ContactsPage, canActivate: [authGuardGuard, roleGuard], data: { roles: ['ROLE_ADMIN', 'ROLE_VENDEDOR', 'ROLE_PUBLICISTA']}},
+    {path: 'user-management', component: UserManagement, canActivate: [authGuardGuard], data: { roles: ['ROLE_ADMIN']}}
 ];
