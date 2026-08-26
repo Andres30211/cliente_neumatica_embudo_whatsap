@@ -522,61 +522,47 @@ export class UserManagement implements OnInit{
       return;
 
     }
+    console.log(this.selectedNewRole);
+
+    // this.saving = true;
+
+    // this.errorMessage = '';
 
 
-    this.saving = true;
+    // this.userService.changeRole(this.selectedUser.id,this.selectedNewRole).subscribe({
 
-    this.errorMessage = '';
+    //   next: (updatedUser) => {
 
-
-    this.userService.changeRole(this.selectedUser.id,this.selectedNewRole).subscribe({
-
-      next: (updatedUser) => {
-
-        const index =
-          this.users.findIndex(
-            user =>
-              user.id === updatedUser.id
-          );
+    //     const index =
+    //       this.users.findIndex(
+    //         user =>
+    //           user.id === updatedUser.id
+    //       );
 
 
-        if (index !== -1) {
+    //     if (index !== -1) {
 
-          this.users[index] =
-            updatedUser;
+    //       this.users[index] =
+    //         updatedUser;
 
-        }
+    //     }
 
 
-        this.applyFilters();
+    //     this.applyFilters();
 
-        this.showRoleModal = false;
+    //     this.showRoleModal = false;
 
-        this.selectedUser = null;
+    //     this.selectedUser = null;
 
-        this.saving = false;
+    //     this.saving = false;
 
-        this.showSuccess(
-          'Rol actualizado correctamente.'
-        );
+    //     this.showSuccess(
+    //       'Rol actualizado correctamente.'
+    //     );
 
-      },
+    //   }
 
-      error: (error) => {
-
-        console.error(
-          'Error cambiando rol:',
-          error
-        );
-
-        this.errorMessage =
-          'No fue posible cambiar el rol.';
-
-        this.saving = false;
-
-      }
-
-    });
+    // });
 
   }
 
