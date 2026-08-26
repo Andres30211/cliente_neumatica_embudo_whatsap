@@ -15,5 +15,5 @@ export const routes: Routes = [
     {path: 'registro', component: Register},
     {path: 'home', component: Home, canActivate: [authGuardGuard]},
     {path: 'whatsapp-embudo', component: ContactsPage, canActivate: [authGuardGuard, roleGuard], data: { roles: ['ROLE_ADMIN', 'ROLE_VENDEDOR', 'ROLE_PUBLICISTA']}},
-    {path: 'user-management', component: UserManagement, canActivate: [authGuardGuard], data: { roles: ['ROLE_ADMIN']}}
+    {path: 'user-management', component: UserManagement, canActivate: [authGuardGuard, roleGuard], data: { roles: ['ROLE_ADMIN']}}
 ];
