@@ -745,7 +745,7 @@ export class UserManagement implements OnInit{
         return 'vendedor';
 
       case 'ROLE_USER':
-        return 'role-user';
+        return 'Usuario';
 
 
       default:
