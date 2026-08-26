@@ -96,7 +96,7 @@ export class UserManagement implements OnInit{
   // ROL
   // =====================================================
 
-  selectedNewRole: RoleName[] = ['ROLE_USER'];
+  selectedNewRole: RoleName = 'ROLE_USER';
 
 
   // =====================================================
@@ -483,7 +483,7 @@ export class UserManagement implements OnInit{
 
     this.selectedUser = user;
 
-    this.selectedNewRole = user.roles;
+    this.selectedNewRole = user.roles[0];
 
     this.errorMessage = '';
 
