@@ -330,7 +330,7 @@
                   class="action-button delete"
                   title="Eliminar usuario"
                   aria-label="Eliminar usuario"
-                  (click)="openDeleteModal(user)">
+                  (click)="deleteUser(user)">
   
                   🗑
   
@@ -707,80 +707,6 @@
           (click)="changeRole()">
   
           {{ saving ? 'Actualizando...' : 'Cambiar rol' }}
-  
-        </button>
-  
-      </div>
-  
-    </div>
-  
-  </div>
-  
-  
-  <!-- =====================================================
-       MODAL ELIMINAR
-  ====================================================== -->
-  
-  <div
-    class="modal-overlay"
-    *ngIf="showDeleteModal"
-    (click)="closeDeleteModal()">
-  
-    <div
-      class="modal modal-small delete-modal"
-      (click)="$event.stopPropagation()">
-  
-      <!-- ICONO -->
-  
-      <div class="delete-icon">
-        !
-      </div>
-  
-  
-      <!-- CONTENIDO -->
-  
-      <div class="delete-content">
-  
-        <h3>
-          ¿Eliminar usuario?
-        </h3>
-  
-        <p>
-  
-          Estás a punto de eliminar a
-  
-          <strong>
-            {{ selectedUser?.name }}
-          </strong>.
-  
-          Esta acción no se puede deshacer.
-  
-        </p>
-  
-      </div>
-  
-  
-      <!-- FOOTER -->
-  
-      <div class="modal-footer">
-  
-        <button
-          type="button"
-          class="btn-secondary"
-          [disabled]="saving"
-          (click)="closeDeleteModal()">
-  
-          Cancelar
-  
-        </button>
-  
-        <button
-          type="button"
-          class="btn-danger"
-          [disabled]="saving"
-          (click)="deleteUser()">
-  
-          {{ saving ? 'Eliminando...' : 'Sí, eliminar' }}
   
         </button>
   

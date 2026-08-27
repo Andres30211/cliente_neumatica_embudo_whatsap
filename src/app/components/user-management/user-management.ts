@@ -451,23 +451,7 @@ export class UserManagement implements OnInit{
 
         this.saving = false;
 
-        this.showSuccess(
-          'Usuario actualizado correctamente.'
-        );
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Error actualizando usuario:',
-          error
-        );
-
-        this.errorMessage =
-          'No fue posible actualizar el usuario.';
-
-        this.saving = false;
+        this.notificationService.success('Actualizar usuario', 'Usuario actualizado correctamente.');
 
       }
 
@@ -567,122 +551,52 @@ export class UserManagement implements OnInit{
 
 
   // =====================================================
-  // ABRIR MODAL ELIMINAR
-  // =====================================================
-
-  openDeleteModal(user: User): void {
-
-    this.selectedUser = user;
-
-    this.errorMessage = '';
-
-    this.showDeleteModal = true;
-
-  }
-
-
-  // =====================================================
-  // CERRAR MODAL ELIMINAR
-  // =====================================================
-
-  closeDeleteModal(): void {
-
-    if (this.saving) {
-
-      return;
-
-    }
-
-    this.showDeleteModal = false;
-
-    this.selectedUser = null;
-
-  }
-
-
-  // =====================================================
   // ELIMINAR USUARIO
   // =====================================================
 
-  deleteUser(): void {
+  deleteUser(user: User): void {
 
-    if (!this.selectedUser) {
-
-      return;
-
-    }
-
-
-    this.saving = true;
-
-    this.errorMessage = '';
-
-
-    this.userService.deleteUser(
-      this.selectedUser.id
+  this.notificationService
+    .confirm(
+      '¿Eliminar usuario?',
+      `¿Estás seguro de que deseas eliminar a ${user.name}?`
     )
-    .subscribe({
+    .then((result) => {
 
-      next: () => {
-
-        this.users =
-          this.users.filter(
-            user =>
-              user.id !==
-              this.selectedUser?.id
-          );
-
-
-        this.applyFilters();
-
-        this.showDeleteModal = false;
-
-        this.selectedUser = null;
-
-        this.saving = false;
-
-        this.showSuccess(
-          'Usuario eliminado correctamente.'
-        );
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Error eliminando usuario:',
-          error
-        );
-
-        this.errorMessage =
-          'No fue posible eliminar el usuario.';
-
-        this.saving = false;
-
+      // El usuario canceló
+      if (!result.isConfirmed) {
+        return;
       }
 
+      this.selectedUser = user;
+      this.saving = true;
+      this.errorMessage = '';
+
+      this.userService.deleteUser(user.id)
+        .subscribe({
+
+          next: () => {
+
+            this.users = this.users.filter(
+              u => u.id !== user.id
+            );
+
+            this.applyFilters();
+
+            this.showDeleteModal = false;
+            this.selectedUser = null;
+            this.saving = false;
+
+            this.notificationService.confirm(
+              'Usuario eliminado',
+              'El usuario fue eliminado correctamente.'
+            );
+          }
+
+        });
     });
-
-  }
-
-
-  // =====================================================
-  // MENSAJE DE ÉXITO
-  // =====================================================
-
-  showSuccess(message: string): void {
-
-    this.successMessage = message;
-
-
-    setTimeout(() => {
-
-      this.successMessage = '';
-
-    }, 3000);
-
-  }
-
+}
+  
 
   // =====================================================
   // OBTENER CLASE DEL ROL
