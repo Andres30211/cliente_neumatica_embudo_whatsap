@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { AttendanceResponse, AttendanceService } from '../../services/attendance-service';
 import { CommonModule } from '@angular/common';
+import { Topbar } from "../topbar/topbar";
+import { Sidebar } from "../sidebar/sidebar";
 
 @Component({
   selector: 'app-attendance',
-  imports: [CommonModule],
+  imports: [CommonModule, Topbar, Sidebar],
   templateUrl: './attendance.html',
   styleUrl: './attendance.css',
 })
