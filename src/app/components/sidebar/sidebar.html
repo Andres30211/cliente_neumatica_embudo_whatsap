@@ -11,6 +11,22 @@
 
   <nav class="sidebar__nav">
 
+    <a
+      [routerLink]="['/home']"
+      routerLinkActive="sidebar__item--active"
+      class="sidebar__item"
+    >
+
+      <span class="sidebar__icon">
+        ⏳
+      </span>
+
+      <span class="sidebar__text">
+        Tablero
+      </span>
+
+    </a>
+
     @if (!this.meRol('ROLE_USER')) {
 
       <a
@@ -30,23 +46,6 @@
       </a>
 
     }
-
-
-    <a
-      [routerLink]="['/home']"
-      routerLinkActive="sidebar__item--active"
-      class="sidebar__item"
-    >
-
-      <span class="sidebar__icon">
-        ⏳
-      </span>
-
-      <span class="sidebar__text">
-        Tablero
-      </span>
-
-    </a>
 
     @if (this.meRol('ROLE_ADMIN')) {
 
@@ -69,8 +68,8 @@
     }
 
 
-    <!-- <a
-      routerLink="/reports"
+    <a
+      [routerLink]="['/attendance']"
       routerLinkActive="sidebar__item--active"
       class="sidebar__item"
     >
@@ -80,13 +79,13 @@
       </span>
 
       <span class="sidebar__text">
-        Informes
+        Asistencia
       </span>
 
     </a>
 
 
-    <a
+    <!-- <a
       routerLink="/settings"
       routerLinkActive="sidebar__item--active"
       class="sidebar__item"

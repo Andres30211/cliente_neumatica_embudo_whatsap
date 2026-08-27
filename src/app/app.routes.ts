@@ -8,6 +8,7 @@ import { Home } from './components/home/home';
 import { UserManagement } from './components/user-management/user-management';
 import { roleGuard } from './guards/role-guard';
 import { Unauthorized } from './components/unauthorized/unauthorized';
+import { Attendance } from './components/attendance/attendance';
 
 export const routes: Routes = [
 
@@ -17,5 +18,6 @@ export const routes: Routes = [
     {path: 'home', component: Home, canActivate: [authGuardGuard]},
     {path: 'whatsapp-embudo', component: ContactsPage, canActivate: [authGuardGuard, roleGuard], data: { roles: ['ROLE_ADMIN', 'ROLE_VENDEDOR', 'ROLE_PUBLICISTA']}},
     {path: 'user-management', component: UserManagement, canActivate: [authGuardGuard, roleGuard], data: { roles: ['ROLE_ADMIN']}},
+    {path: 'attendance', component: Attendance, canActivate: [authGuardGuard, roleGuard], data: { roles: ['ROLE_ADMIN', 'ROLE_VENDEDOR', 'ROLE_PUBLICISTA']}},
     {path: 'unauthorized', component: Unauthorized}
 ];
