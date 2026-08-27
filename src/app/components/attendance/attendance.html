@@ -1,0 +1,109 @@
+<div class="attendance-container">
+
+  <h2>Asistencia</h2>
+
+  <p>
+    Presiona el botón para registrar tu ubicación
+    y tomar asistencia.
+  </p>
+
+
+  <!-- ========================================= -->
+  <!-- BOTÓN CHECK-IN                           -->
+  <!-- ========================================= -->
+
+  <button
+    type="button"
+    (click)="takeAttendance()"
+    [disabled]="loading"
+  >
+
+    {{ loading ? 'Obteniendo ubicación...' : 'Tomar asistencia' }}
+
+  </button>
+
+
+  <!-- ========================================= -->
+  <!-- BOTÓN CHECK-OUT                          -->
+  <!-- ========================================= -->
+
+  <button
+    type="button"
+    (click)="takeCheckout()"
+    [disabled]="loading"
+  >
+
+    Registrar salida
+
+  </button>
+
+
+  <!-- ========================================= -->
+  <!-- MENSAJE ÉXITO                            -->
+  <!-- ========================================= -->
+
+  <p
+    *ngIf="message"
+    class="success"
+  >
+    {{ message }}
+  </p>
+
+
+  <!-- ========================================= -->
+  <!-- MENSAJE ERROR                            -->
+  <!-- ========================================= -->
+
+  <p
+    *ngIf="errorMessage"
+    class="error"
+  >
+    {{ errorMessage }}
+  </p>
+
+
+  <!-- ========================================= -->
+  <!-- INFORMACIÓN DE ASISTENCIA                -->
+  <!-- ========================================= -->
+
+  <div
+    *ngIf="attendance"
+    class="attendance-info"
+  >
+
+    <h3>Información</h3>
+
+    <p>
+      <strong>Latitud:</strong>
+      {{ attendance.latitude }}
+    </p>
+
+    <p>
+      <strong>Longitud:</strong>
+      {{ attendance.longitude }}
+    </p>
+
+    <p>
+      <strong>Precisión:</strong>
+      {{ attendance.accuracy }} metros
+    </p>
+
+    <p>
+      <strong>Entrada:</strong>
+      {{ attendance.checkInAt }}
+    </p>
+
+    <p>
+      <strong>Estado:</strong>
+
+      {{
+        attendance.insideCompany
+          ? 'Dentro de la empresa'
+          : 'Fuera de la empresa'
+      }}
+
+    </p>
+
+  </div>
+
+</div>
