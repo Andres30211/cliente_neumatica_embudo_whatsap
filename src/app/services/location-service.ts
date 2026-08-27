@@ -22,7 +22,8 @@ export interface LocationResponse {
 })
 export class LocationService {
 
-  private readonly API_URL = 'http://localhost:8082/api/locations';
+  // private readonly API_URL = 'http://localhost:8082/api/locations';
+  private readonly API_URL = 'https://service-location-neumatica.onrender.com/api/locations';
 
 
   constructor(

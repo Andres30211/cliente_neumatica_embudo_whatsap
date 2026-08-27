@@ -35,8 +35,8 @@ export interface AttendanceResponse {
 })
 export class AttendanceService {
 
-  private readonly API_URL =
-    'http://localhost:8082/api/attendance';
+  // private readonly API_URL = 'http://localhost:8082/api/attendance';
+  private readonly API_URL = 'https://service-location-neumatica.onrender.com/api/attendance';
 
 
   constructor(
