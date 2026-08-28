@@ -146,20 +146,6 @@ export class UserManagement implements OnInit{
 
         this.dc.detectChanges();
 
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error cargando usuarios:',
-            error
-          );
-
-          this.errorMessage =
-            'No fue posible cargar los usuarios.';
-
-          this.loading = false;
-
         }
 
       });
@@ -591,10 +577,10 @@ export class UserManagement implements OnInit{
               'El usuario fue eliminado correctamente.'
             );
 
-            this.loadUsers();
           }
-
+          
         });
+        this.loadUsers();
     });
 }
   
