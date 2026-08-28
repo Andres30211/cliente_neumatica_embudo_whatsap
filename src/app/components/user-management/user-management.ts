@@ -572,8 +572,7 @@ export class UserManagement implements OnInit{
       this.saving = true;
       this.errorMessage = '';
 
-      this.userService.deleteUser(user.id)
-        .subscribe({
+      this.userService.deleteUser(user.id).subscribe({
 
           next: () => {
 
@@ -591,6 +590,8 @@ export class UserManagement implements OnInit{
               'Usuario eliminado',
               'El usuario fue eliminado correctamente.'
             );
+
+            this.loadUsers();
           }
 
         });
