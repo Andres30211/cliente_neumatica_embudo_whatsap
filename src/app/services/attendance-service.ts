@@ -35,8 +35,6 @@ export interface AttendanceAdminResponse {
 
   userName: string;
 
-  userEmail: string;
-
   latitude: number;
 
   longitude: number;

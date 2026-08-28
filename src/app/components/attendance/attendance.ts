@@ -364,12 +364,6 @@ export class Attendance implements OnInit {
         attendance.userName
           .toLowerCase()
           .includes(search)
-
-        ||
-
-        attendance.userEmail
-          .toLowerCase()
-          .includes(search)
     );
   }
 
