@@ -67,7 +67,7 @@
       
     }
 
-    @if (this.meRol('ROLE_ADMIN') && this.meRol('ROLE_VENDEDOR')) {
+    @if (this.meRol('ROLE_ADMIN') || this.meRol('ROLE_VENDEDOR')) {
       <a
         [routerLink]="['/attendance']"
         routerLinkActive="sidebar__item--active"
