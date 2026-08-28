@@ -1,117 +1,613 @@
 <app-topbar></app-topbar>
 
-<main>
+<main class="page-layout">
 
   <app-sidebar></app-sidebar>
 
-  <div class="attendance-container">
-  
-    <h2>Asistencia</h2>
-  
-    <p>
-      Presiona el botón para registrar tu ubicación
-      y tomar asistencia.
-    </p>
-  
-  
-    <!-- ========================================= -->
-    <!-- BOTÓN CHECK-IN                           -->
-    <!-- ========================================= -->
-  
-    <button
-      type="button"
-      (click)="takeAttendance()"
-      [disabled]="loading"
-    >
-  
-      {{ loading ? 'Obteniendo ubicación...' : 'Tomar asistencia' }}
-  
-    </button>
-  
-  
-    <!-- ========================================= -->
-    <!-- BOTÓN CHECK-OUT                          -->
-    <!-- ========================================= -->
-  
-    <button
-      type="button"
-      (click)="takeCheckout()"
-      [disabled]="loading"
-    >
-  
-      Registrar salida
-  
-    </button>
-  
-  
-    <!-- ========================================= -->
-    <!-- MENSAJE ÉXITO                            -->
-    <!-- ========================================= -->
-  
-    <p
-      *ngIf="message"
-      class="success"
-    >
-      {{ message }}
-    </p>
-  
-  
-    <!-- ========================================= -->
-    <!-- MENSAJE ERROR                            -->
-    <!-- ========================================= -->
-  
-    <p
-      *ngIf="errorMessage"
-      class="error"
-    >
-      {{ errorMessage }}
-    </p>
-  
-  
-    <!-- ========================================= -->
-    <!-- INFORMACIÓN DE ASISTENCIA                -->
-    <!-- ========================================= -->
-  
-    <div
-      *ngIf="attendance"
-      class="attendance-info"
-    >
-  
-      <h3>Información</h3>
-  
-      <p>
-        <strong>Latitud:</strong>
-        {{ attendance.latitude }}
-      </p>
-  
-      <p>
-        <strong>Longitud:</strong>
-        {{ attendance.longitude }}
-      </p>
-  
-      <p>
-        <strong>Precisión:</strong>
-        {{ attendance.accuracy }} metros
-      </p>
-  
-      <p>
-        <strong>Entrada:</strong>
-        {{ attendance.checkInAt }}
-      </p>
-  
-      <p>
-        <strong>Estado:</strong>
-  
-        {{
-          attendance.insideCompany
-            ? 'Dentro de la empresa'
-            : 'Fuera de la empresa'
-        }}
-  
-      </p>
-  
+
+  <section class="attendance-page">
+
+    <!-- ===================================== -->
+    <!-- HEADER                                -->
+    <!-- ===================================== -->
+
+    <div class="page-header">
+
+      <div>
+
+        <span class="eyebrow">
+          CONTROL DE PERSONAL
+        </span>
+
+        <h1>
+          Asistencia
+        </h1>
+
+        <p>
+          Controla las entradas, salidas y ubicación
+          de los vendedores durante la jornada.
+        </p>
+
+      </div>
+
+
+      <button
+        class="refresh-button"
+        type="button"
+        (click)="refresh()"
+        [disabled]="loadingAttendances"
+      >
+
+        <span>
+          ↻
+        </span>
+
+        Actualizar
+
+      </button>
+
     </div>
-  
-  </div>
+
+
+    <!-- ===================================== -->
+    <!-- MENSAJES                             -->
+    <!-- ===================================== -->
+
+    <div
+      *ngIf="message"
+      class="alert success-alert"
+    >
+
+      <span class="alert-icon">
+        ✓
+      </span>
+
+      {{ message }}
+
+    </div>
+
+
+    <div
+      *ngIf="errorMessage"
+      class="alert error-alert"
+    >
+
+      <span class="alert-icon">
+        !
+      </span>
+
+      {{ errorMessage }}
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- CARDS DE ESTADÍSTICAS                -->
+    <!-- ===================================== -->
+
+    <div class="stats-grid">
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          👥
+        </div>
+
+        <div>
+
+          <span class="stat-label">
+            Asistencias hoy
+          </span>
+
+          <strong>
+            {{ totalAttendances }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon success-icon">
+          ✓
+        </div>
+
+        <div>
+
+          <span class="stat-label">
+            En la empresa
+          </span>
+
+          <strong>
+            {{ insideCompanyCount }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon warning-icon">
+          ◉
+        </div>
+
+        <div>
+
+          <span class="stat-label">
+            Fuera de la empresa
+          </span>
+
+          <strong>
+            {{ outsideCompanyCount }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- CONTROL DEL USUARIO                  -->
+    <!-- ===================================== -->
+
+    <section class="check-panel">
+
+      <div class="check-info">
+
+        <span class="eyebrow">
+          MI ASISTENCIA
+        </span>
+
+        <h2>
+          Registrar jornada
+        </h2>
+
+        <p>
+          Utiliza tu ubicación actual para registrar
+          tu entrada o salida.
+        </p>
+
+      </div>
+
+
+      <div class="check-actions">
+
+        <button
+          class="check-in-button"
+          type="button"
+          (click)="takeAttendance()"
+          [disabled]="loading"
+        >
+
+          <span class="button-icon">
+            📍
+          </span>
+
+          <span>
+
+            <strong>
+              {{ loading
+                ? 'Obteniendo ubicación...'
+                : 'Tomar asistencia'
+              }}
+            </strong>
+
+            <small>
+              Registrar entrada
+            </small>
+
+          </span>
+
+        </button>
+
+
+        <button
+          class="check-out-button"
+          type="button"
+          (click)="takeCheckout()"
+          [disabled]="loading"
+        >
+
+          <span class="button-icon">
+            ↪
+          </span>
+
+          <span>
+
+            <strong>
+              Registrar salida
+            </strong>
+
+            <small>
+              Finalizar jornada
+            </small>
+
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================== -->
+    <!-- INFORMACIÓN DE MI ASISTENCIA          -->
+    <!-- ===================================== -->
+
+    <section
+      *ngIf="attendance"
+      class="current-attendance"
+    >
+
+      <div class="section-title">
+
+        <div>
+
+          <span class="eyebrow">
+            ÚLTIMO REGISTRO
+          </span>
+
+          <h2>
+            Mi ubicación
+          </h2>
+
+        </div>
+
+        <span
+          class="status"
+          [class.status-inside]="attendance.insideCompany"
+          [class.status-outside]="!attendance.insideCompany"
+        >
+
+          <span class="status-dot"></span>
+
+          {{
+            attendance.insideCompany
+              ? 'Dentro de la empresa'
+              : 'Fuera de la empresa'
+          }}
+
+        </span>
+
+      </div>
+
+
+      <div class="location-details">
+
+        <div>
+
+          <span>
+            Latitud
+          </span>
+
+          <strong>
+            {{ attendance.latitude }}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Longitud
+          </span>
+
+          <strong>
+            {{ attendance.longitude }}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Precisión
+          </span>
+
+          <strong>
+            {{ attendance.accuracy | number:'1.0-1' }} m
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Entrada
+          </span>
+
+          <strong>
+            {{ formatTime(attendance.checkInAt) }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================== -->
+    <!-- LISTADO DE VENDEDORES                -->
+    <!-- ===================================== -->
+
+    <section class="attendance-table-section">
+
+
+      <div class="table-header">
+
+        <div>
+
+          <span class="eyebrow">
+            REGISTROS DEL DÍA
+          </span>
+
+          <h2>
+            Vendedores
+          </h2>
+
+        </div>
+
+
+        <div class="search-box">
+
+          <span>
+            🔎
+          </span>
+
+          <input
+            type="text"
+            placeholder="Buscar vendedor..."
+            [(ngModel)]="searchTerm"
+          />
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================== -->
+      <!-- LOADING                            -->
+      <!-- =================================== -->
+
+      <div
+        *ngIf="loadingAttendances"
+        class="loading-container"
+      >
+
+        <div class="spinner"></div>
+
+        <span>
+          Cargando asistencias...
+        </span>
+
+      </div>
+
+
+      <!-- =================================== -->
+      <!-- TABLA                              -->
+      <!-- =================================== -->
+
+      <div
+        *ngIf="!loadingAttendances"
+        class="table-wrapper"
+      >
+
+        <table>
+
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Vendedor
+              </th>
+
+              <th>
+                Entrada
+              </th>
+
+              <th>
+                Salida
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th>
+                Precisión
+              </th>
+
+              <th>
+                Ubicación
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+
+            <tr
+              *ngFor="
+                let item of filteredAttendances
+              "
+            >
+
+
+              <!-- VENDEDOR -->
+
+              <td>
+
+                <div class="seller">
+
+                  <div class="avatar">
+
+                    {{
+                      item.userName
+                        ? item.userName.charAt(0).toUpperCase()
+                        : '?'
+                    }}
+
+                  </div>
+
+
+                  <div>
+
+                    <strong>
+                      {{ item.userName }}
+                    </strong>
+
+                    <small>
+                      {{ item.userEmail }}
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+
+              <!-- ENTRADA -->
+
+              <td>
+
+                <span class="time">
+
+                  {{ formatTime(item.checkInAt) }}
+
+                </span>
+
+              </td>
+
+
+              <!-- SALIDA -->
+
+              <td>
+
+                <span class="time">
+
+                  {{ formatTime(item.checkOutAt) }}
+
+                </span>
+
+              </td>
+
+
+              <!-- ESTADO -->
+
+              <td>
+
+                <span
+                  class="status"
+                  [class.status-inside]="
+                    item.insideCompany
+                  "
+                  [class.status-outside]="
+                    !item.insideCompany
+                  "
+                >
+
+                  <span class="status-dot"></span>
+
+                  {{
+                    item.insideCompany
+                      ? 'En empresa'
+                      : 'Fuera'
+                  }}
+
+                </span>
+
+              </td>
+
+
+              <!-- PRECISIÓN -->
+
+              <td>
+
+                <span class="accuracy">
+
+                  {{ item.accuracy | number:'1.0-1' }} m
+
+                </span>
+
+              </td>
+
+
+              <!-- MAPA -->
+
+              <td>
+
+                <button
+                  type="button"
+                  class="map-button"
+                  (click)="openGoogleMaps(item)"
+                >
+
+                  📍 Ver mapa
+
+                </button>
+
+              </td>
+
+            </tr>
+
+
+            <!-- SIN RESULTADOS -->
+
+            <tr
+              *ngIf="
+                filteredAttendances.length === 0
+              "
+            >
+
+              <td
+                colspan="6"
+                class="empty-state"
+              >
+
+                <div class="empty-icon">
+                  📍
+                </div>
+
+                <strong>
+                  No hay registros
+                </strong>
+
+                <span>
+                  Todavía no existen asistencias
+                  registradas para hoy.
+                </span>
+
+              </td>
+
+            </tr>
+
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </section>
 
 </main>

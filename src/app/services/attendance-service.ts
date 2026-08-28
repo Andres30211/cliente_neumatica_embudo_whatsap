@@ -5,26 +5,47 @@ import { Observable } from 'rxjs';
 export interface CheckInRequest {
   latitude: number;
   longitude: number;
-  accuracy?: number;
+  accuracy: number;
 }
+
 
 export interface AttendanceResponse {
 
   id: string;
 
+  latitude: number;
+
+  longitude: number;
+
+  accuracy: number;
+
+  checkInAt: string;
+
+  checkOutAt?: string | null;
+
+  insideCompany: boolean;
+}
+
+
+export interface AttendanceAdminResponse {
+
+  id: string;
+
   userId: string;
 
-  locationId: string;
+  userName: string;
+
+  userEmail: string;
 
   latitude: number;
 
   longitude: number;
 
-  accuracy?: number;
+  accuracy: number;
 
   checkInAt: string;
 
-  checkOutAt?: string;
+  checkOutAt?: string | null;
 
   insideCompany: boolean;
 }
@@ -35,8 +56,8 @@ export interface AttendanceResponse {
 })
 export class AttendanceService {
 
-  // private readonly API_URL = 'http://localhost:8082/api/attendance';
-  private readonly API_URL = 'https://service-location-neumatica.onrender.com/api/attendance';
+  private readonly apiUrl =
+    'https://service-location-neumatica.onrender.com/api/attendance';
 
 
   constructor(
@@ -45,49 +66,75 @@ export class AttendanceService {
 
 
   /*
-   * Registrar entrada.
+   * ==========================================
+   * CHECK-IN
+   * ==========================================
    */
   checkIn(
-    location: CheckInRequest
+    request: CheckInRequest
   ): Observable<AttendanceResponse> {
 
     return this.http.post<AttendanceResponse>(
-      `${this.API_URL}/check-in`,
-      location
+      `${this.apiUrl}/check-in`,
+      request
     );
   }
 
 
   /*
-   * Registrar salida.
+   * ==========================================
+   * CHECK-OUT
+   * ==========================================
    */
   checkOut(): Observable<AttendanceResponse> {
 
     return this.http.post<AttendanceResponse>(
-      `${this.API_URL}/check-out`,
+      `${this.apiUrl}/check-out`,
       {}
     );
   }
 
 
   /*
-   * Obtener asistencia actual.
+   * ==========================================
+   * MI HISTORIAL
+   * ==========================================
    */
-  getCurrentAttendance(): Observable<AttendanceResponse> {
+  getMyAttendances():
+    Observable<AttendanceResponse[]> {
 
-    return this.http.get<AttendanceResponse>(
-      `${this.API_URL}/me/current`
+    return this.http.get<AttendanceResponse[]>(
+      `${this.apiUrl}/me`
     );
   }
 
 
   /*
-   * Obtener historial.
+   * ==========================================
+   * MI ASISTENCIA ACTUAL
+   * ==========================================
    */
-  getMyAttendances(): Observable<AttendanceResponse[]> {
+  getCurrentAttendance():
+    Observable<AttendanceResponse> {
 
-    return this.http.get<AttendanceResponse[]>(
-      `${this.API_URL}/me`
+    return this.http.get<AttendanceResponse>(
+      `${this.apiUrl}/me/current`
+    );
+  }
+
+
+  /*
+   * ==========================================
+   * NUEVO
+   *
+   * ASISTENCIAS DEL DÍA
+   * ==========================================
+   */
+  getTodayAttendances():
+    Observable<AttendanceAdminResponse[]> {
+
+    return this.http.get<AttendanceAdminResponse[]>(
+      `${this.apiUrl}/today`
     );
   }
 }

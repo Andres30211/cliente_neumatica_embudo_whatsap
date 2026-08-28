@@ -1,40 +1,878 @@
-main{
+/* =====================================================
+   LAYOUT
+   ===================================================== */
 
+.page-layout {
   display: flex;
+  min-height: calc(100vh - 64px);
+  background: #f6f8fb;
 }
 
-.attendance-container {
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 30px;
-  border: 1px solid #ddd;
+
+.attendance-page {
+  flex: 1;
+  padding: 36px 42px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+}
+
+
+.eyebrow {
+  display: block;
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1.4px;
+
+  color: #7b8494;
+}
+
+
+.page-header h1 {
+  margin: 0;
+
+  font-size: 32px;
+  font-weight: 700;
+
+  color: #172033;
+}
+
+
+.page-header p {
+  margin: 8px 0 0;
+
+  color: #7b8494;
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   REFRESH
+   ===================================================== */
+
+.refresh-button {
+  border: 1px solid #e1e6ed;
+
+  background: white;
+
+  padding: 10px 16px;
+
+  border-radius: 9px;
+
+  color: #344054;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.refresh-button:hover {
+  background: #f8fafc;
+}
+
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =====================================================
+   ALERTAS
+   ===================================================== */
+
+.alert {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 13px 16px;
+
+  border-radius: 10px;
+
+  margin-bottom: 20px;
+
+  font-size: 14px;
+}
+
+
+.success-alert {
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+  color: #067647;
+}
+
+
+.error-alert {
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  color: #b42318;
+}
+
+
+.alert-icon {
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   ESTADÍSTICAS
+   ===================================================== */
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 24px;
+}
+
+
+.stat-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  background: white;
+
+  border: 1px solid #e8ecf2;
+
+  border-radius: 14px;
+
+  padding: 20px;
+
+  box-shadow:
+    0 2px 8px rgba(16, 24, 40, 0.03);
+}
+
+
+.stat-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #eef2ff;
+
+  font-size: 21px;
+}
+
+
+.success-icon {
+  background: #ecfdf3;
+}
+
+
+.warning-icon {
+  background: #fffaeb;
+}
+
+
+.stat-label {
+  display: block;
+
+  font-size: 12px;
+
+  color: #7b8494;
+
+  margin-bottom: 4px;
+}
+
+
+.stat-card strong {
+  display: block;
+
+  font-size: 24px;
+
+  color: #172033;
+}
+
+
+/* =====================================================
+   PANEL CHECK
+   ===================================================== */
+
+.check-panel {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 30px;
+
+  padding: 26px;
+
+  background: white;
+
+  border: 1px solid #e8ecf2;
+
+  border-radius: 15px;
+
+  margin-bottom: 24px;
+
+  box-shadow:
+    0 2px 8px rgba(16, 24, 40, 0.03);
+}
+
+
+.check-info h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 21px;
+}
+
+
+.check-info p {
+  margin: 7px 0 0;
+
+  color: #7b8494;
+
+  font-size: 13px;
+}
+
+
+.check-actions {
+  display: flex;
+
+  gap: 12px;
+}
+
+
+.check-in-button,
+.check-out-button {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  border: 0;
+
+  padding: 13px 18px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.check-in-button {
+  background: #172033;
+
+  color: white;
+}
+
+
+.check-in-button:hover {
+  background: #252f44;
+}
+
+
+.check-out-button {
+  background: #f2f4f7;
+
+  color: #344054;
+}
+
+
+.check-out-button:hover {
+  background: #e9edf2;
+}
+
+
+.check-in-button:disabled,
+.check-out-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+.button-icon {
+  font-size: 18px;
+}
+
+
+.check-actions strong {
+  display: block;
+
+  text-align: left;
+
+  font-size: 13px;
+}
+
+
+.check-actions small {
+  display: block;
+
+  text-align: left;
+
+  margin-top: 2px;
+
+  opacity: 0.7;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   ASISTENCIA ACTUAL
+   ===================================================== */
+
+.current-attendance {
+  background: white;
+
+  border: 1px solid #e8ecf2;
+
+  border-radius: 15px;
+
+  padding: 24px;
+
+  margin-bottom: 24px;
+}
+
+
+.section-title {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+
+.section-title h2 {
+  margin: 0;
+
+  font-size: 20px;
+
+  color: #172033;
+}
+
+
+.location-details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 15px;
+
+  margin-top: 22px;
+}
+
+
+.location-details div {
+  padding: 15px;
+
+  background: #f8fafc;
+
   border-radius: 10px;
 }
 
-button {
-  margin-right: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
+
+.location-details span {
+  display: block;
+
+  font-size: 11px;
+
+  color: #7b8494;
+
+  margin-bottom: 5px;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+
+.location-details strong {
+  font-size: 13px;
+
+  color: #172033;
 }
 
-.success {
-  margin-top: 20px;
-  color: green;
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+.status {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+
+  font-weight: 600;
 }
 
-.error {
-  margin-top: 20px;
-  color: red;
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  display: inline-block;
 }
 
-.attendance-info {
-  margin-top: 20px;
-  padding: 20px;
-  background: #f5f5f5;
+
+.status-inside {
+  background: #ecfdf3;
+
+  color: #067647;
+}
+
+
+.status-inside .status-dot {
+  background: #12b76a;
+}
+
+
+.status-outside {
+  background: #fffaeb;
+
+  color: #b54708;
+}
+
+
+.status-outside .status-dot {
+  background: #f79009;
+}
+
+
+/* =====================================================
+   TABLA
+   ===================================================== */
+
+.attendance-table-section {
+  background: white;
+
+  border: 1px solid #e8ecf2;
+
+  border-radius: 15px;
+
+  overflow: hidden;
+}
+
+
+.table-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 23px 24px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+
+.table-header h2 {
+  margin: 0;
+
+  font-size: 20px;
+
+  color: #172033;
+}
+
+
+/* =====================================================
+   SEARCH
+   ===================================================== */
+
+.search-box {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  border: 1px solid #dfe4eb;
+
+  border-radius: 9px;
+
+  padding: 8px 11px;
+
+  width: 240px;
+}
+
+
+.search-box input {
+  border: 0;
+
+  outline: none;
+
+  width: 100%;
+
+  font-size: 13px;
+
+  color: #344054;
+
+  background: transparent;
+}
+
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+
+table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+
+thead {
+  background: #f8fafc;
+}
+
+
+th {
+  padding: 13px 20px;
+
+  text-align: left;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  color: #667085;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.4px;
+}
+
+
+td {
+  padding: 15px 20px;
+
+  border-top: 1px solid #edf0f4;
+
+  font-size: 13px;
+
+  color: #344054;
+}
+
+
+/* =====================================================
+   SELLER
+   ===================================================== */
+
+.seller {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+
+.avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eef2ff;
+
+  color: #3949ab;
+
+  font-weight: 700;
+}
+
+
+.seller strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 13px;
+}
+
+
+.seller small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #98a2b3;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   TIME
+   ===================================================== */
+
+.time {
+  font-weight: 600;
+
+  color: #344054;
+}
+
+
+.accuracy {
+  color: #667085;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   MAP BUTTON
+   ===================================================== */
+
+.map-button {
+  border: 1px solid #dfe4eb;
+
+  background: white;
+
   border-radius: 8px;
+
+  padding: 7px 10px;
+
+  color: #344054;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.map-button:hover {
+  background: #f8fafc;
+
+  border-color: #cdd4df;
+}
+
+
+/* =====================================================
+   LOADING
+   ===================================================== */
+
+.loading-container {
+  min-height: 200px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  color: #667085;
+
+  font-size: 13px;
+}
+
+
+.spinner {
+  width: 28px;
+  height: 28px;
+
+  border: 3px solid #e4e7ec;
+
+  border-top-color: #344054;
+
+  border-radius: 50%;
+
+  animation:
+    spin 0.8s linear infinite;
+}
+
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* =====================================================
+   EMPTY
+   ===================================================== */
+
+.empty-state {
+  padding: 55px !important;
+
+  text-align: center;
+
+  color: #667085;
+}
+
+
+.empty-icon {
+  font-size: 35px;
+
+  margin-bottom: 10px;
+}
+
+
+.empty-state strong {
+  display: block;
+
+  color: #344054;
+
+  margin-bottom: 5px;
+}
+
+
+.empty-state span {
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1000px) {
+
+  .attendance-page {
+    padding: 25px;
+  }
+
+
+  .stats-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .check-panel {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .location-details {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .attendance-page {
+    padding: 18px;
+  }
+
+
+  .page-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+
+  .check-actions {
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+
+  .check-in-button,
+  .check-out-button {
+    width: 100%;
+  }
+
+
+  .location-details {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .table-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+
+  .search-box {
+    width: 100%;
+  }
+
 }

@@ -1,26 +1,81 @@
-import { Component } from '@angular/core';
-import { AttendanceResponse, AttendanceService } from '../../services/attendance-service';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import {
+  AttendanceResponse,
+  AttendanceAdminResponse,
+  AttendanceService
+} from '../../services/attendance-service';
+
 import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
 
+
 @Component({
   selector: 'app-attendance',
-  imports: [CommonModule, Topbar, Sidebar],
-  templateUrl: './attendance.html',
-  styleUrl: './attendance.css',
-})
-export class Attendance {
 
+  standalone: true,
+
+  imports: [
+    CommonModule,
+    Topbar,
+    Sidebar
+  ],
+
+  templateUrl: './attendance.html',
+
+  styleUrl: './attendance.css'
+})
+export class Attendance implements OnInit {
+
+
+  /*
+   * ==========================================
+   * ESTADOS
+   * ==========================================
+   */
 
   loading = false;
+
+  loadingAttendances = false;
 
   message = '';
 
   errorMessage = '';
 
+
+  /*
+   * ==========================================
+   * ASISTENCIA DEL USUARIO
+   * ==========================================
+   */
+
   attendance?: AttendanceResponse;
 
+
+  /*
+   * ==========================================
+   * ASISTENCIAS DEL DÍA
+   * ==========================================
+   */
+
+  attendances: AttendanceAdminResponse[] = [];
+
+
+  /*
+   * ==========================================
+   * FILTRO
+   * ==========================================
+   */
+
+  searchTerm = '';
+
+
+  /*
+   * ==========================================
+   * CONSTRUCTOR
+   * ==========================================
+   */
 
   constructor(
     private attendanceService: AttendanceService
@@ -28,10 +83,24 @@ export class Attendance {
 
 
   /*
-   * =====================================================
-   * TOMAR ASISTENCIA
-   * =====================================================
+   * ==========================================
+   * INIT
+   * ==========================================
    */
+
+  ngOnInit(): void {
+
+    this.loadTodayAttendances();
+
+  }
+
+
+  /*
+   * ==========================================
+   * TOMAR ASISTENCIA
+   * ==========================================
+   */
+
   takeAttendance(): void {
 
     this.loading = true;
@@ -42,7 +111,7 @@ export class Attendance {
 
 
     /*
-     * Verificamos si el navegador soporta GPS.
+     * Verificamos soporte GPS.
      */
     if (!navigator.geolocation) {
 
@@ -56,14 +125,11 @@ export class Attendance {
 
 
     /*
-     * Solicitamos la ubicación al navegador.
+     * Obtener ubicación.
      */
     navigator.geolocation.getCurrentPosition(
 
-      /*
-       * ÉXITO
-       */
-      (position) => {
+      position => {
 
         const latitude =
           position.coords.latitude;
@@ -75,35 +141,22 @@ export class Attendance {
           position.coords.accuracy;
 
 
-        console.log('Latitud:', latitude);
-
-        console.log('Longitud:', longitude);
-
-        console.log('Precisión:', accuracy);
-
-
         /*
-         * Enviamos solamente:
-         *
-         * latitude
-         * longitude
-         * accuracy
+         * Enviamos ubicación al backend.
          *
          * NO enviamos userId.
+         *
+         * El backend lo obtiene del JWT.
          */
         this.attendanceService
           .checkIn({
-
             latitude,
-
             longitude,
-
             accuracy
-
           })
           .subscribe({
 
-            next: (response) => {
+            next: response => {
 
               this.loading = false;
 
@@ -121,10 +174,16 @@ export class Attendance {
                   'Asistencia registrada. Estás fuera de la empresa.';
               }
 
+
+              /*
+               * Actualizamos tabla.
+               */
+              this.loadTodayAttendances();
+
             },
 
 
-            error: (error) => {
+            error: error => {
 
               this.loading = false;
 
@@ -136,20 +195,15 @@ export class Attendance {
             }
 
           });
+
       },
 
 
-      /*
-       * ERROR
-       */
-      (error) => {
+      error => {
 
         this.loading = false;
 
-        console.error(
-          'Error obteniendo ubicación:',
-          error
-        );
+        console.error(error);
 
 
         switch (error.code) {
@@ -186,9 +240,7 @@ export class Attendance {
 
       },
 
-      /*
-       * Opciones del GPS.
-       */
+
       {
         enableHighAccuracy: true,
 
@@ -196,15 +248,17 @@ export class Attendance {
 
         maximumAge: 0
       }
+
     );
   }
 
 
   /*
-   * =====================================================
+   * ==========================================
    * CHECK-OUT
-   * =====================================================
+   * ==========================================
    */
+
   takeCheckout(): void {
 
     this.loading = true;
@@ -218,7 +272,7 @@ export class Attendance {
       .checkOut()
       .subscribe({
 
-        next: (response) => {
+        next: response => {
 
           this.loading = false;
 
@@ -226,10 +280,14 @@ export class Attendance {
 
           this.message =
             'Salida registrada correctamente.';
+
+
+          this.loadTodayAttendances();
+
         },
 
 
-        error: (error) => {
+        error: error => {
 
           this.loading = false;
 
@@ -241,5 +299,189 @@ export class Attendance {
         }
 
       });
+  }
+
+
+  /*
+   * ==========================================
+   * CARGAR ASISTENCIAS DEL DÍA
+   * ==========================================
+   */
+
+  loadTodayAttendances(): void {
+
+    this.loadingAttendances = true;
+
+
+    this.attendanceService
+      .getTodayAttendances()
+      .subscribe({
+
+        next: response => {
+
+          this.attendances = response;
+
+          this.loadingAttendances = false;
+
+        },
+
+
+        error: error => {
+
+          console.error(error);
+
+          this.loadingAttendances = false;
+
+          this.errorMessage =
+            error?.error?.message ||
+            'No fue posible cargar las asistencias.';
+        }
+
+      });
+  }
+
+
+  /*
+   * ==========================================
+   * FILTRO
+   * ==========================================
+   */
+
+  get filteredAttendances():
+    AttendanceAdminResponse[] {
+
+    const search =
+      this.searchTerm
+        .trim()
+        .toLowerCase();
+
+
+    if (!search) {
+
+      return this.attendances;
+
+    }
+
+
+    return this.attendances.filter(
+      attendance =>
+
+        attendance.userName
+          .toLowerCase()
+          .includes(search)
+
+        ||
+
+        attendance.userEmail
+          .toLowerCase()
+          .includes(search)
+    );
+  }
+
+
+  /*
+   * ==========================================
+   * TOTAL
+   * ==========================================
+   */
+
+  get totalAttendances(): number {
+
+    return this.attendances.length;
+
+  }
+
+
+  /*
+   * ==========================================
+   * DENTRO DE LA EMPRESA
+   * ==========================================
+   */
+
+  get insideCompanyCount(): number {
+
+    return this.attendances.filter(
+      attendance =>
+        attendance.insideCompany
+    ).length;
+
+  }
+
+
+  /*
+   * ==========================================
+   * FUERA DE LA EMPRESA
+   * ==========================================
+   */
+
+  get outsideCompanyCount(): number {
+
+    return this.attendances.filter(
+      attendance =>
+        !attendance.insideCompany
+    ).length;
+
+  }
+
+
+  /*
+   * ==========================================
+   * GOOGLE MAPS
+   * ==========================================
+   */
+
+  openGoogleMaps(
+    attendance: AttendanceAdminResponse
+  ): void {
+
+    const url =
+      `https://www.google.com/maps?q=${attendance.latitude},${attendance.longitude}`;
+
+
+    window.open(
+      url,
+      '_blank'
+    );
+  }
+
+
+  /*
+   * ==========================================
+   * FORMATEAR HORA
+   * ==========================================
+   */
+
+  formatTime(
+    date: string | null | undefined
+  ): string {
+
+    if (!date) {
+
+      return '--';
+
+    }
+
+
+    return new Date(date)
+      .toLocaleTimeString(
+        'es-CO',
+        {
+          hour: '2-digit',
+          minute: '2-digit'
+        }
+      );
+  }
+
+
+  /*
+   * ==========================================
+   * RECARGAR
+   * ==========================================
+   */
+
+  refresh(): void {
+
+    this.loadTodayAttendances();
+
   }
 }
