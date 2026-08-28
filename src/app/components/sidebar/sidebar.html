@@ -67,23 +67,23 @@
       
     }
 
+    @if (this.meRol('ROLE_ADMIN')) {
+      <a
+        [routerLink]="['/attendance']"
+        routerLinkActive="sidebar__item--active"
+        class="sidebar__item"
+      >
 
-    <a
-      [routerLink]="['/attendance']"
-      routerLinkActive="sidebar__item--active"
-      class="sidebar__item"
-    >
+        <span class="sidebar__icon">
+          ▥
+        </span>
 
-      <span class="sidebar__icon">
-        ▥
-      </span>
+        <span class="sidebar__text">
+          Asistencia
+        </span>
 
-      <span class="sidebar__text">
-        Asistencia
-      </span>
-
-    </a>
-
+      </a>
+    }
 
     <!-- <a
       routerLink="/settings"
