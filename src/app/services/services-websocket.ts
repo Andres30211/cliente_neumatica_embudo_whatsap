@@ -29,9 +29,7 @@ export class ServicesWebsocket {
 
       this.client.subscribe('/topic/contacts', message => {
 
-        const contact: Contact = JSON.parse(message.body);
-
-        console.log(contact);
+        const contact: Contact = JSON.parse(message.body);;
 
         // Emitir el nuevo contacto
         this.contactsSubject.next(contact);
