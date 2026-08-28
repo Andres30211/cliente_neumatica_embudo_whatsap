@@ -9,6 +9,7 @@ import {
 
 import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
@@ -19,7 +20,8 @@ import { Sidebar } from "../sidebar/sidebar";
   imports: [
     CommonModule,
     Topbar,
-    Sidebar
+    Sidebar,
+    FormsModule
   ],
 
   templateUrl: './attendance.html',
