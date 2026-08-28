@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TokensServices } from '../../services/tokens-services';
 import { AuthServices } from '../../services/auth-services';
 import { Router } from '@angular/router';
@@ -21,7 +21,7 @@ export class Topbar implements OnInit{
 
   public unreadCount: number = 0;
 
-  public  notifications: Notification[] = [];
+  public notifications: Notification[] = [];
 
   public isOpen = false;
 
@@ -29,7 +29,8 @@ export class Topbar implements OnInit{
     private authService: AuthServices,
     private router: Router,
     private websocket: ServicesWebsocket,
-    private notificationService: NotificationServices) {}
+    private notificationService: NotificationServices,
+    private dc: ChangeDetectorRef) {}
   
   ngOnInit(): void {
     
@@ -39,6 +40,7 @@ export class Topbar implements OnInit{
       .subscribe(notifications => {
 
         this.notifications = notifications;
+        this.dc.detectChanges();
 
       });
     
