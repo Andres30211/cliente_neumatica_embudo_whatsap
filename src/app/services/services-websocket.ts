@@ -26,9 +26,9 @@ export class ServicesWebsocket {
   // NOTIFICACIONES
   // =========================
 
-  private notificationsSubject = new Subject<Notification>();
+  // private notificationsSubject = new Subject<Notification>();
 
-  public notifications$ = this.notificationsSubject.asObservable();
+  // public notifications$ = this.notificationsSubject.asObservable();
 
   constructor(private notificationService: NotificationServices){}
 

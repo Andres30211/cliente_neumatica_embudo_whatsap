@@ -10,9 +10,9 @@ export class NotificationServices {
 
   private readonly STORAGE_KEY = 'crm_notifications';
 
-  // private notificationsSubject = new BehaviorSubject<Notification[]>(this.getNotifications());
+  private notificationsSubject = new BehaviorSubject<Notification[]>(this.getNotifications());
 
-  // public notifications$ = this.notificationsSubject.asObservable();
+  public notifications$ = this.notificationsSubject.asObservable();
   
   public success(title: string,message: string): void {
 
@@ -115,7 +115,7 @@ export class NotificationServices {
       JSON.stringify(notifications)
     );
 
-    // this.notificationsSubject.next(notifications);
+    this.notificationsSubject.next(notifications);
   }
 
 
@@ -138,9 +138,9 @@ export class NotificationServices {
       JSON.stringify(updatedNotifications)
     );
 
-    // this.notificationsSubject.next(
-    //   updatedNotifications
-    // );
+    this.notificationsSubject.next(
+      updatedNotifications
+    );
   }
 
 
@@ -154,7 +154,7 @@ export class NotificationServices {
       this.STORAGE_KEY
     );
 
-    // this.notificationsSubject.next([]);
+    this.notificationsSubject.next([]);
   }
 
 

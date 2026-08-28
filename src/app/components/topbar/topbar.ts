@@ -35,7 +35,12 @@ export class Topbar implements OnInit{
     
     this.nombre = this.tokenService.getName() ?? '';
 
-    this.notifications = this.notificationService.getNotifications();
+    this.notificationService.notifications$
+      .subscribe(notifications => {
+
+        this.notifications = notifications;
+
+      });
     
   }
 
