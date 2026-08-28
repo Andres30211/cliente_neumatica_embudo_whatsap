@@ -328,18 +328,8 @@ export class Attendance implements OnInit {
 
           this.dc.detectChanges();
 
-        },
+          console.log(response);
 
-
-        error: error => {
-
-          console.error(error);
-
-          this.loadingAttendances = false;
-
-          this.errorMessage =
-            error?.error?.message ||
-            'No fue posible cargar las asistencias.';
         }
 
       });
