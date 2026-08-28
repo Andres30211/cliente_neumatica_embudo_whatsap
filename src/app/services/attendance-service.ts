@@ -56,8 +56,7 @@ export interface AttendanceAdminResponse {
 })
 export class AttendanceService {
 
-  private readonly apiUrl =
-    'https://service-location-neumatica.onrender.com/api/attendance';
+  private readonly apiUrl = 'https://service-location-neumatica.onrender.com/api/attendance';
 
 
   constructor(
@@ -130,11 +129,8 @@ export class AttendanceService {
    * ASISTENCIAS DEL DÍA
    * ==========================================
    */
-  getTodayAttendances():
-    Observable<AttendanceAdminResponse[]> {
+  getTodayAttendances():Observable<AttendanceAdminResponse[]> {
 
-    return this.http.get<AttendanceAdminResponse[]>(
-      `${this.apiUrl}/today`
-    );
+    return this.http.get<AttendanceAdminResponse[]>(`${this.apiUrl}/today`);
   }
 }
