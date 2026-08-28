@@ -40,7 +40,7 @@ export class Topbar implements OnInit{
 
         this.notifications = notifications;
 
-        this.unreadCount = notifications
+        this.unreadCount = this.notifications
         .filter(notification => !notification.read)
         .length;
 
