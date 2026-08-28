@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -80,7 +80,8 @@ export class Attendance implements OnInit {
    */
 
   constructor(
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private dc: ChangeDetectorRef
   ) {}
 
 
@@ -324,6 +325,8 @@ export class Attendance implements OnInit {
           this.attendances = response;
 
           this.loadingAttendances = false;
+
+          this.dc.detectChanges();
 
         },
 
