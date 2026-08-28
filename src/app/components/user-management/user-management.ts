@@ -580,7 +580,7 @@ export class UserManagement implements OnInit{
           }
           
         });
-        // this.loadUsers();
+        this.loadUsers();
         this.dc.detectChanges();
     });
 }
