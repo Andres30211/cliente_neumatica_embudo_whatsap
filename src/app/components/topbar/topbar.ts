@@ -29,8 +29,7 @@ export class Topbar implements OnInit{
     private authService: AuthServices,
     private router: Router,
     private websocket: ServicesWebsocket,
-    private notificationService: NotificationServices,
-    private dc: ChangeDetectorRef) {}
+    private notificationService: NotificationServices) {}
   
   ngOnInit(): void {
     
@@ -40,7 +39,10 @@ export class Topbar implements OnInit{
       .subscribe(notifications => {
 
         this.notifications = notifications;
-        this.dc.detectChanges();
+
+        this.unreadCount = notifications
+        .filter(notification => !notification.read)
+        .length;
 
       });
     
@@ -77,15 +79,6 @@ export class Topbar implements OnInit{
   deleteAll(): void {
 
     this.notificationService.deleteAll();
-
-  }
-
-
-  get unreadCountt(): number {
-
-    return this.notifications
-      .filter(notification => !notification.read)
-      .length;
 
   }
 
