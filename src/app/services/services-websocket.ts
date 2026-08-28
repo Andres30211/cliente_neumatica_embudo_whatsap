@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 
 import { Contact } from '../interfaces/Contact';
 import { Notification } from '../interfaces/Notification';
+import { NotificationServices } from './notification-services';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,8 @@ export class ServicesWebsocket {
   private notificationsSubject = new Subject<Notification>();
 
   public notifications$ = this.notificationsSubject.asObservable();
+
+  constructor(private notificationService: NotificationServices){}
 
 
   // =========================
@@ -68,7 +71,8 @@ export class ServicesWebsocket {
         const notification: Notification =
           JSON.parse(message.body);
 
-        this.notificationsSubject.next(notification);
+          this.notificationService.addNotification(notification);
+        // this.notificationsSubject.next(notification);
 
       });
 

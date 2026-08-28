@@ -14,17 +14,130 @@
 
   </div>
 
-  <button class="notification-button">
+  <div class="notification-container">
 
-  🔔
+  <!-- CAMPANA -->
+
+  <button
+    class="notification-button"
+    (click)="toggleNotifications()"
+  >
+
+    <span class="bell">🔔</span>
 
     @if (unreadCount > 0) {
+
       <span class="notification-badge">
         {{ unreadCount }}
       </span>
+
     }
 
   </button>
+
+
+  <!-- PANEL -->
+
+  @if (isOpen) {
+
+    <div class="notification-panel">
+
+      <div class="notification-header">
+
+        <div>
+          <h3>Notificaciones</h3>
+
+          <span>
+            {{ notifications.length }} notificaciones
+          </span>
+        </div>
+
+
+        @if (notifications.length > 0) {
+
+          <button
+            class="delete-all"
+            (click)="deleteAll()"
+          >
+            Eliminar todas
+          </button>
+
+        }
+
+      </div>
+
+
+      <!-- SIN NOTIFICACIONES -->
+
+      @if (notifications.length === 0) {
+
+        <div class="empty-notifications">
+
+          <div class="empty-icon">
+            🔔
+          </div>
+
+          <p>No tienes notificaciones</p>
+
+          <span>
+            Las nuevas conversaciones aparecerán aquí.
+          </span>
+
+        </div>
+
+      }
+
+
+      <!-- LISTA -->
+
+      @for (
+        notification of notifications;
+        track notification.id
+      ) {
+
+        <div class="notification-item">
+
+          <div class="notification-icon">
+            💬
+          </div>
+
+
+          <div class="notification-content">
+
+            <strong>
+              {{ notification.title }}
+            </strong>
+
+            <p>
+              {{ notification.message }}
+            </p>
+
+            <small>
+              {{ notification.createdAt | date:'short' }}
+            </small>
+
+          </div>
+
+
+          <button
+            class="delete-button"
+            title="Eliminar notificación"
+            (click)="deleteNotification(notification.id)"
+          >
+
+            🗑️
+
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>
 
   <!-- USUARIO -->
   <div class="topbar__user">
