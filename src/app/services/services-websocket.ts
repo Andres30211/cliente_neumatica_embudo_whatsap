@@ -1,22 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
-import { Contact } from '../interfaces/Contact';
 import { Subject } from 'rxjs';
+
+import { Contact } from '../interfaces/Contact';
+import { Notification } from '../interfaces/Notification';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServicesWebsocket {
-  
+
   private client!: Client;
 
-  // Subject privado
+  // =========================
+  // CONTACTOS
+  // =========================
+
   private contactsSubject = new Subject<Contact>();
 
-  // Observable público
   public contacts$ = this.contactsSubject.asObservable();
 
-  connect() {
+
+  // =========================
+  // NOTIFICACIONES
+  // =========================
+
+  private notificationsSubject = new Subject<Notification>();
+
+  public notifications$ = this.notificationsSubject.asObservable();
+
+
+  // =========================
+  // CONEXIÓN
+  // =========================
+
+  connect(): void {
 
     this.client = new Client({
       brokerURL: 'wss://neumatica-embudo-whatsap.onrender.com/wss',
@@ -27,12 +45,30 @@ export class ServicesWebsocket {
 
       console.log('Conectado al WebSocket');
 
+
+      // -------------------------
+      // CONTACTOS
+      // -------------------------
+
       this.client.subscribe('/topic/contacts', message => {
 
-        const contact: Contact = JSON.parse(message.body);;
+        const contact: Contact = JSON.parse(message.body);
 
-        // Emitir el nuevo contacto
         this.contactsSubject.next(contact);
+
+      });
+
+
+      // -------------------------
+      // NOTIFICACIONES
+      // -------------------------
+
+      this.client.subscribe('/topic/notifications', message => {
+
+        const notification: Notification =
+          JSON.parse(message.body);
+
+        this.notificationsSubject.next(notification);
 
       });
 
@@ -40,7 +76,4 @@ export class ServicesWebsocket {
 
     this.client.activate();
   }
-
-  
-
 }
