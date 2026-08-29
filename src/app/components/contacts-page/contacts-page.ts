@@ -6,10 +6,11 @@ import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
 import { ServicesWebsocket } from '../../services/services-websocket';
 import { TokensServices } from '../../services/tokens-services';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contacts-page',
-  imports: [WhatsappEmbudo, Topbar, Sidebar],
+  imports: [WhatsappEmbudo, Topbar, Sidebar, CommonModule],
   templateUrl: './contacts-page.html',
   styleUrl: './contacts-page.css',
 })
@@ -83,7 +84,7 @@ export class ContactsPage implements OnInit{
     });
   }
 
-  descargarExcel() {
+  public descargarExcel() {
 
     this.servicesWhat.downloadExcel().subscribe(blob => {
 
