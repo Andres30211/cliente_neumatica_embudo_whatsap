@@ -25,37 +25,7 @@ export class Login implements OnInit{
   constructor(private authService: AuthServices, private router: Router, private cdr: ChangeDetectorRef){}
 
   ngOnInit(): void {
-    this.despertarServidor();
   }
-
-  public despertarServidor() {
-
-    const intervalo = setInterval(() => {
-
-      this.authService.despertar().subscribe({
-
-        next: () => {
-
-          this.cargandoServidor = false;
-          this.cdr.detectChanges();
-          console.log(this.cargandoServidor);
-
-          clearInterval(intervalo);
-
-        },
-
-        error: (error) => {
-
-          console.log("Servidor aún iniciando..." + error.error);
-
-        }
-
-      });
-
-    }, 5000);
-
-  }
-
 
   loginForm = this.fb.group({
     email: ['',[Validators.required,Validators.email]],
