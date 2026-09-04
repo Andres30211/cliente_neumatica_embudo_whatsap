@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Notification } from '../interfaces/Notification';
+import { BrowserNotificationService } from './browser-notification-service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,8 @@ export class NotificationServices {
   private notificationsSubject = new BehaviorSubject<Notification[]>(this.getNotifications());
 
   public notifications$ = this.notificationsSubject.asObservable();
+
+  constructor(private browserNotificationService: BrowserNotificationService){}
   
   public success(title: string,message: string): void {
 
@@ -116,6 +119,8 @@ export class NotificationServices {
     );
 
     this.notificationsSubject.next(notifications);
+
+    this.browserNotificationService.showNotification(notification);
   }
 
 

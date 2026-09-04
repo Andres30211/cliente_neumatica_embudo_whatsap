@@ -26,12 +26,7 @@ export class ServicesWebsocket {
   // NOTIFICACIONES
   // =========================
 
-  // private notificationsSubject = new Subject<Notification>();
-
-  // public notifications$ = this.notificationsSubject.asObservable();
-
   constructor(private notificationService: NotificationServices){}
-
 
   // =========================
   // CONEXIÓN
@@ -72,7 +67,6 @@ export class ServicesWebsocket {
           JSON.parse(message.body);
 
           this.notificationService.addNotification(notification);
-        // this.notificationsSubject.next(notification);
 
       });
 
