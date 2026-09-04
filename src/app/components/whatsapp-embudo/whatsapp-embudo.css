@@ -1,35 +1,51 @@
 :host {
 
   --graphite-900: #ffffff;
+
   --graphite-800: #181e23;
+
   --graphite-700: #1f262c;
+
   --bubble-in: #262f36;
+
   --steel-600: #313c44;
+
   --steel-500: #465158;
+
   --steel-400: #7c8890;
+
   --paper: #e9edf0;
+
   --paper-dim: #aeb8bf;
+
   --amber: #e2a33d;
+
   --green: #52a373;
 
   --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 
   display: block;
+
   width: 100%;
 
   color-scheme: dark;
 }
 
 
-/* CARD */
+/* =========================================================
+   CARD PRINCIPAL
+   ========================================================= */
 
 .record {
 
   position: relative;
 
   width: 100%;
+
   min-width: 0;
 
   box-sizing: border-box;
@@ -37,6 +53,7 @@
   background: var(--graphite-800);
 
   border: 1px solid var(--steel-600);
+
   border-top: 2px solid var(--amber);
 
   border-radius: 6px;
@@ -50,13 +67,16 @@
 }
 
 
-/* HEADER */
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .record__header {
 
   display: flex;
 
   align-items: center;
+
   justify-content: space-between;
 
   gap: 8px;
@@ -64,9 +84,12 @@
   margin-bottom: 10px;
 }
 
+
 .record__id {
+
   display: none;
 }
+
 
 .record__name {
 
@@ -94,7 +117,9 @@
 }
 
 
-/* STATUS */
+/* =========================================================
+   ESTADO DEL CONTACTO
+   ========================================================= */
 
 .stamp {
 
@@ -123,6 +148,7 @@
   white-space: nowrap;
 }
 
+
 .stamp--pending {
 
   background: #6d6d6d;
@@ -133,7 +159,9 @@
 }
 
 
-/* DATA */
+/* =========================================================
+   INFORMACIÓN DEL CONTACTO
+   ========================================================= */
 
 .record__grid {
 
@@ -150,6 +178,7 @@
   border-bottom: 1px solid var(--steel-600);
 }
 
+
 .record__field {
 
   flex: 1 1 50%;
@@ -158,6 +187,7 @@
 
   padding-right: 8px;
 }
+
 
 .record__field dt {
 
@@ -173,6 +203,7 @@
 
   margin-bottom: 2px;
 }
+
 
 .record__field dd {
 
@@ -190,7 +221,17 @@
 }
 
 
-/* CONVERSATION */
+/* =========================================================
+   BLOQUE DE CONVERSACIÓN
+   ========================================================= */
+
+.thread-block {
+
+  width: 100%;
+
+  min-width: 0;
+}
+
 
 .thread-block__title {
 
@@ -207,6 +248,7 @@
   margin: 0 0 8px;
 }
 
+
 .thread-block__title::before {
 
   content: '// ';
@@ -214,6 +256,10 @@
   color: var(--amber);
 }
 
+
+/* =========================================================
+   CONVERSACIÓN
+   ========================================================= */
 
 .thread {
 
@@ -224,11 +270,41 @@
   margin-bottom: 8px;
 
   border-radius: 4px;
+
+  /*
+   * Altura máxima de la conversación.
+   *
+   * Cuando la conversación supera esta altura,
+   * aparece un scroll vertical interno.
+   */
+  max-height: 500px;
+
+  overflow-y: auto;
+
+  /*
+   * Evita que el contenido multimedia
+   * provoque crecimiento horizontal.
+   */
+  overflow-x: hidden;
+
+  /*
+   * Permite que el scroll sea más natural
+   * en dispositivos táctiles.
+   */
+  overscroll-behavior: contain;
+
+  /*
+   * Scroll suave.
+   */
+  scroll-behavior: smooth;
 }
 
+
 .thread:last-child {
+
   margin-bottom: 0;
 }
+
 
 .thread--empty {
 
@@ -239,10 +315,63 @@
   color: var(--steel-400);
 
   text-align: center;
+
+  max-height: none;
+
+  overflow: hidden;
 }
 
 
-/* META */
+/* =========================================================
+   SCROLLBAR DE LA CONVERSACIÓN
+   ========================================================= */
+
+.thread::-webkit-scrollbar {
+
+  width: 7px;
+}
+
+
+.thread::-webkit-scrollbar-track {
+
+  background: var(--graphite-800);
+
+  border-radius: 10px;
+}
+
+
+.thread::-webkit-scrollbar-thumb {
+
+  background: var(--steel-500);
+
+  border-radius: 10px;
+
+  border: 1px solid var(--graphite-800);
+}
+
+
+.thread::-webkit-scrollbar-thumb:hover {
+
+  background: var(--steel-400);
+}
+
+
+/*
+ * Firefox
+ */
+.thread {
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    var(--steel-500)
+    var(--graphite-800);
+}
+
+
+/* =========================================================
+   INFORMACIÓN DE LA CONVERSACIÓN
+   ========================================================= */
 
 .thread__meta {
 
@@ -256,6 +385,7 @@
 
   margin-bottom: 8px;
 }
+
 
 .thread__status {
 
@@ -276,7 +406,10 @@
   padding: 2px 8px;
 
   border-radius: 3px;
+
+  flex-shrink: 0;
 }
+
 
 .thread__dates {
 
@@ -294,7 +427,9 @@
 }
 
 
-/* MESSAGES */
+/* =========================================================
+   LISTA DE MENSAJES
+   ========================================================= */
 
 .log {
 
@@ -308,8 +443,13 @@
 
   flex-direction: column;
 
-  gap: 5px;
+  gap: 7px;
+
+  width: 100%;
+
+  min-width: 0;
 }
+
 
 .log__entry {
 
@@ -318,13 +458,22 @@
   align-self: flex-start;
 
   max-width: 82%;
+
+  min-width: 0;
 }
+
+
+/* =========================================================
+   MENSAJE DE TEXTO
+   ========================================================= */
 
 .log__body {
 
   margin: 0;
 
   padding: 6px 10px;
+
+  font-family: var(--font-body);
 
   font-size: 12px;
 
@@ -337,59 +486,468 @@
   border-radius: 10px 10px 10px 3px;
 
   overflow-wrap: anywhere;
+
+  word-break: break-word;
 }
 
 
-/* TABLET */
+/* =========================================================
+   CONTENEDOR GENERAL DE MULTIMEDIA
+   ========================================================= */
+
+.media-message {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 7px;
+
+  max-width: 100%;
+
+  min-width: 0;
+
+  padding: 7px;
+
+  background: var(--bubble-in);
+
+  border-radius: 10px 10px 10px 3px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   IMÁGENES
+   ========================================================= */
+
+.media-message__image {
+
+  display: block;
+
+  /*
+   * Tamaño máximo de la imagen.
+   *
+   * En escritorio:
+   * máximo 320px de ancho
+   * máximo 320px de alto
+   */
+  width: auto;
+
+  max-width: 320px;
+
+  max-height: 320px;
+
+  height: auto;
+
+  object-fit: contain;
+
+  border-radius: 7px;
+
+  background: #11161a;
+
+  cursor: pointer;
+
+  transition:
+    transform .15s ease,
+    opacity .15s ease;
+}
+
+
+/*
+ * Pequeño efecto visual al pasar
+ * el mouse sobre la imagen.
+ */
+.media-message__image:hover {
+
+  opacity: .92;
+
+  transform: scale(1.01);
+}
+
+
+/* =========================================================
+   VIDEO
+   ========================================================= */
+
+.media-message__video {
+
+  display: block;
+
+  width: 320px;
+
+  max-width: 100%;
+
+  height: auto;
+
+  max-height: 320px;
+
+  object-fit: contain;
+
+  border-radius: 7px;
+
+  background: #000;
+}
+
+
+/* =========================================================
+   AUDIO
+   ========================================================= */
+
+.media-message__audio {
+
+  display: block;
+
+  width: 320px;
+
+  max-width: 100%;
+
+  height: 40px;
+}
+
+
+/* =========================================================
+   CAPTION
+   ========================================================= */
+
+.media-message__caption {
+
+  margin: 0;
+
+  padding: 0 3px;
+
+  font-family: var(--font-body);
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  color: var(--paper-dim);
+
+  overflow-wrap: anywhere;
+
+  word-break: break-word;
+
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   DOCUMENTOS
+   ========================================================= */
+
+.media-message__document {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin: 0;
+
+  padding: 8px 10px;
+
+  width: 100%;
+
+  max-width: 300px;
+
+  box-sizing: border-box;
+
+  background: var(--graphite-800);
+
+  border: 1px solid var(--steel-600);
+
+  border-radius: 6px;
+
+  color: var(--paper);
+
+  font-family: var(--font-body);
+
+  font-size: 11px;
+
+  overflow-wrap: anywhere;
+
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   UBICACIÓN
+   ========================================================= */
+
+.location-message {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding: 8px 10px;
+
+  background: var(--bubble-in);
+
+  border-radius: 10px 10px 10px 3px;
+
+  color: var(--paper);
+
+  font-family: var(--font-body);
+
+  font-size: 11px;
+
+  max-width: 300px;
+
+  overflow-wrap: anywhere;
+}
+
+
+.location-message strong {
+
+  color: var(--amber);
+
+  font-family: var(--font-mono);
+
+  font-size: 10px;
+}
+
+
+.location-message p {
+
+  margin: 0;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   BOTONES DE DESCARGA
+   ========================================================= */
+
+.media-message button {
+
+  border: 1px solid var(--steel-500);
+
+  background: var(--graphite-800);
+
+  color: var(--paper);
+
+  padding: 5px 9px;
+
+  border-radius: 4px;
+
+  font-family: var(--font-mono);
+
+  font-size: 9px;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease;
+}
+
+
+.media-message button:hover {
+
+  background: var(--amber);
+
+  border-color: var(--amber);
+
+  color: #000;
+}
+
+
+.media-message button:active {
+
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
 
 @media (max-width: 900px) {
 
   .record__field {
+
     flex-basis: 50%;
   }
 
+
+  /*
+   * Reducimos ligeramente el tamaño
+   * de los archivos multimedia.
+   */
+  .media-message__image {
+
+    max-width: 280px;
+
+    max-height: 280px;
+  }
+
+
+  .media-message__video {
+
+    width: 280px;
+
+    max-height: 280px;
+  }
+
+
+  .media-message__audio {
+
+    width: 280px;
+  }
 }
 
 
-/* MOBILE */
+/* =========================================================
+   MÓVIL
+   ========================================================= */
 
 @media (max-width: 600px) {
 
   .record {
+
     padding: 11px;
   }
 
+
   .record__name {
+
     font-size: 14px;
   }
 
+
   .record__field {
+
     flex-basis: 100%;
   }
 
+
   .thread__dates {
+
     flex-direction: column;
+
     gap: 3px;
   }
 
+
   .log__entry {
+
     max-width: 95%;
   }
 
+
+  /*
+   * La conversación ocupa menos altura
+   * en dispositivos pequeños.
+   */
+  .thread {
+
+    max-height: 420px;
+
+    padding: 7px 8px 9px;
+  }
+
+
+  /*
+   * Las imágenes se adaptan
+   * completamente al ancho disponible.
+   */
+  .media-message {
+
+    max-width: 100%;
+  }
+
+
+  .media-message__image {
+
+    width: auto;
+
+    max-width: 100%;
+
+    max-height: 260px;
+  }
+
+
+  /*
+   * El video nunca puede superar
+   * el ancho de la pantalla.
+   */
+  .media-message__video {
+
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: 260px;
+  }
+
+
+  /*
+   * El audio también se adapta.
+   */
+  .media-message__audio {
+
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+
+  .media-message__document {
+
+    max-width: 100%;
+  }
+
+
+  .location-message {
+
+    max-width: 100%;
+  }
 }
 
 
-/* VERY SMALL */
+/* =========================================================
+   PANTALLAS MUY PEQUEÑAS
+   ========================================================= */
 
 @media (max-width: 380px) {
 
   .record__header {
+
     align-items: flex-start;
+
     flex-direction: column;
   }
 
+
   .stamp {
+
     align-self: flex-start;
   }
 
+
+  .thread {
+
+    max-height: 360px;
+  }
+
+
+  .media-message__image {
+
+    max-height: 220px;
+  }
+
+
+  .media-message__video {
+
+    max-height: 220px;
+  }
 }
