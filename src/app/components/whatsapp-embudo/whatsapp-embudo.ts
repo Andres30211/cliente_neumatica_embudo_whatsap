@@ -20,4 +20,88 @@ export class WhatsappEmbudo implements OnInit{
   ngOnInit(): void {
   }
 
+  /**
+   * Descarga un archivo multimedia.
+   */
+  public downloadMedia(
+    messageId: string,
+    fileName?: string
+  ): void {
+
+    this.servicesWhat
+      .getMessageMedia(messageId)
+      .subscribe({
+
+        next: (blob) => {
+
+          const url =
+            window.URL.createObjectURL(blob);
+
+          const link =
+            document.createElement('a');
+
+          link.href = url;
+
+          link.download =
+            fileName || 'archivo';
+
+          link.click();
+
+          window.URL.revokeObjectURL(url);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error descargando multimedia:',
+            error
+          );
+
+          alert(
+            'No fue posible descargar el archivo.'
+          );
+        }
+
+      });
+  }
+
+  /**
+   * Abre el archivo multimedia
+   * en una nueva pestaña.
+   */
+  public openMedia(
+    messageId: string
+  ): void {
+
+    this.servicesWhat
+      .getMessageMedia(messageId)
+      .subscribe({
+
+        next: (blob) => {
+
+          const url =
+            window.URL.createObjectURL(blob);
+
+          window.open(
+            url,
+            '_blank'
+          );
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error abriendo multimedia:',
+            error
+          );
+
+          alert(
+            'No fue posible abrir el archivo.'
+          );
+        }
+
+      });
+  }
+
 }

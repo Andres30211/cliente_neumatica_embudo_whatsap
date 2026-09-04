@@ -20,6 +20,22 @@ export class ServicesWhatsapp {
     return this.http.get<ContactPage>(`${this.urlWhatsapp}/contacts`,{ params });
   }
 
+  /**
+   * Obtiene el archivo multimedia asociado
+   * a un mensaje.
+   */
+  public getMessageMedia(
+    messageId: string
+  ): Observable<Blob> {
+
+    return this.http.get(
+      `${this.urlWhatsapp}/messages/${messageId}/media`,
+      {
+        responseType: 'blob'
+      }
+    );
+  }
+
   public sendCampaing(): Observable<string>{
     return this.http.post(`${this.urlWhatsapp}/sendCampaing`, {}, {responseType: 'text'});
   }

@@ -1,7 +1,4 @@
-<article
-  class="record"
-  [class.record--complete]="contact.registrationStep === 'COMPLETED'"
->
+<article class="record" [class.record--complete]="contact.registrationStep === 'COMPLETED'">
 
   <div class="record__corner record__corner--tl"></div>
   <div class="record__corner record__corner--tr"></div>
@@ -18,16 +15,13 @@
       {{ contact.name }}
     </h3>
 
-    <span
-      class="stamp"
-      [class.stamp--pending]="
+    <span class="stamp" [class.stamp--pending]="
         contact.registrationStep !== 'COMPLETED'
-      "
-    >
+      ">
       {{
-        contact.registrationStep === 'COMPLETED'
-          ? 'Datos completos'
-          : 'Incompleto'
+      contact.registrationStep === 'COMPLETED'
+      ? 'Datos completos'
+      : 'Incompleto'
       }}
     </span>
 
@@ -84,64 +78,273 @@
 
     @if (contact.conversations.length > 0) {
 
-      @for (conv of contact.conversations; track conv.id) {
+    @for (conv of contact.conversations; track conv.id) {
 
-        <div class="thread">
+    <div class="thread">
 
-          <div class="thread__meta">
+      <div class="thread__meta">
 
-            <span
-              class="thread__status"
-              [attr.data-status]="conv.status"
-            >
-              {{ conv.status }}
-            </span>
+        <span class="thread__status" [attr.data-status]="conv.status">
+          {{ conv.status }}
+        </span>
 
-            <span class="thread__dates">
+        <span class="thread__dates">
 
-              <span>
-                Inicio:
-                {{ conv.startedAt | date:'yyyy-MM-dd HH:mm' }}
-              </span>
+          <span>
+            Inicio:
+            {{ conv.startedAt | date:'yyyy-MM-dd HH:mm' }}
+          </span>
 
-              <span>
-                Último mensaje:
-                {{ conv.lastMessageAt | date:'yyyy-MM-dd HH:mm' }}
-              </span>
+          <span>
+            Último mensaje:
+            {{ conv.lastMessageAt | date:'yyyy-MM-dd HH:mm' }}
+          </span>
 
-            </span>
+        </span>
 
-          </div>
+      </div>
 
 
-          <ol class="log">
+      <ol class="log">
 
-            @for (
-              message of conv.messages;
-              track message.id
-            ) {
+        @for (
+        message of conv.messages;
+        track message.id
+        ) {
 
-              <li class="log__entry">
+        <li class="log__entry">
 
-                <p class="log__body">
-                  {{ message.body }}
-                </p>
+          <!-- ========================= -->
+          <!-- MENSAJE DE TEXTO           -->
+          <!-- ========================= -->
 
-              </li>
+          @if (message.type === 'TEXT') {
+
+          <p class="log__body">
+            {{ message.body }}
+          </p>
+
+          }
+
+
+          <!-- ========================= -->
+          <!-- IMAGEN                     -->
+          <!-- ========================= -->
+
+          @if (message.type === 'IMAGE') {
+
+          <div class="media-message">
+
+            <img class="media-message__image" [src]="
+              'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
+              + message.whatsappMessageId
+              + '/media'
+            " alt="Imagen recibida" />
+
+            @if (message.caption) {
+
+            <p class="media-message__caption">
+              {{ message.caption }}
+            </p>
 
             }
 
-          </ol>
+            <button type="button" (click)="
+              downloadMedia(
+                message.whatsappMessageId,
+                message.fileName
+              )
+            ">
+              Descargar imagen
+            </button>
 
-        </div>
+          </div>
 
-      }
+          }
+
+
+          <!-- ========================= -->
+          <!-- VIDEO                      -->
+          <!-- ========================= -->
+
+          @if (message.type === 'VIDEO') {
+
+          <div class="media-message">
+
+            <video class="media-message__video" controls>
+
+              <source [src]="
+                'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
+                + message.whatsappMessageId
+                + '/media'
+              " [type]="message.mimeType" />
+
+              Tu navegador no soporta
+              reproducción de video.
+
+            </video>
+
+            @if (message.caption) {
+
+            <p class="media-message__caption">
+              {{ message.caption }}
+            </p>
+
+            }
+
+            <button type="button" (click)="
+              downloadMedia(
+                message.whatsappMessageId,
+                message.fileName
+              )
+            ">
+              Descargar video
+            </button>
+
+          </div>
+
+          }
+
+
+          <!-- ========================= -->
+          <!-- AUDIO                      -->
+          <!-- ========================= -->
+
+          @if (message.type === 'AUDIO') {
+
+          <div class="media-message">
+
+            <audio controls class="media-message__audio">
+
+              <source [src]="
+                'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
+                + message.whatsappMessageId
+                + '/media'
+              " [type]="message.mimeType" />
+
+              Tu navegador no soporta
+              reproducción de audio.
+
+            </audio>
+
+            <button type="button" (click)="
+              downloadMedia(
+                message.whatsappMessageId,
+                message.fileName
+              )
+            ">
+              Descargar audio
+            </button>
+
+          </div>
+
+          }
+
+
+          <!-- ========================= -->
+          <!-- DOCUMENTO                  -->
+          <!-- ========================= -->
+
+          @if (message.type === 'DOCUMENT') {
+
+          <div class="media-message">
+
+            <p class="media-message__document">
+
+              📄
+
+              {{
+              message.fileName
+              || 'Documento recibido'
+              }}
+
+            </p>
+
+            @if (message.caption) {
+
+            <p class="media-message__caption">
+              {{ message.caption }}
+            </p>
+
+            }
+
+            <button type="button" (click)="
+              downloadMedia(
+                message.whatsappMessageId,
+                message.fileName
+              )
+            ">
+              Descargar documento
+            </button>
+
+          </div>
+
+          }
+
+
+          <!-- ========================= -->
+          <!-- STICKER                    -->
+          <!-- ========================= -->
+
+          @if (message.type === 'STICKER') {
+
+          <div class="media-message">
+
+            <img class="media-message__image" [src]="
+              'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
+              + message.whatsappMessageId
+              + '/media'
+            " alt="Sticker recibido" />
+
+            <button type="button" (click)="
+              downloadMedia(
+                message.whatsappMessageId,
+                message.fileName
+              )
+            ">
+              Descargar sticker
+            </button>
+
+          </div>
+
+          }
+
+
+          <!-- ========================= -->
+          <!-- UBICACIÓN                  -->
+          <!-- ========================= -->
+
+          @if (message.type === 'LOCATION') {
+
+          <div class="location-message">
+
+            <strong>
+              📍 Ubicación recibida
+            </strong>
+
+            <p>
+              {{ message.body }}
+            </p>
+
+          </div>
+
+          }
+
+        </li>
+
+        }
+
+      </ol>
+
+    </div>
+
+    }
 
     } @else {
 
-      <div class="thread thread--empty">
-        No hay conversaciones registradas.
-      </div>
+    <div class="thread thread--empty">
+      No hay conversaciones registradas.
+    </div>
 
     }
 
