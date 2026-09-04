@@ -1,4 +1,4 @@
-import { Messages } from "./Message";
+import { Message } from "./Message";
 
 export interface Conversations{
 
@@ -8,5 +8,5 @@ export interface Conversations{
     closedAt: string | null;
     assignedTo: string | null;
     status: string;
-    messages: Messages[]
+    messages: Message[]
 }
