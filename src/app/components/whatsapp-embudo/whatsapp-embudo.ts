@@ -3,6 +3,7 @@ import { ServicesWhatsapp } from '../../services/services-whatsapp';
 import { Contact } from '../../interfaces/Contact';
 import { CommonModule } from '@angular/common';
 import { ServicesWebsocket } from '../../services/services-websocket';
+import { BrowserNotificationService } from '../../services/browser-notification-service';
 
 @Component({
   selector: 'whatsapp-embudo',
@@ -15,9 +16,13 @@ export class WhatsappEmbudo implements OnInit{
   @Input({ required: true })
   contact!: Contact;
 
-  constructor(private servicesWhat: ServicesWhatsapp){}
+  constructor(private servicesWhat: ServicesWhatsapp,
+    private browserNotificationService: BrowserNotificationService
+  ){}
 
   ngOnInit(): void {
+
+    this.browserNotificationService.requestPermission();
   }
 
   /**
