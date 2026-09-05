@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
+import { DashboardComponent } from "../dashboard-component/dashboard-component";
 
 interface CarouselSlide {
   image: string;
@@ -12,7 +13,7 @@ interface CarouselSlide {
 
 @Component({
   selector: 'app-home',
-  imports: [Topbar, Sidebar],
+  imports: [Topbar, Sidebar, DashboardComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
