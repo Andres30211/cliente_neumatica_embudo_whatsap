@@ -1,90 +1,95 @@
 <app-topbar></app-topbar>
 <main>
 
-    <app-sidebar></app-sidebar>
+    <div class="home">
 
-    <section class="carousel" (mouseenter)="stopAutoPlay()" (mouseleave)="startAutoPlay()"
-        aria-label="Productos destacados">
-
-        <!-- Slides -->
-        <div class="carousel__slides">
-
-            @for (slide of slides; track $index) {
-
-            <article class="carousel__slide" [class.carousel__slide--active]="currentIndex === $index">
-
-                <!-- Imagen -->
-                <img class="carousel__image" [src]="slide.image" [alt]="slide.title" />
-
-                <!-- Capa oscura -->
-                <div class="carousel__overlay"></div>
-
-                <!-- Contenido -->
-                <div class="carousel__content">
-
-                    <span class="carousel__category">
-                        SOLUCIONES NEUMÁTICAS
-                    </span>
-
-                    <h2>
-                        {{ slide.title }}
-                    </h2>
-
-                    <h3>
-                        {{ slide.subtitle }}
-                    </h3>
-
-                    <p>
-                        {{ slide.description }}
-                    </p>
-
-                    <button type="button" class="carousel__button">
-                        {{ slide.buttonText }}
-
-                        <span class="carousel__button-arrow">
-                            →
+        <app-sidebar></app-sidebar>
+    
+        <section class="carousel" (mouseenter)="stopAutoPlay()" (mouseleave)="startAutoPlay()"
+            aria-label="Productos destacados">
+    
+            <!-- Slides -->
+            <div class="carousel__slides">
+    
+                @for (slide of slides; track $index) {
+    
+                <article class="carousel__slide" [class.carousel__slide--active]="currentIndex === $index">
+    
+                    <!-- Imagen -->
+                    <img class="carousel__image" [src]="slide.image" [alt]="slide.title" />
+    
+                    <!-- Capa oscura -->
+                    <div class="carousel__overlay"></div>
+    
+                    <!-- Contenido -->
+                    <div class="carousel__content">
+    
+                        <span class="carousel__category">
+                            SOLUCIONES NEUMÁTICAS
                         </span>
-                    </button>
-
-                </div>
-
-            </article>
-
-            }
-
-        </div>
-
-
-        <!-- Flecha izquierda -->
-        <button type="button" class="carousel__arrow carousel__arrow--left" (click)="previous()"
-            aria-label="Imagen anterior">
-            <span>‹</span>
-        </button>
-
-
-        <!-- Flecha derecha -->
-        <button type="button" class="carousel__arrow carousel__arrow--right" (click)="next()"
-            aria-label="Imagen siguiente">
-            <span>›</span>
-        </button>
-
-
-        <!-- Indicadores -->
-        <div class="carousel__indicators">
-
-            @for (slide of slides; track $index) {
-
-            <button type="button" class="carousel__indicator"
-                [class.carousel__indicator--active]="currentIndex === $index" (click)="goToSlide($index)"
-                [attr.aria-label]="'Ir a la imagen ' + ($index + 1)">
+    
+                        <h2>
+                            {{ slide.title }}
+                        </h2>
+    
+                        <h3>
+                            {{ slide.subtitle }}
+                        </h3>
+    
+                        <p>
+                            {{ slide.description }}
+                        </p>
+    
+                        <button type="button" class="carousel__button">
+                            {{ slide.buttonText }}
+    
+                            <span class="carousel__button-arrow">
+                                →
+                            </span>
+                        </button>
+    
+                    </div>
+    
+                </article>
+    
+                }
+    
+            </div>
+    
+    
+            <!-- Flecha izquierda -->
+            <button type="button" class="carousel__arrow carousel__arrow--left" (click)="previous()"
+                aria-label="Imagen anterior">
+                <span>‹</span>
             </button>
+    
+    
+            <!-- Flecha derecha -->
+            <button type="button" class="carousel__arrow carousel__arrow--right" (click)="next()"
+                aria-label="Imagen siguiente">
+                <span>›</span>
+            </button>
+    
+    
+            <!-- Indicadores -->
+            <div class="carousel__indicators">
+    
+                @for (slide of slides; track $index) {
+    
+                <button type="button" class="carousel__indicator"
+                    [class.carousel__indicator--active]="currentIndex === $index" (click)="goToSlide($index)"
+                    [attr.aria-label]="'Ir a la imagen ' + ($index + 1)">
+                </button>
+    
+                }
+    
+            </div>
+    
+        </section>
 
-            }
+    </div>
 
-        </div>
 
-    </section>
-
+    <app-dashboard-component></app-dashboard-component>
     
 </main>
-<app-dashboard-component></app-dashboard-component>
