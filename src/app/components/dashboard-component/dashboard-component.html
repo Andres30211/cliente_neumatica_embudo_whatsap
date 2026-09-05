@@ -59,11 +59,27 @@
     @if (!loading()) {
 
       <!-- ===================================================
+           ERROR
+           =================================================== -->
+
+      @if (error()) {
+
+        <div class="dashboard-error">
+
+          <strong>
+            {{ error() }}
+          </strong>
+
+        </div>
+
+      }
+
+
+      <!-- ===================================================
            KPI CARDS
            =================================================== -->
 
       <section class="kpi-grid">
-
 
         <!-- CONTACTOS -->
 
@@ -178,7 +194,6 @@
 
         </article>
 
-
       </section>
 
 
@@ -188,10 +203,7 @@
 
       <section class="dashboard-grid">
 
-
-        <!-- =================================================
-             ACTIVIDAD
-             ================================================= -->
+        <!-- ACTIVIDAD -->
 
         <article class="panel panel--activity">
 
@@ -220,7 +232,7 @@
 
             @for (
               day of activityByDay();
-              track day.label
+              track day.date
             ) {
 
               <div class="chart-column">
@@ -253,9 +265,7 @@
         </article>
 
 
-        <!-- =================================================
-             INFORMACIÓN DE CONTACTOS
-             ================================================= -->
+        <!-- INFORMACIÓN DE CONTACTOS -->
 
         <article class="panel contact-quality">
 
@@ -277,7 +287,6 @@
 
 
           <div class="quality-list">
-
 
             <!-- EMAIL -->
 
@@ -388,11 +397,9 @@
 
             </div>
 
-
           </div>
 
         </article>
-
 
       </section>
 
@@ -403,10 +410,7 @@
 
       <section class="dashboard-grid dashboard-grid--secondary">
 
-
-        <!-- =================================================
-             EMBUDO
-             ================================================= -->
+        <!-- EMBUDO -->
 
         <article class="panel funnel-panel">
 
@@ -490,6 +494,7 @@
 
             }
 
+
             @if (!registrationSteps().length) {
 
               <div class="empty-state">
@@ -503,9 +508,7 @@
         </article>
 
 
-        <!-- =================================================
-             USUARIOS
-             ================================================= -->
+        <!-- USUARIOS -->
 
         <article class="panel users-panel">
 
@@ -527,7 +530,6 @@
 
 
           <div class="user-summary">
-
 
             <div class="user-main-stat">
 
@@ -606,7 +608,6 @@
 
             </div>
 
-
           </div>
 
 
@@ -661,7 +662,6 @@
 
         </article>
 
-
       </section>
 
 
@@ -671,10 +671,7 @@
 
       <section class="dashboard-grid dashboard-grid--bottom">
 
-
-        <!-- =================================================
-             CONTACTOS RECIENTES
-             ================================================= -->
+        <!-- CONTACTOS RECIENTES -->
 
         <article class="panel recent-panel">
 
@@ -709,7 +706,6 @@
 
               <div class="recent-contact">
 
-
                 <div class="contact-avatar">
 
                   {{
@@ -742,7 +738,11 @@
 
                 <div class="contact-status">
 
-                  @if (isRecentInteraction(contact.lastInteraction)) {
+                  @if (
+                    isRecentInteraction(
+                      contact.lastInteraction
+                    )
+                  ) {
 
                     <span class="status-active">
                       ● Activo
@@ -757,7 +757,14 @@
                   }
 
                   <small>
-                    {{ contact.lastInteraction | date:'dd/MM HH:mm' }}
+
+                    {{
+                      (
+                        contact.lastInteraction ||
+                        contact.createdAt
+                      ) | date:'dd/MM HH:mm'
+                    }}
+
                   </small>
 
                 </div>
@@ -799,9 +806,7 @@
         </article>
 
 
-        <!-- =================================================
-             ALERTAS / ATENCIÓN
-             ================================================= -->
+        <!-- ALERTAS / ATENCIÓN -->
 
         <article class="panel attention-panel">
 
@@ -820,7 +825,10 @@
             </div>
 
             <span class="attention-badge">
-              {{ contactsWithoutEmail() + incompleteContactsCount() }}
+              {{
+                contactsWithoutEmail() +
+                incompleteContactsCount()
+              }}
             </span>
 
           </div>
@@ -828,6 +836,7 @@
 
           <div class="attention-list">
 
+            <!-- SIN EMAIL -->
 
             <div class="attention-item">
 
@@ -854,6 +863,8 @@
             </div>
 
 
+            <!-- INCOMPLETOS -->
+
             <div class="attention-item">
 
               <div class="attention-icon attention-icon--orange">
@@ -879,6 +890,8 @@
             </div>
 
 
+            <!-- ACTIVOS -->
+
             <div class="attention-item">
 
               <div class="attention-icon attention-icon--green">
@@ -903,14 +916,11 @@
 
             </div>
 
-
           </div>
 
         </article>
 
-
       </section>
-
 
     }
 

@@ -1,9 +1,19 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+
+import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
+
 import { ServicesWhatsapp } from '../../services/services-whatsapp';
 import { UserService } from '../../services/user-service';
+
 import { Contact } from '../../interfaces/Contact';
 import { User } from '../../interfaces/User';
-import { CommonModule } from '@angular/common';
 import { ContactPage } from '../../interfaces/ContactPage';
 
 @Component({
@@ -12,7 +22,7 @@ import { ContactPage } from '../../interfaces/ContactPage';
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly whatsappService = inject(ServicesWhatsapp);
   private readonly usersService = inject(UserService);
 
@@ -43,19 +53,29 @@ export class DashboardComponent {
   });
 
   contactsWithEmail = computed(() => {
-    return this.contacts().filter((contact) => !!contact.email?.trim()).length;
+    return this.contacts().filter((contact) => {
+      return !!contact.email?.trim();
+    }).length;
   });
 
   contactsWithoutEmail = computed(() => {
-    return this.totalContacts() - this.contactsWithEmail();
+    return Math.max(
+      0,
+      this.totalContacts() - this.contactsWithEmail()
+    );
   });
 
   contactsWithCompany = computed(() => {
-    return this.contacts().filter((contact) => !!contact.company?.trim()).length;
+    return this.contacts().filter((contact) => {
+      return !!contact.company?.trim();
+    }).length;
   });
 
   contactsWithoutCompany = computed(() => {
-    return this.totalContacts() - this.contactsWithCompany();
+    return Math.max(
+      0,
+      this.totalContacts() - this.contactsWithCompany()
+    );
   });
 
   // ============================================================
@@ -63,19 +83,27 @@ export class DashboardComponent {
   // ============================================================
 
   emailPercentage = computed(() => {
-    if (this.totalContacts() === 0) {
+    const total = this.totalContacts();
+
+    if (total === 0) {
       return 0;
     }
 
-    return Math.round((this.contactsWithEmail() / this.totalContacts()) * 100);
+    return Math.round(
+      (this.contactsWithEmail() / total) * 100
+    );
   });
 
   companyPercentage = computed(() => {
-    if (this.totalContacts() === 0) {
+    const total = this.totalContacts();
+
+    if (total === 0) {
       return 0;
     }
 
-    return Math.round((this.contactsWithCompany() / this.totalContacts()) * 100);
+    return Math.round(
+      (this.contactsWithCompany() / total) * 100
+    );
   });
 
   // ============================================================
@@ -92,9 +120,20 @@ export class DashboardComponent {
         return false;
       }
 
-      const interactionDate = new Date(contact.lastInteraction).getTime();
+      const interactionDate = new Date(
+        contact.lastInteraction
+      ).getTime();
 
-      return now - interactionDate <= twentyFourHours;
+      if (Number.isNaN(interactionDate)) {
+        return false;
+      }
+
+      const difference = now - interactionDate;
+
+      return (
+        difference >= 0 &&
+        difference <= twentyFourHours
+      );
     });
   });
 
@@ -103,7 +142,7 @@ export class DashboardComponent {
   });
 
   // ============================================================
-  // CONTACTOS NUEVOS
+  // CONTACTOS NUEVOS HOY
   // ============================================================
 
   newContactsToday = computed(() => {
@@ -115,6 +154,10 @@ export class DashboardComponent {
       }
 
       const date = new Date(contact.createdAt);
+
+      if (Number.isNaN(date.getTime())) {
+        return false;
+      }
 
       return (
         date.getDate() === today.getDate() &&
@@ -130,11 +173,23 @@ export class DashboardComponent {
 
   incompleteContacts = computed(() => {
     return this.contacts().filter((contact) => {
-      const step = contact.registrationStep?.toLowerCase()?.trim();
+      const step = contact.registrationStep
+        ?.toLowerCase()
+        ?.trim();
 
-      return (
-        step && !['completed', 'complete', 'finalizado', 'completado', 'finished'].includes(step)
-      );
+      if (!step) {
+        return false;
+      }
+
+      return ![
+        'completed',
+        'complete',
+        'finalizado',
+        'finalizada',
+        'completado',
+        'completada',
+        'finished',
+      ].includes(step);
     });
   });
 
@@ -148,10 +203,20 @@ export class DashboardComponent {
 
   recentContacts = computed(() => {
     return [...this.contacts()]
+      .filter((contact) => {
+        return !!(
+          contact.lastInteraction ||
+          contact.createdAt
+        );
+      })
       .sort((a, b) => {
-        const dateA = new Date(a.lastInteraction || a.createdAt).getTime();
+        const dateA = new Date(
+          a.lastInteraction || a.createdAt
+        ).getTime();
 
-        const dateB = new Date(b.lastInteraction || b.createdAt).getTime();
+        const dateB = new Date(
+          b.lastInteraction || b.createdAt
+        ).getTime();
 
         return dateB - dateA;
       })
@@ -167,12 +232,27 @@ export class DashboardComponent {
   });
 
   enabledUsers = computed(() => {
-    return this.users().filter((user) => user.enabled).length;
+    return this.users().filter((user) => {
+      return user.enabled === true;
+    }).length;
   });
 
   disabledUsers = computed(() => {
-    return this.users().filter((user) => !user.enabled).length;
+    return this.users().filter((user) => {
+      return user.enabled === false;
+    }).length;
   });
+
+  // ============================================================
+  // NORMALIZACIÓN DE ROLES
+  // ============================================================
+
+  private normalizeRole(role: unknown): string {
+    return String(role ?? '')
+      .trim()
+      .toUpperCase()
+      .replace(/^ROLE_/, '');
+  }
 
   // ============================================================
   // VENDEDORES
@@ -180,7 +260,14 @@ export class DashboardComponent {
 
   sellers = computed(() => {
     return this.users().filter((user) => {
-      return user.roles?.some((role) => String(role).toUpperCase() === 'VENDEDOR');
+      return user.roles?.some((role) => {
+        const normalizedRole = this.normalizeRole(role);
+
+        return (
+          normalizedRole === 'VENDEDOR' ||
+          normalizedRole === 'SELLER'
+        );
+      });
     });
   });
 
@@ -194,12 +281,15 @@ export class DashboardComponent {
 
   administrators = computed(() => {
     return this.users().filter((user) => {
-      return user.roles?.some(
-        (role) =>
-          String(role).toUpperCase() === 'ADMIN' ||
-          String(role).toUpperCase() === 'ADMINISTRADOR' ||
-          String(role).toUpperCase() === 'ADMINISTRATOR',
-      );
+      return user.roles?.some((role) => {
+        const normalizedRole = this.normalizeRole(role);
+
+        return (
+          normalizedRole === 'ADMIN' ||
+          normalizedRole === 'ADMINISTRADOR' ||
+          normalizedRole === 'ADMINISTRATOR'
+        );
+      });
     });
   });
 
@@ -215,9 +305,14 @@ export class DashboardComponent {
     const map = new Map<string, number>();
 
     this.contacts().forEach((contact) => {
-      const step = contact.registrationStep?.trim() || 'Sin información';
+      const step =
+        contact.registrationStep?.trim() ||
+        'Sin información';
 
-      map.set(step, (map.get(step) || 0) + 1);
+      map.set(
+        step,
+        (map.get(step) || 0) + 1
+      );
     });
 
     const total = this.totalContacts();
@@ -227,14 +322,17 @@ export class DashboardComponent {
         return {
           name,
           count,
-          percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+          percentage:
+            total > 0
+              ? Math.round((count / total) * 100)
+              : 0,
         };
       })
       .sort((a, b) => b.count - a.count);
   });
 
   // ============================================================
-  // PASO CON MAYOR CANTIDAD DE CONTACTOS
+  // PASO CON MAYOR CANTIDAD
   // ============================================================
 
   mainRegistrationStep = computed(() => {
@@ -248,15 +346,20 @@ export class DashboardComponent {
   });
 
   // ============================================================
-  // MÉTRICAS DE ACTIVIDAD
+  // ACTIVIDAD POR DÍA
   // ============================================================
 
   activityByDay = computed(() => {
-    const result = [];
+    const result: {
+      label: string;
+      date: string;
+      count: number;
+    }[] = [];
 
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
 
+      date.setHours(0, 0, 0, 0);
       date.setDate(date.getDate() - i);
 
       const count = this.contacts().filter((contact) => {
@@ -264,7 +367,13 @@ export class DashboardComponent {
           return false;
         }
 
-        const contactDate = new Date(contact.createdAt);
+        const contactDate = new Date(
+          contact.createdAt
+        );
+
+        if (Number.isNaN(contactDate.getTime())) {
+          return false;
+        }
 
         return (
           contactDate.getDate() === date.getDate() &&
@@ -274,7 +383,11 @@ export class DashboardComponent {
       }).length;
 
       result.push({
-        label: date.toLocaleDateString('es-CO', { weekday: 'short' }).replace('.', ''),
+        label: date
+          .toLocaleDateString('es-CO', {
+            weekday: 'short',
+          })
+          .replace('.', ''),
 
         date: date.toLocaleDateString('es-CO', {
           day: 'numeric',
@@ -289,7 +402,9 @@ export class DashboardComponent {
   });
 
   maxActivity = computed(() => {
-    const values = this.activityByDay().map((item) => item.count);
+    const values = this.activityByDay().map(
+      (item) => item.count
+    );
 
     return Math.max(...values, 1);
   });
@@ -299,19 +414,31 @@ export class DashboardComponent {
   // ============================================================
 
   enabledUsersPercentage = computed(() => {
-    if (!this.totalUsers()) {
+    const total = this.totalUsers();
+
+    if (total === 0) {
       return 0;
     }
 
-    return Math.round((this.enabledUsers() / this.totalUsers()) * 100);
+    return Math.round(
+      (this.enabledUsers() / total) * 100
+    );
   });
 
   // ============================================================
-  // CARGA INICIAL
+  // INICIALIZACIÓN
   // ============================================================
 
   ngOnInit(): void {
     this.loadDashboard();
+  }
+
+  // ============================================================
+  // CARGAR TODOS LOS CONTACTOS
+  // ============================================================
+
+  private loadAllContacts() {
+    return this.whatsappService.getContacts(0);
   }
 
   // ============================================================
@@ -320,39 +447,86 @@ export class DashboardComponent {
 
   loadDashboard(): void {
     this.loading.set(true);
-
     this.error.set(null);
 
     // ----------------------------------------------------------
-    // CONTACTOS
+    // PRIMERA PÁGINA DE CONTACTOS + USUARIOS
     // ----------------------------------------------------------
 
-    this.whatsappService.getContacts().subscribe({
-      next: (response: ContactPage) => {
-        this.contacts.set(response.content || []);
+    forkJoin({
+      contactsPage: this.loadAllContacts(),
+      users: this.usersService.getUsers(),
+    }).subscribe({
+      next: ({ contactsPage, users }) => {
+        const totalPages = contactsPage.totalPages || 1;
+
+        // ------------------------------------------------------
+        // SI SOLO EXISTE UNA PÁGINA
+        // ------------------------------------------------------
+
+        if (totalPages <= 1) {
+          this.contacts.set(
+            contactsPage.content || []
+          );
+
+          this.users.set(users || []);
+
+          this.loading.set(false);
+
+          return;
+        }
+
+        // ------------------------------------------------------
+        // CARGAR LAS PÁGINAS RESTANTES
+        // ------------------------------------------------------
+
+        const remainingRequests = [];
+
+        for (let page = 1; page < totalPages; page++) {
+          remainingRequests.push(
+            this.whatsappService.getContacts(page)
+          );
+        }
+
+        forkJoin(remainingRequests).subscribe({
+          next: (pages: ContactPage[]) => {
+            const allContacts: Contact[] = [
+              ...(contactsPage.content || []),
+              ...pages.flatMap(
+                (page) => page.content || []
+              ),
+            ];
+
+            this.contacts.set(allContacts);
+            this.users.set(users || []);
+
+            this.loading.set(false);
+          },
+
+          error: (error) => {
+            console.error(
+              'Error cargando páginas de contactos:',
+              error
+            );
+
+            this.error.set(
+              'No fue posible cargar todos los contactos.'
+            );
+
+            this.loading.set(false);
+          },
+        });
       },
 
       error: (error) => {
-        console.error('Error cargando contactos:', error);
-        this.error.set('No fue posible cargar los contactos.');
-      },
-    });
+        console.error(
+          'Error cargando dashboard:',
+          error
+        );
 
-    // ----------------------------------------------------------
-    // USUARIOS
-    // ----------------------------------------------------------
-
-    this.usersService.getUsers().subscribe({
-      next: (users: User[]) => {
-        this.users.set(users || []);
-
-        this.loading.set(false);
-      },
-
-      error: (error) => {
-        console.error('Error cargando usuarios:', error);
-
-        this.error.set('No fue posible cargar los usuarios.');
+        this.error.set(
+          'No fue posible cargar la información del dashboard.'
+        );
 
         this.loading.set(false);
       },
@@ -363,26 +537,49 @@ export class DashboardComponent {
   // TRACKING
   // ============================================================
 
-  trackContact(index: number, contact: Contact): string {
+  trackContact(
+    index: number,
+    contact: Contact
+  ): string {
     return contact.id;
   }
 
-  trackUser(index: number, user: User): string {
+  trackUser(
+    index: number,
+    user: User
+  ): string {
     return user.id;
   }
 
-  isRecentInteraction(lastInteraction: string | Date | null): boolean {
-  if (!lastInteraction) {
-    return false;
+  // ============================================================
+  // INTERACCIÓN RECIENTE
+  // ============================================================
+
+  isRecentInteraction(
+    lastInteraction: string | Date | null
+  ): boolean {
+    if (!lastInteraction) {
+      return false;
+    }
+
+    const now = Date.now();
+
+    const interactionTime =
+      new Date(lastInteraction).getTime();
+
+    if (Number.isNaN(interactionTime)) {
+      return false;
+    }
+
+    const twentyFourHours =
+      24 * 60 * 60 * 1000;
+
+    const difference =
+      now - interactionTime;
+
+    return (
+      difference >= 0 &&
+      difference < twentyFourHours
+    );
   }
-
-  const now = Date.now();
-  const interactionTime = new Date(lastInteraction).getTime();
-  const twentyFourHours = 24 * 60 * 60 * 1000;
-
-  return (
-    interactionTime <= now &&
-    now - interactionTime < twentyFourHours
-  );
-}
 }
