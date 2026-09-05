@@ -82,4 +82,25 @@ export class Topbar implements OnInit{
 
   }
 
+  obtenerIniciales(nombre: string | null | undefined): string {
+
+    if (!nombre) {
+      return 'US';
+    }
+
+    const palabras = nombre
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (palabras.length === 1) {
+      return palabras[0].substring(0, 2).toUpperCase();
+    }
+
+    return (
+      palabras[0].charAt(0) +
+      palabras[1].charAt(0)
+    ).toUpperCase();
+  }
+
 }

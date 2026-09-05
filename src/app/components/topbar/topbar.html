@@ -1,187 +1,392 @@
 <header class="topbar">
 
-  <!-- BUSCADOR -->
-  <div class="topbar__search">
+  <!-- =====================================================
+       BIENVENIDA
+       ===================================================== -->
 
-    <span class="topbar__search-icon">
-      ⌕
-    </span>
+  <div class="topbar__welcome">
 
-    <input
-      type="text"
-      placeholder="Buscar tus contactos..."
-    />
+    <h1>
+      ¡Bienvenido, {{ nombre }}! <span>👋</span>
+    </h1>
+
+    <p>
+      Aquí tienes el resumen general de tu CRM.
+    </p>
 
   </div>
 
-  <div class="notification-container">
 
-  <!-- CAMPANA -->
+  <!-- =====================================================
+       ACCIONES DEL TOPBAR
+       ===================================================== -->
 
-  <button
-    class="notification-button"
-    (click)="toggleNotifications()"
-  >
+  <div class="topbar__actions">
 
-    <span class="bell">🔔</span>
 
-    @if (unreadCount > 0) {
+    <!-- ===================================================
+         BUSCADOR
+         =================================================== -->
 
-      <span class="notification-badge">
-        {{ unreadCount }}
+    <div class="topbar__search">
+
+      <span class="topbar__search-icon">
+
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle
+            cx="11"
+            cy="11"
+            r="7"
+          ></circle>
+
+          <path
+            d="M20 20l-4-4"
+          ></path>
+
+        </svg>
+
       </span>
 
-    }
 
-  </button>
-
-
-  <!-- PANEL -->
-
-  @if (isOpen) {
-
-    <div class="notification-panel">
-
-      <div class="notification-header">
-
-        <div>
-          <h3>Notificaciones</h3>
-
-          <span>
-            {{ notifications.length }} notificaciones
-          </span>
-        </div>
-
-
-        @if (notifications.length > 0) {
-
-          <button
-            class="delete-all"
-            (click)="deleteAll()"
-          >
-            Eliminar todas
-          </button>
-
-        }
-
-      </div>
-
-
-      <!-- SIN NOTIFICACIONES -->
-
-      @if (notifications.length === 0) {
-
-        <div class="empty-notifications">
-
-          <div class="empty-icon">
-            🔔
-          </div>
-
-          <p>No tienes notificaciones</p>
-
-          <span>
-            Las nuevas conversaciones aparecerán aquí.
-          </span>
-
-        </div>
-
-      }
-
-
-      <!-- LISTA -->
-
-      @for (
-        notification of notifications;
-        track notification.id
-      ) {
-
-        <div class="notification-item">
-
-          <div class="notification-icon">
-            💬
-          </div>
-
-
-          <div class="notification-content">
-
-            <strong>
-              {{ notification.title }}
-            </strong>
-
-            <p>
-              {{ notification.message }}
-            </p>
-
-            <small>
-              {{ notification.createdAt | date:'short' }}
-            </small>
-
-          </div>
-
-
-          <button
-            class="delete-button"
-            title="Eliminar notificación"
-            (click)="deleteNotification(notification.id)"
-          >
-
-            🗑️
-
-          </button>
-
-        </div>
-
-      }
+      <input
+        type="text"
+        placeholder="Buscar contactos, empresas, oportunidades..."
+      />
 
     </div>
 
-  }
 
-</div>
+    <!-- ===================================================
+         NOTIFICACIONES
+         =================================================== -->
 
-  <!-- USUARIO -->
-  <div class="topbar__user">
+    <div class="notification-container">
 
-    <div class="topbar__avatar">
-      👤
-    </div>
-
-    <span class="topbar__username">
-      {{ this.nombre }}
-    </span>
-
-    <!-- BOTÓN DEL MENÚ -->
-    <div class="topbar__menu">
 
       <button
         type="button"
-        class="topbar__arrow"
+        class="notification-button"
+        (click)="toggleNotifications()"
+        aria-label="Abrir notificaciones"
+      >
+
+        <svg
+          class="notification-bell"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+          ></path>
+
+          <path
+            d="M10 21h4"
+          ></path>
+
+        </svg>
+
+
+        @if (unreadCount > 0) {
+
+          <span class="notification-badge">
+            {{ unreadCount }}
+          </span>
+
+        }
+
+      </button>
+
+
+      <!-- =================================================
+           PANEL DE NOTIFICACIONES
+           ================================================= -->
+
+      @if (isOpen) {
+
+        <div class="notification-panel">
+
+
+          <div class="notification-header">
+
+            <div>
+
+              <h3>
+                Notificaciones
+              </h3>
+
+              <span>
+                {{ notifications.length }} notificaciones
+              </span>
+
+            </div>
+
+
+            @if (notifications.length > 0) {
+
+              <button
+                type="button"
+                class="delete-all"
+                (click)="deleteAll()"
+              >
+                Eliminar todas
+              </button>
+
+            }
+
+          </div>
+
+
+          <!-- SIN NOTIFICACIONES -->
+
+          @if (notifications.length === 0) {
+
+            <div class="empty-notifications">
+
+              <div class="empty-icon">
+                🔔
+              </div>
+
+              <p>
+                No tienes notificaciones
+              </p>
+
+              <span>
+                Las nuevas conversaciones aparecerán aquí.
+              </span>
+
+            </div>
+
+          }
+
+
+          <!-- LISTA DE NOTIFICACIONES -->
+
+          @for (
+            notification of notifications;
+            track notification.id
+          ) {
+
+            <div class="notification-item">
+
+
+              <div class="notification-icon">
+                💬
+              </div>
+
+
+              <div class="notification-content">
+
+                <strong>
+                  {{ notification.title }}
+                </strong>
+
+                <p>
+                  {{ notification.message }}
+                </p>
+
+                <small>
+                  {{ notification.createdAt | date:'short' }}
+                </small>
+
+              </div>
+
+
+              <button
+                type="button"
+                class="delete-button"
+                title="Eliminar notificación"
+                (click)="deleteNotification(notification.id)"
+              >
+
+                🗑️
+
+              </button>
+
+            </div>
+
+          }
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ===================================================
+         CALENDARIO
+         =================================================== -->
+
+    <button
+      type="button"
+      class="topbar__icon-button"
+      aria-label="Calendario"
+    >
+
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="17"
+          rx="2"
+        ></rect>
+
+        <path
+          d="M16 2v4"
+        ></path>
+
+        <path
+          d="M8 2v4"
+        ></path>
+
+        <path
+          d="M3 10h18"
+        ></path>
+
+      </svg>
+
+    </button>
+
+
+    <!-- ===================================================
+         USUARIO
+         =================================================== -->
+
+    <div class="topbar__user">
+
+
+      <!-- AVATAR -->
+
+      <button
+        type="button"
+        class="topbar__avatar"
         (click)="toggleMenu()"
         [attr.aria-expanded]="menuAbierto"
         aria-label="Abrir menú de usuario"
       >
-        ⌄
+
+        {{ obtenerIniciales(nombre) }}
+
       </button>
 
 
-      <!-- MENÚ DESPLEGABLE -->
-      <div
-        class="topbar__dropdown"
-        *ngIf="menuAbierto">
+      <!-- NOMBRE -->
+
+      <span class="topbar__username">
+        {{ nombre }}
+      </span>
+
+
+      <!-- FLECHA / MENÚ -->
+
+      <div class="topbar__menu">
+
 
         <button
           type="button"
-          class="topbar__logout"
-          (click)="cerrarSesion()"
+          class="topbar__arrow"
+          (click)="toggleMenu()"
+          [attr.aria-expanded]="menuAbierto"
+          aria-label="Abrir menú de usuario"
         >
-          <span class="topbar__logout-icon">
-            ↪
-          </span>
 
-          <span>
-            Cerrar sesión
-          </span>
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M6 9l6 6 6-6"
+            ></path>
+
+          </svg>
+
         </button>
+
+
+        <!-- ===============================================
+             MENÚ DE USUARIO
+             =============================================== -->
+
+        @if (menuAbierto) {
+
+          <div class="topbar__dropdown">
+
+
+            <div class="topbar__dropdown-user">
+
+              <div class="topbar__dropdown-avatar">
+
+                {{ obtenerIniciales(nombre) }}
+
+              </div>
+
+
+              <div>
+
+                <strong>
+                  {{ nombre }}
+                </strong>
+
+                <span>
+                  Usuario del CRM
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="topbar__dropdown-divider"></div>
+
+
+            <button
+              type="button"
+              class="topbar__logout"
+              (click)="cerrarSesion()"
+            >
+
+              <span class="topbar__logout-icon">
+
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+
+                  <path
+                    d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                  ></path>
+
+                  <path
+                    d="M16 17l5-5-5-5"
+                  ></path>
+
+                  <path
+                    d="M21 12H9"
+                  ></path>
+
+                </svg>
+
+              </span>
+
+              <span>
+                Cerrar sesión
+              </span>
+
+            </button>
+
+          </div>
+
+        }
 
       </div>
 
