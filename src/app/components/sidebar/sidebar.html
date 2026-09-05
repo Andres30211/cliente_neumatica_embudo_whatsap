@@ -1,32 +1,39 @@
 <aside class="sidebar">
 
+  <!-- LOGO -->
   <div class="sidebar__brand">
-
     <div class="sidebar__logo">
-      <img src="../../../../public/ico.png" alt="logo">
+      <img src="../../../../public/ico.png" alt="Neumática Industrial S.A.S.">
     </div>
-
   </div>
 
 
+  <!-- MENÚ -->
   <nav class="sidebar__nav">
 
+    <!-- TABLERO -->
     <a
       [routerLink]="['/home']"
       routerLinkActive="sidebar__item--active"
+      /* [routerLinkActiveOptions]="{ exact: true }" */
       class="sidebar__item"
     >
-
       <span class="sidebar__icon">
-        ⏳
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+          <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+          <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+          <rect x="14" y="14" width="6" height="6" rx="1"></rect>
+        </svg>
       </span>
 
       <span class="sidebar__text">
         Tablero
       </span>
-
     </a>
 
+
+    <!-- EMBUDO -->
     @if (!this.meRol('ROLE_USER')) {
 
       <a
@@ -34,19 +41,21 @@
         routerLinkActive="sidebar__item--active"
         class="sidebar__item"
       >
-  
         <span class="sidebar__icon">
-          ▦
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16l-6.2 7v5.5l-3.6 1.8V12L4 5z"></path>
+          </svg>
         </span>
-  
+
         <span class="sidebar__text">
           Embudo
         </span>
-  
       </a>
 
     }
 
+
+    <!-- USUARIOS -->
     @if (this.meRol('ROLE_ADMIN')) {
 
       <a
@@ -54,53 +63,68 @@
         routerLinkActive="sidebar__item--active"
         class="sidebar__item"
       >
-  
         <span class="sidebar__icon">
-          ●
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="8" r="3"></circle>
+            <path d="M3.5 19c.7-3 2.5-4.5 5.5-4.5s4.8 1.5 5.5 4.5"></path>
+            <path d="M15 6.5a3 3 0 0 1 0 5.8"></path>
+            <path d="M16 14.8c2.4.4 3.8 1.8 4.5 4.2"></path>
+          </svg>
         </span>
-  
+
         <span class="sidebar__text">
           Usuarios
         </span>
-  
       </a>
-      
+
     }
 
+
+    <!-- ASISTENCIA -->
     @if (this.meRol('ROLE_ADMIN') || this.meRol('ROLE_VENDEDOR')) {
+
       <a
         [routerLink]="['/attendance']"
         routerLinkActive="sidebar__item--active"
         class="sidebar__item"
       >
-
         <span class="sidebar__icon">
-          ▥
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="15" rx="2"></rect>
+            <path d="M8 3v4"></path>
+            <path d="M16 3v4"></path>
+            <path d="M4 10h16"></path>
+            <path d="m8 15 2 2 5-5"></path>
+          </svg>
         </span>
 
         <span class="sidebar__text">
           Asistencia
         </span>
-
       </a>
+
     }
 
-    <!-- <a
-      routerLink="/settings"
-      routerLinkActive="sidebar__item--active"
-      class="sidebar__item"
-    >
-
-      <span class="sidebar__icon">
-        ⚙
-      </span>
-
-      <span class="sidebar__text">
-        Ajustes
-      </span>
-
-    </a> -->
-
   </nav>
+
+
+  <!-- PARTE INFERIOR -->
+  <div class="sidebar__footer">
+
+    <div class="sidebar__footer-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3a9 9 0 1 0 9 9"></path>
+        <path d="M12 7v5l3 2"></path>
+        <path d="M16 3h5v5"></path>
+        <path d="m21 3-5 5"></path>
+      </svg>
+    </div>
+
+    <div class="sidebar__footer-text">
+      <strong>Neumática</strong>
+      <span>Industrial S.A.S.</span>
+    </div>
+
+  </div>
 
 </aside>

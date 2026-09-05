@@ -1,198 +1,491 @@
 :host {
-
   display: block;
-
   flex-shrink: 0;
-
   width: 178px;
 }
 
 
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
 .sidebar {
-
   position: sticky;
-
   top: 0;
 
-  height: 100vh;
-
   width: 178px;
+  height: 100vh;
 
   box-sizing: border-box;
 
-  background:
-    linear-gradient(
-      180deg,
-      #edc205 0%,
-      #c9a918 55%,
-      #c7aa3f 100%
-    );
+  display: flex;
+  flex-direction: column;
 
-    
-    overflow: hidden;
-  }
-  
-.sidebar__text{
-  color: #0b0b0b;
+  background: #ffffff;
 
+  border-right: 1px solid #eeeeee;
+
+  overflow: hidden;
+
+  z-index: 100;
 }
 
 
-/* LOGO */
+/* =========================================================
+   LOGO
+   ========================================================= */
 
 .sidebar__brand {
-
-  height: 72px;
+  height: 92px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
+
+  padding: 12px 15px 5px;
+
+  box-sizing: border-box;
+
+  flex-shrink: 0;
 }
+
 
 .sidebar__logo {
-
-  width: 100%;
-
-  height: 48px;
+  width: 145px;
+  max-width: 100%;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  color: #fff;
-
-  font-size: 38px;
-
-  font-weight: 700;
-
-  /* transform: rotate(-8deg); */
-
-  margin-top: 2rem;
 }
 
-.sidebar__logo img{
 
+.sidebar__logo img {
   width: 100%;
-  /* border-radius: 50%; */
+  height: auto;
+
+  display: block;
+
+  object-fit: contain;
 }
 
 
-/* NAV */
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
 
 .sidebar__nav {
-
   display: flex;
-
   flex-direction: column;
 
   gap: 5px;
 
-  padding: 10px 8px;
+  padding: 18px 9px;
 
-  margin-top: 4rem;
+  flex: 1;
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 
-/* ITEM */
+/* Scrollbar */
+
+.sidebar__nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar__nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar__nav::-webkit-scrollbar-thumb {
+  background: #dddddd;
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   ITEMS
+   ========================================================= */
 
 .sidebar__item {
+  position: relative;
+
+  width: 100%;
+  min-height: 43px;
 
   display: flex;
-
   align-items: center;
 
   gap: 12px;
 
-  min-height: 40px;
+  padding: 0 13px;
 
-  padding: 0 10px;
+  box-sizing: border-box;
 
   border-radius: 7px;
 
-  color: rgba(255,255,255,.92);
+  color: #262626;
 
   text-decoration: none;
 
-  transition:
-    background .2s ease,
-    color .2s ease;
+  font-size: 14px;
+  font-weight: 500;
 
-  font-size: 16px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  white-space: nowrap;
 }
+
 
 .sidebar__item:hover {
-
-  background: rgba(255,255,255,.12);
+  background: #fff8d8;
+  color: #111111;
 }
+
 
 .sidebar__item--active {
+  background: #ffc900;
 
-  background: rgba(255,255,255,.24);
+  color: #111111;
 
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.08);
+  font-weight: 600;
+
+  box-shadow: none;
 }
 
 
-/* ICON */
+.sidebar__item--active:hover {
+  background: #ffc900;
+}
+
+
+/* =========================================================
+   ICONOS
+   ========================================================= */
 
 .sidebar__icon {
-
   width: 22px;
-
   min-width: 22px;
+  height: 22px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
-  color: #dce6eb;
-
-  font-size: 21px;
+  color: #242424;
 }
 
 
-/* MOBILE */
+.sidebar__icon svg {
+  width: 19px;
+  height: 19px;
 
-@media (max-width: 700px) {
+  display: block;
 
-  :host,
-  .sidebar {
+  fill: none;
+  stroke: currentColor;
 
-    width: 64px;
+  stroke-width: 1.8;
 
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+.sidebar__text {
+  color: inherit;
+
+  line-height: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.sidebar__footer {
+  width: 100%;
+
+  min-height: 82px;
+
+  padding: 13px 12px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  background: #ffc900;
+
+  flex-shrink: 0;
+}
+
+
+.sidebar__footer-icon {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  color: #252525;
+}
+
+
+.sidebar__footer-icon svg {
+  width: 22px;
+  height: 22px;
+
+  fill: none;
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+.sidebar__footer-text {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  color: #171717;
+
+  font-size: 10px;
+
+  line-height: 1.25;
+}
+
+
+.sidebar__footer-text strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+.sidebar__footer-text span {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   TABLETS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  :host {
+    width: 76px;
   }
 
-  .sidebar__item {
 
+  .sidebar {
+    width: 76px;
+  }
+
+
+  .sidebar__brand {
+    height: 82px;
+
+    padding: 10px 8px;
+  }
+
+
+  .sidebar__logo {
+    width: 60px;
+  }
+
+
+  .sidebar__nav {
+    padding: 18px 7px;
+  }
+
+
+  .sidebar__item {
     justify-content: center;
 
     padding: 0;
 
+    min-height: 45px;
   }
+
 
   .sidebar__text {
-
     display: none;
-
   }
 
-  .sidebar__nav {
 
-    padding: 10px 6px;
-
+  .sidebar__icon {
+    width: 24px;
+    min-width: 24px;
   }
+
+
+  .sidebar__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+
+  .sidebar__footer {
+    min-height: 70px;
+
+    padding: 10px;
+
+    justify-content: center;
+  }
+
+
+  .sidebar__footer-text {
+    display: none;
+  }
+
+
+  .sidebar__footer-icon {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+  }
+
+}
+
+
+/* =========================================================
+   CELULARES
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  :host {
+    width: 64px;
+  }
+
+
+  .sidebar {
+    width: 64px;
+  }
+
 
   .sidebar__brand {
+    height: 72px;
 
+    padding: 8px 6px;
+  }
+
+
+  .sidebar__logo {
+    width: 50px;
+  }
+
+
+  .sidebar__nav {
+    padding: 14px 5px;
+
+    gap: 4px;
+  }
+
+
+  .sidebar__item {
+    min-height: 44px;
+
+    border-radius: 8px;
+  }
+
+
+  .sidebar__icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+
+  .sidebar__footer {
+    min-height: 64px;
+
+    padding: 8px 5px;
+  }
+
+
+  .sidebar__footer-icon {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+  }
+
+
+  .sidebar__footer-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+}
+
+
+/* =========================================================
+   CELULARES MUY PEQUEÑOS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  :host {
+    width: 58px;
+  }
+
+
+  .sidebar {
+    width: 58px;
+  }
+
+
+  .sidebar__brand {
     height: 65px;
+  }
 
+
+  .sidebar__logo {
+    width: 45px;
+  }
+
+
+  .sidebar__nav {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+
+  .sidebar__item {
+    min-height: 42px;
+  }
+
+
+  .sidebar__footer {
+    min-height: 58px;
+  }
+
+
+  .sidebar__footer-icon {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
   }
 
 }
