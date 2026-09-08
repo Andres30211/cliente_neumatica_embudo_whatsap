@@ -1,19 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-
-export interface VisitRequest {
-
-  companyName: string;
-
-  comment: string;
-
-  latitude: number;
-
-  longitude: number;
-
-  accuracy: number;
-}
+import { HttpClient } from '@angular/common/http';
+import { Observable, from, switchMap } from 'rxjs';
 
 
 export interface VisitResponse {
@@ -43,9 +30,10 @@ export interface VisitResponse {
 
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class VisitServices {
+export class VisitService {
+
 
   private readonly apiUrl =
     'https://service-location-neumatica.onrender.com/api/visits';
@@ -61,51 +49,266 @@ export class VisitServices {
    * CREAR VISITA
    * =========================================================
    */
+
   createVisit(
-
-    request: VisitRequest,
-
+    companyName: string,
+    comment: string,
+    latitude: number,
+    longitude: number,
+    accuracy: number,
     image: File
-
   ): Observable<VisitResponse> {
 
-
-    const formData =
-      new FormData();
-
-
     /*
-     * Datos de la visita.
+     * Primero comprimimos la imagen.
      */
-    const blob =
-      new Blob(
-        [
-          JSON.stringify(request)
-        ],
-        {
-          type: 'application/json'
+
+    return from(
+      this.compressImage(image)
+    ).pipe(
+
+      /*
+       * Cuando termina la compresión,
+       * enviamos la imagen resultante.
+       */
+
+      switchMap(
+        (compressedImage) => {
+
+          const formData =
+            new FormData();
+
+
+          formData.append(
+            'companyName',
+            companyName
+          );
+
+
+          formData.append(
+            'comment',
+            comment
+          );
+
+
+          formData.append(
+            'latitude',
+            latitude.toString()
+          );
+
+
+          formData.append(
+            'longitude',
+            longitude.toString()
+          );
+
+
+          formData.append(
+            'accuracy',
+            accuracy.toString()
+          );
+
+
+          formData.append(
+            'image',
+            compressedImage,
+            'visit-image.jpg'
+          );
+
+
+          return this.http.post<VisitResponse>(
+            this.apiUrl,
+            formData
+          );
+
         }
-      );
-
-
-    formData.append(
-      'data',
-      blob
+      )
     );
+  }
 
 
-    /*
-     * Imagen.
-     */
-    formData.append(
-      'image',
-      image
-    );
+  /*
+   * =========================================================
+   * COMPRIMIR IMAGEN
+   * =========================================================
+   */
+
+  private compressImage(
+    file: File
+  ): Promise<Blob> {
+
+    return new Promise(
+      (resolve, reject) => {
+
+        const reader =
+          new FileReader();
 
 
-    return this.http.post<VisitResponse>(
-      this.apiUrl,
-      formData
+        reader.onload = (
+          event: any
+        ) => {
+
+          const image =
+            new Image();
+
+
+          image.onload = () => {
+
+            /*
+             * Tamaño máximo.
+             */
+
+            const maxWidth = 1280;
+
+            const maxHeight = 1280;
+
+
+            let width =
+              image.width;
+
+            let height =
+              image.height;
+
+
+            /*
+             * Redimensionar manteniendo
+             * proporción.
+             */
+
+            if (
+              width > maxWidth ||
+              height > maxHeight
+            ) {
+
+              const ratio =
+                Math.min(
+                  maxWidth / width,
+                  maxHeight / height
+                );
+
+
+              width =
+                Math.round(
+                  width * ratio
+                );
+
+
+              height =
+                Math.round(
+                  height * ratio
+                );
+            }
+
+
+            /*
+             * Canvas.
+             */
+
+            const canvas =
+              document.createElement(
+                'canvas'
+              );
+
+
+            canvas.width =
+              width;
+
+            canvas.height =
+              height;
+
+
+            const context =
+              canvas.getContext(
+                '2d'
+              );
+
+
+            if (!context) {
+
+              reject(
+                new Error(
+                  'No fue posible procesar la imagen.'
+                )
+              );
+
+              return;
+            }
+
+
+            /*
+             * Dibujar imagen.
+             */
+
+            context.drawImage(
+              image,
+              0,
+              0,
+              width,
+              height
+            );
+
+
+            /*
+             * Convertir a JPEG.
+             *
+             * 0.75 = 75% de calidad.
+             */
+
+            canvas.toBlob(
+              (blob) => {
+
+                if (!blob) {
+
+                  reject(
+                    new Error(
+                      'No fue posible comprimir la imagen.'
+                    )
+                  );
+
+                  return;
+                }
+
+
+                resolve(blob);
+
+              },
+
+              'image/jpeg',
+
+              0.75
+            );
+          };
+
+
+          image.onerror = () => {
+
+            reject(
+              new Error(
+                'No fue posible cargar la imagen.'
+              )
+            );
+
+          };
+
+
+          image.src =
+            event.target.result;
+        };
+
+
+        reader.onerror = () => {
+
+          reject(
+            new Error(
+              'No fue posible leer la imagen.'
+            )
+          );
+
+        };
+
+
+        reader.readAsDataURL(file);
+      }
     );
   }
 
@@ -115,6 +318,7 @@ export class VisitServices {
    * MIS VISITAS
    * =========================================================
    */
+
   getMyVisits():
     Observable<VisitResponse[]> {
 
@@ -129,21 +333,23 @@ export class VisitServices {
    * TODAS LAS VISITAS
    * =========================================================
    */
+
   getAllVisits():
     Observable<VisitResponse[]> {
 
     return this.http.get<VisitResponse[]>(
-      this.apiUrl
+      `${this.apiUrl}/today`
     );
   }
 
 
   /*
    * =========================================================
-   * VISITA POR ID
+   * BUSCAR POR ID
    * =========================================================
    */
-  getVisitById(
+
+  getById(
     id: string
   ): Observable<VisitResponse> {
 
@@ -151,5 +357,4 @@ export class VisitServices {
       `${this.apiUrl}/${id}`
     );
   }
-  
 }
