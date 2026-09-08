@@ -515,7 +515,7 @@ export class VisitService {
     Observable<VisitResponse[]> {
 
     return this.http.get<VisitResponse[]>(
-      `${this.apiUrl}/today`
+      `${this.apiUrl}`
     );
 
   }
