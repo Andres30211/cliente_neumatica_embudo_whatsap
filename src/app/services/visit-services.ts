@@ -534,7 +534,7 @@ export class VisitService {
       return imageUrl;
     }
 
-    return `${this.apiUrl}${imageUrl}`;
+    return `https://service-location-neumatica.onrender.com/${imageUrl}`;
   }
 
 
