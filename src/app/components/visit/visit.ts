@@ -88,7 +88,7 @@ export class Visit implements OnInit {
 
   loading = false;
 
-  loadingVisits = false;
+  loadingVisits = true;
 
   message = '';
 
