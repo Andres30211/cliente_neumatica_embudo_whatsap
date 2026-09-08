@@ -719,42 +719,6 @@ export class Visit implements OnInit {
 
   /*
    * =========================================================
-   * ABRIR MODAL
-   * =========================================================
-   */
-
-  openVisit(
-    visit: VisitResponse
-  ): void {
-
-    this.selectedVisit =
-      visit;
-
-    this.showModal =
-      true;
-
-  }
-
-
-  /*
-   * =========================================================
-   * CERRAR MODAL
-   * =========================================================
-   */
-
-  closeModal(): void {
-
-    this.showModal =
-      false;
-
-    this.selectedVisit =
-      undefined;
-
-  }
-
-
-  /*
-   * =========================================================
    * GOOGLE MAPS
    * =========================================================
    */
