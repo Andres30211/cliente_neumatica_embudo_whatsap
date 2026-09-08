@@ -64,7 +64,7 @@ export class VisitService {
 
   constructor(
     private http: HttpClient
-  ) {}
+  ) { }
 
 
   /*
@@ -86,158 +86,158 @@ export class VisitService {
    */
 
   createVisit(
-  formData: FormData
-): Observable<VisitResponse> {
+    formData: FormData
+  ): Observable<VisitResponse> {
 
-  /*
-   * =========================================================
-   * OBTENER IMAGEN ORIGINAL
-   * =========================================================
-   */
+    /*
+     * =========================================================
+     * OBTENER IMAGEN ORIGINAL
+     * =========================================================
+     */
 
-  const image =
-    formData.get('image');
-
-
-  /*
-   * La imagen es obligatoria.
-   */
-
-  if (!(image instanceof File)) {
-
-    throw new Error(
-      'La imagen es obligatoria.'
-    );
-
-  }
+    const image =
+      formData.get('image');
 
 
-  /*
-   * =========================================================
-   * COMPRIMIR SOLAMENTE LA IMAGEN
-   * =========================================================
-   *
-   * La petición NO se comprime.
-   *
-   * Primero reducimos la imagen y después
-   * construimos el multipart/form-data.
-   */
+    /*
+     * La imagen es obligatoria.
+     */
 
-  return from(
-    this.compressImage(image)
-  ).pipe(
+    if (!(image instanceof File)) {
 
-    switchMap(
-      compressedImage => {
+      throw new Error(
+        'La imagen es obligatoria.'
+      );
+
+    }
 
 
-        /*
-         * =====================================================
-         * DATOS DE LA VISITA
-         * =====================================================
-         */
+    /*
+     * =========================================================
+     * COMPRIMIR SOLAMENTE LA IMAGEN
+     * =========================================================
+     *
+     * La petición NO se comprime.
+     *
+     * Primero reducimos la imagen y después
+     * construimos el multipart/form-data.
+     */
 
-        const data = {
+    return from(
+      this.compressImage(image)
+    ).pipe(
 
-          companyName:
-            formData
-              .get('companyName')
-              ?.toString() || '',
-
-          comment:
-            formData
-              .get('comment')
-              ?.toString() || '',
-
-          latitude:
-            Number(
-              formData.get('latitude')
-            ),
-
-          longitude:
-            Number(
-              formData.get('longitude')
-            ),
-
-          accuracy:
-            Number(
-              formData.get('accuracy')
-            )
-
-        };
+      switchMap(
+        compressedImage => {
 
 
-        /*
-         * =====================================================
-         * CREAR NUEVO FORMDATA
-         * =====================================================
-         */
+          /*
+           * =====================================================
+           * DATOS DE LA VISITA
+           * =====================================================
+           */
 
-        const requestData =
-          new FormData();
+          const data = {
+
+            companyName:
+              formData
+                .get('companyName')
+                ?.toString() || '',
+
+            comment:
+              formData
+                .get('comment')
+                ?.toString() || '',
+
+            latitude:
+              Number(
+                formData.get('latitude')
+              ),
+
+            longitude:
+              Number(
+                formData.get('longitude')
+              ),
+
+            accuracy:
+              Number(
+                formData.get('accuracy')
+              )
+
+          };
 
 
-        /*
-         * =====================================================
-         * PARTE "data"
-         * =====================================================
-         *
-         * Spring Boot espera:
-         *
-         * @RequestPart("data")
-         * VisitRequest request
-         *
-         */
+          /*
+           * =====================================================
+           * CREAR NUEVO FORMDATA
+           * =====================================================
+           */
 
-        const jsonBlob =
-          new Blob(
-            [
-              JSON.stringify(data)
-            ],
-            {
-              type: 'application/json'
-            }
+          const requestData =
+            new FormData();
+
+
+          /*
+           * =====================================================
+           * PARTE "data"
+           * =====================================================
+           *
+           * Spring Boot espera:
+           *
+           * @RequestPart("data")
+           * VisitRequest request
+           *
+           */
+
+          const jsonBlob =
+            new Blob(
+              [
+                JSON.stringify(data)
+              ],
+              {
+                type: 'application/json'
+              }
+            );
+
+
+          requestData.append(
+            'data',
+            jsonBlob
           );
 
 
-        requestData.append(
-          'data',
-          jsonBlob
-        );
+          /*
+           * =====================================================
+           * PARTE "image"
+           * =====================================================
+           *
+           * Aquí enviamos la imagen YA COMPRIMIDA.
+           */
+
+          requestData.append(
+            'image',
+            compressedImage,
+            'visit-image.jpg'
+          );
 
 
-        /*
-         * =====================================================
-         * PARTE "image"
-         * =====================================================
-         *
-         * Aquí enviamos la imagen YA COMPRIMIDA.
-         */
+          /*
+           * =====================================================
+           * ENVIAR PETICIÓN
+           * =====================================================
+           */
 
-        requestData.append(
-          'image',
-          compressedImage,
-          'visit-image.jpg'
-        );
+          return this.http.post<VisitResponse>(
+            this.apiUrl,
+            requestData
+          );
 
+        }
+      )
 
-        /*
-         * =====================================================
-         * ENVIAR PETICIÓN
-         * =====================================================
-         */
+    );
 
-        return this.http.post<VisitResponse>(
-          this.apiUrl,
-          requestData
-        );
-
-      }
-    )
-
-  );
-
-}
+  }
 
 
   /*
@@ -521,6 +521,20 @@ export class VisitService {
       `${this.apiUrl}`
     );
 
+  }
+
+  getImageUrl(imageUrl: string): string {
+
+    if (!imageUrl) {
+      return '';
+    }
+
+    if (imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+
+    return `${this.apiUrl}${imageUrl}`;
   }
 
 

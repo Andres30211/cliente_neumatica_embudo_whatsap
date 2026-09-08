@@ -668,6 +668,11 @@ export class Visit implements OnInit {
 
   }
 
+  getImageUrl(imageUrl: string): string {
+
+    return this.visitService.getImageUrl(imageUrl);
+  }
+
 
   /*
    * =========================================================
