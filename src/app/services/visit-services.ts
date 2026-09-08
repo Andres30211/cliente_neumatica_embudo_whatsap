@@ -1,7 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, from, switchMap } from 'rxjs';
+import {
+  Injectable
+} from '@angular/core';
 
+import {
+  HttpClient
+} from '@angular/common/http';
+
+import {
+  Observable,
+  from,
+  switchMap
+} from 'rxjs';
+
+
+/*
+ * =========================================================
+ * RESPONSE
+ * =========================================================
+ */
 
 export interface VisitResponse {
 
@@ -26,8 +42,15 @@ export interface VisitResponse {
   visitedAt: string;
 
   createdAt: string;
+
 }
 
+
+/*
+ * =========================================================
+ * SERVICE
+ * =========================================================
+ */
 
 @Injectable({
   providedIn: 'root'
@@ -48,82 +71,169 @@ export class VisitService {
    * =========================================================
    * CREAR VISITA
    * =========================================================
+   *
+   * Recibe un FormData completo:
+   *
+   * companyName
+   * comment
+   * latitude
+   * longitude
+   * accuracy
+   * image
+   *
+   * La imagen se comprime antes de enviarla.
+   * =========================================================
    */
 
   createVisit(
-    companyName: string,
-    comment: string,
-    latitude: number,
-    longitude: number,
-    accuracy: number,
-    image: File
+    formData: FormData
   ): Observable<VisitResponse> {
 
+
     /*
-     * Primero comprimimos la imagen.
+     * Obtener la imagen del FormData.
+     */
+
+    const image =
+      formData.get('image');
+
+
+    /*
+     * Si no existe imagen,
+     * enviamos directamente.
+     */
+
+    if (!(image instanceof File)) {
+
+      return this.http.post<VisitResponse>(
+        this.apiUrl,
+        formData
+      );
+
+    }
+
+
+    /*
+     * Comprimir imagen.
      */
 
     return from(
       this.compressImage(image)
     ).pipe(
 
-      /*
-       * Cuando termina la compresión,
-       * enviamos la imagen resultante.
-       */
-
       switchMap(
-        (compressedImage) => {
+        compressedImage => {
 
-          const formData =
+
+          /*
+           * Crear un nuevo FormData.
+           *
+           * No modificamos el original.
+           */
+
+          const compressedFormData =
             new FormData();
 
 
-          formData.append(
-            'companyName',
-            companyName
-          );
+          /*
+           * Copiar datos.
+           */
+
+          const companyName =
+            formData.get('companyName');
 
 
-          formData.append(
-            'comment',
-            comment
-          );
+          const comment =
+            formData.get('comment');
 
 
-          formData.append(
-            'latitude',
-            latitude.toString()
-          );
+          const latitude =
+            formData.get('latitude');
 
 
-          formData.append(
-            'longitude',
-            longitude.toString()
-          );
+          const longitude =
+            formData.get('longitude');
 
 
-          formData.append(
-            'accuracy',
-            accuracy.toString()
-          );
+          const accuracy =
+            formData.get('accuracy');
 
 
-          formData.append(
+          if (companyName !== null) {
+
+            compressedFormData.append(
+              'companyName',
+              companyName.toString()
+            );
+
+          }
+
+
+          if (comment !== null) {
+
+            compressedFormData.append(
+              'comment',
+              comment.toString()
+            );
+
+          }
+
+
+          if (latitude !== null) {
+
+            compressedFormData.append(
+              'latitude',
+              latitude.toString()
+            );
+
+          }
+
+
+          if (longitude !== null) {
+
+            compressedFormData.append(
+              'longitude',
+              longitude.toString()
+            );
+
+          }
+
+
+          if (accuracy !== null) {
+
+            compressedFormData.append(
+              'accuracy',
+              accuracy.toString()
+            );
+
+          }
+
+
+          /*
+           * Agregar imagen comprimida.
+           */
+
+          compressedFormData.append(
             'image',
             compressedImage,
             'visit-image.jpg'
           );
 
 
+          /*
+           * Enviar.
+           */
+
           return this.http.post<VisitResponse>(
             this.apiUrl,
-            formData
+            compressedFormData
           );
 
         }
       )
+
     );
+
   }
 
 
@@ -138,92 +248,47 @@ export class VisitService {
   ): Promise<Blob> {
 
     return new Promise(
-      (resolve, reject) => {
+      (
+        resolve,
+        reject
+      ) => {
+
 
         const reader =
           new FileReader();
 
 
-        reader.onload = (
-          event: any
-        ) => {
+        /*
+         * Error leyendo archivo.
+         */
 
-          const image =
-            new Image();
+        reader.onerror =
+          () => {
 
+            reject(
+              new Error(
+                'No fue posible leer la imagen.'
+              )
+            );
 
-          image.onload = () => {
-
-            /*
-             * Tamaño máximo.
-             */
-
-            const maxWidth = 1280;
-
-            const maxHeight = 1280;
+          };
 
 
-            let width =
-              image.width;
+        /*
+         * Archivo cargado.
+         */
 
-            let height =
-              image.height;
+        reader.onload =
+          (event: ProgressEvent<FileReader>) => {
 
 
-            /*
-             * Redimensionar manteniendo
-             * proporción.
-             */
+            const result =
+              event.target?.result;
+
 
             if (
-              width > maxWidth ||
-              height > maxHeight
+              typeof result !== 'string'
             ) {
-
-              const ratio =
-                Math.min(
-                  maxWidth / width,
-                  maxHeight / height
-                );
-
-
-              width =
-                Math.round(
-                  width * ratio
-                );
-
-
-              height =
-                Math.round(
-                  height * ratio
-                );
-            }
-
-
-            /*
-             * Canvas.
-             */
-
-            const canvas =
-              document.createElement(
-                'canvas'
-              );
-
-
-            canvas.width =
-              width;
-
-            canvas.height =
-              height;
-
-
-            const context =
-              canvas.getContext(
-                '2d'
-              );
-
-
-            if (!context) {
 
               reject(
                 new Error(
@@ -232,84 +297,195 @@ export class VisitService {
               );
 
               return;
+
             }
 
 
-            /*
-             * Dibujar imagen.
-             */
-
-            context.drawImage(
-              image,
-              0,
-              0,
-              width,
-              height
-            );
+            const image =
+              new Image();
 
 
             /*
-             * Convertir a JPEG.
-             *
-             * 0.75 = 75% de calidad.
+             * Error cargando imagen.
              */
 
-            canvas.toBlob(
-              (blob) => {
+            image.onerror =
+              () => {
 
-                if (!blob) {
+                reject(
+                  new Error(
+                    'No fue posible cargar la imagen.'
+                  )
+                );
+
+              };
+
+
+            /*
+             * Imagen cargada.
+             */
+
+            image.onload =
+              () => {
+
+
+                /*
+                 * Tamaño máximo.
+                 */
+
+                const maxWidth =
+                  1280;
+
+                const maxHeight =
+                  1280;
+
+
+                let width =
+                  image.width;
+
+                let height =
+                  image.height;
+
+
+                /*
+                 * Mantener proporción.
+                 */
+
+                if (
+                  width > maxWidth ||
+                  height > maxHeight
+                ) {
+
+                  const ratio =
+                    Math.min(
+                      maxWidth / width,
+                      maxHeight / height
+                    );
+
+
+                  width =
+                    Math.round(
+                      width * ratio
+                    );
+
+
+                  height =
+                    Math.round(
+                      height * ratio
+                    );
+
+                }
+
+
+                /*
+                 * Crear canvas.
+                 */
+
+                const canvas =
+                  document.createElement(
+                    'canvas'
+                  );
+
+
+                canvas.width =
+                  width;
+
+                canvas.height =
+                  height;
+
+
+                const context =
+                  canvas.getContext(
+                    '2d'
+                  );
+
+
+                if (!context) {
 
                   reject(
                     new Error(
-                      'No fue posible comprimir la imagen.'
+                      'No fue posible procesar la imagen.'
                     )
                   );
 
                   return;
+
                 }
 
 
-                resolve(blob);
+                /*
+                 * Dibujar imagen.
+                 */
 
-              },
+                context.drawImage(
+                  image,
+                  0,
+                  0,
+                  width,
+                  height
+                );
 
-              'image/jpeg',
 
-              0.75
-            );
+                /*
+                 * Convertir a JPEG.
+                 *
+                 * 0.70 = 70% calidad.
+                 *
+                 * Esto ayuda a reducir considerablemente
+                 * el tamaño de la petición.
+                 */
+
+                canvas.toBlob(
+                  blob => {
+
+                    if (!blob) {
+
+                      reject(
+                        new Error(
+                          'No fue posible comprimir la imagen.'
+                        )
+                      );
+
+                      return;
+
+                    }
+
+
+                    resolve(
+                      blob
+                    );
+
+                  },
+
+                  'image/jpeg',
+
+                  0.70
+                );
+
+              };
+
+
+            /*
+             * Cargar imagen.
+             */
+
+            image.src =
+              result;
+
           };
 
 
-          image.onerror = () => {
+        /*
+         * Leer archivo.
+         */
 
-            reject(
-              new Error(
-                'No fue posible cargar la imagen.'
-              )
-            );
+        reader.readAsDataURL(
+          file
+        );
 
-          };
-
-
-          image.src =
-            event.target.result;
-        };
-
-
-        reader.onerror = () => {
-
-          reject(
-            new Error(
-              'No fue posible leer la imagen.'
-            )
-          );
-
-        };
-
-
-        reader.readAsDataURL(file);
       }
     );
+
   }
 
 
@@ -325,6 +501,7 @@ export class VisitService {
     return this.http.get<VisitResponse[]>(
       `${this.apiUrl}/me`
     );
+
   }
 
 
@@ -340,6 +517,7 @@ export class VisitService {
     return this.http.get<VisitResponse[]>(
       `${this.apiUrl}/today`
     );
+
   }
 
 
@@ -356,5 +534,7 @@ export class VisitService {
     return this.http.get<VisitResponse>(
       `${this.apiUrl}/${id}`
     );
+
   }
+
 }

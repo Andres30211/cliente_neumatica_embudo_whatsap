@@ -8,13 +8,24 @@ import {
 } from '@angular/common';
 
 import {
-  FormsModule
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
 } from '@angular/forms';
 
-import { Topbar } from '../topbar/topbar';
+import {
+  Topbar
+} from '../topbar/topbar';
 
-import { Sidebar } from '../sidebar/sidebar';
-import { VisitResponse, VisitServices } from '../../services/visit-services';
+import {
+  Sidebar
+} from '../sidebar/sidebar';
+
+import {
+  VisitResponse,
+  VisitService
+} from '../../services/visit-services';
 
 
 @Component({
@@ -24,7 +35,7 @@ import { VisitResponse, VisitServices } from '../../services/visit-services';
 
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     Topbar,
     Sidebar
   ],
@@ -38,13 +49,18 @@ export class Visit implements OnInit {
 
   /*
    * =========================================================
-   * FORMULARIO
+   * FORMULARIO REACTIVO
    * =========================================================
    */
 
-  companyName = '';
+  visitForm: FormGroup;
 
-  comment = '';
+
+  /*
+   * =========================================================
+   * IMAGEN
+   * =========================================================
+   */
 
   selectedImage?: File;
 
@@ -101,22 +117,78 @@ export class Visit implements OnInit {
 
   /*
    * =========================================================
-   * BUSQUEDA
+   * CONSTRUCTOR
    * =========================================================
    */
 
-  searchTerm = '';
-
-
   constructor(
-    private visitService: VisitServices
-  ) {}
+    private fb: FormBuilder,
+    private visitService: VisitService
+  ) {
 
+    /*
+     * Formulario reactivo.
+     */
+
+    this.visitForm =
+      this.fb.group({
+
+        companyName: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(200)
+          ]
+        ],
+
+        comment: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(5000)
+          ]
+        ],
+
+        searchTerm: [
+          ''
+        ]
+
+      });
+
+  }
+
+
+  /*
+   * =========================================================
+   * INIT
+   * =========================================================
+   */
 
   ngOnInit(): void {
 
     this.loadVisits();
 
+  }
+
+
+  /*
+   * =========================================================
+   * GETTERS DEL FORMULARIO
+   * =========================================================
+   */
+
+  get companyName() {
+    return this.visitForm.get('companyName');
+  }
+
+
+  get comment() {
+    return this.visitForm.get('comment');
+  }
+
+
+  get searchTerm() {
+    return this.visitForm.get('searchTerm');
   }
 
 
@@ -151,18 +223,23 @@ export class Visit implements OnInit {
     /*
      * Validar tipo.
      */
+
     if (!file.type.startsWith('image/')) {
 
       this.errorMessage =
         'Selecciona una imagen válida.';
 
+      input.value = '';
+
       return;
+
     }
 
 
     /*
-     * Máximo 5 MB.
+     * Máximo 5 MB antes de compresión.
      */
+
     if (
       file.size >
       5 * 1024 * 1024
@@ -171,16 +248,32 @@ export class Visit implements OnInit {
       this.errorMessage =
         'La imagen no puede superar 5 MB.';
 
+      input.value = '';
+
       return;
+
     }
 
 
-    this.selectedImage = file;
+    /*
+     * Limpiar error.
+     */
+
+    this.errorMessage = '';
+
+
+    /*
+     * Guardar archivo.
+     */
+
+    this.selectedImage =
+      file;
 
 
     /*
      * Preview.
      */
+
     const reader =
       new FileReader();
 
@@ -190,6 +283,15 @@ export class Visit implements OnInit {
 
         this.imagePreview =
           reader.result as string;
+
+      };
+
+
+    reader.onerror =
+      () => {
+
+        this.errorMessage =
+          'No fue posible mostrar la imagen.';
 
       };
 
@@ -213,6 +315,23 @@ export class Visit implements OnInit {
     this.imagePreview =
       null;
 
+
+    /*
+     * Limpiar input de archivo.
+     */
+
+    const input =
+      document.getElementById(
+        'imageInput'
+      ) as HTMLInputElement | null;
+
+
+    if (input) {
+
+      input.value = '';
+
+    }
+
   }
 
 
@@ -230,25 +349,31 @@ export class Visit implements OnInit {
 
 
     /*
-     * Validaciones.
+     * Marcar campos como tocados.
      */
-    if (!this.companyName.trim()) {
+
+    this.visitForm.markAllAsTouched();
+
+
+    /*
+     * Validar formulario.
+     */
+
+    if (
+      this.visitForm.invalid
+    ) {
 
       this.errorMessage =
-        'Ingresa el nombre de la empresa.';
+        'Completa correctamente los campos obligatorios.';
 
       return;
+
     }
 
 
-    if (!this.comment.trim()) {
-
-      this.errorMessage =
-        'Ingresa un comentario.';
-
-      return;
-    }
-
+    /*
+     * Validar imagen.
+     */
 
     if (!this.selectedImage) {
 
@@ -256,6 +381,18 @@ export class Visit implements OnInit {
         'Debes subir una fotografía.';
 
       return;
+
+    }
+
+
+    /*
+     * Evitar doble envío.
+     */
+
+    if (this.loading) {
+
+      return;
+
     }
 
 
@@ -263,8 +400,11 @@ export class Visit implements OnInit {
 
 
     /*
-     * Obtener GPS en tiempo real.
+     * =======================================================
+     * GPS
+     * =======================================================
      */
+
     if (!navigator.geolocation) {
 
       this.loading = false;
@@ -273,12 +413,17 @@ export class Visit implements OnInit {
         'Tu dispositivo no soporta geolocalización.';
 
       return;
+
     }
 
 
     navigator.geolocation.getCurrentPosition(
 
       position => {
+
+        /*
+         * Guardar coordenadas.
+         */
 
         this.latitude =
           position.coords.latitude;
@@ -291,39 +436,79 @@ export class Visit implements OnInit {
 
 
         /*
-         * Crear request.
+         * Crear FormData.
          */
-        const request = {
 
-          companyName:
-            this.companyName.trim(),
-
-          comment:
-            this.comment.trim(),
-
-          latitude:
-            this.latitude,
-
-          longitude:
-            this.longitude,
-
-          accuracy:
-            this.accuracy
-
-        };
+        const formData =
+          new FormData();
 
 
         /*
-         * Enviar.
+         * Datos del formulario.
          */
+
+        formData.append(
+          'companyName',
+          this.companyName?.value.trim()
+        );
+
+
+        formData.append(
+          'comment',
+          this.comment?.value.trim()
+        );
+
+
+        /*
+         * GPS.
+         */
+
+        formData.append(
+          'latitude',
+          this.latitude.toString()
+        );
+
+
+        formData.append(
+          'longitude',
+          this.longitude.toString()
+        );
+
+
+        formData.append(
+          'accuracy',
+          this.accuracy.toString()
+        );
+
+
+        /*
+         * Imagen.
+         */
+
+        formData.append(
+          'image',
+          this.selectedImage!,
+          this.selectedImage!.name
+        );
+
+
+        /*
+         * ===================================================
+         * ENVIAR AL BACKEND
+         * ===================================================
+         */
+
         this.visitService
-          .createVisit(
-            request,
-            this.selectedImage!
-          )
+          .createVisit(formData)
           .subscribe({
 
             next: response => {
+
+              console.log(
+                'Visita creada:',
+                response
+              );
+
 
               this.loading = false;
 
@@ -335,12 +520,14 @@ export class Visit implements OnInit {
               /*
                * Limpiar formulario.
                */
+
               this.resetForm();
 
 
               /*
-               * Actualizar visitas.
+               * Actualizar historial.
                */
+
               this.loadVisits();
 
             },
@@ -350,7 +537,23 @@ export class Visit implements OnInit {
 
               this.loading = false;
 
-              console.error(error);
+
+              console.error(
+                'Error registrando visita:',
+                error
+              );
+
+
+              if (
+                error?.status === 413
+              ) {
+
+                this.errorMessage =
+                  'La imagen es demasiado grande para el servidor.';
+
+                return;
+
+              }
 
 
               this.errorMessage =
@@ -451,7 +654,10 @@ export class Visit implements OnInit {
           this.loadingVisits =
             false;
 
-          console.error(error);
+          console.error(
+            'Error cargando visitas:',
+            error
+          );
 
         }
 
@@ -470,9 +676,12 @@ export class Visit implements OnInit {
     VisitResponse[] {
 
     const search =
-      this.searchTerm
-        .trim()
-        .toLowerCase();
+      (
+        this.searchTerm?.value ||
+        ''
+      )
+      .trim()
+      .toLowerCase();
 
 
     if (!search) {
@@ -588,24 +797,53 @@ export class Visit implements OnInit {
 
   resetForm(): void {
 
-    this.companyName = '';
+    this.visitForm.reset({
 
-    this.comment = '';
+      companyName: '',
+
+      comment: '',
+
+      searchTerm:
+        this.searchTerm?.value || ''
+
+    });
+
 
     this.selectedImage =
       undefined;
 
+
     this.imagePreview =
       null;
+
 
     this.latitude =
       undefined;
 
+
     this.longitude =
       undefined;
 
+
     this.accuracy =
       undefined;
+
+
+    /*
+     * Limpiar input file.
+     */
+
+    const input =
+      document.getElementById(
+        'imageInput'
+      ) as HTMLInputElement | null;
+
+
+    if (input) {
+
+      input.value = '';
+
+    }
 
   }
 

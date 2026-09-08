@@ -1,3 +1,4 @@
+```html
 <div class="page">
 
   <app-topbar></app-topbar>
@@ -73,46 +74,104 @@
       <!-- FORMULARIO -->
       <!-- ========================================= -->
 
-      <section class="visit-form-card">
+      <form
+        class="visit-form-card"
+        [formGroup]="visitForm"
+        (ngSubmit)="registerVisit()"
+      >
 
 
+        <!-- ========================================= -->
         <!-- EMPRESA -->
+        <!-- ========================================= -->
 
         <div class="form-group">
 
-          <label>
+          <label for="companyName">
             Empresa visitada
           </label>
 
           <input
+            id="companyName"
             type="text"
-            [(ngModel)]="companyName"
+            formControlName="companyName"
             placeholder="Ej. Industrias ABC"
             maxlength="200"
           >
 
+
+          <small
+            class="field-error"
+            *ngIf="
+              companyName?.invalid &&
+              companyName?.touched
+            "
+          >
+
+            <span
+              *ngIf="companyName?.errors?.['required']"
+            >
+              El nombre de la empresa es obligatorio.
+            </span>
+
+            <span
+              *ngIf="companyName?.errors?.['maxlength']"
+            >
+              El nombre no puede superar 200 caracteres.
+            </span>
+
+          </small>
+
         </div>
 
 
+        <!-- ========================================= -->
         <!-- COMENTARIO -->
+        <!-- ========================================= -->
 
         <div class="form-group">
 
-          <label>
+          <label for="comment">
             Comentario de la visita
           </label>
 
           <textarea
-            [(ngModel)]="comment"
+            id="comment"
+            formControlName="comment"
             rows="5"
             maxlength="5000"
             placeholder="Describe brevemente el motivo de la visita, cliente contactado, oportunidad comercial, próximos pasos..."
           ></textarea>
 
+
+          <small
+            class="field-error"
+            *ngIf="
+              comment?.invalid &&
+              comment?.touched
+            "
+          >
+
+            <span
+              *ngIf="comment?.errors?.['required']"
+            >
+              El comentario es obligatorio.
+            </span>
+
+            <span
+              *ngIf="comment?.errors?.['maxlength']"
+            >
+              El comentario no puede superar 5000 caracteres.
+            </span>
+
+          </small>
+
         </div>
 
 
+        <!-- ========================================= -->
         <!-- FOTO -->
+        <!-- ========================================= -->
 
         <div class="form-group">
 
@@ -120,6 +179,8 @@
             Evidencia fotográfica
           </label>
 
+
+          <!-- UPLOAD -->
 
           <div
             class="image-upload"
@@ -158,7 +219,9 @@
           </div>
 
 
+          <!-- ========================================= -->
           <!-- PREVIEW -->
+          <!-- ========================================= -->
 
           <div
             class="image-preview"
@@ -176,7 +239,9 @@
               class="remove-image"
               (click)="removeImage()"
             >
+
               ×
+
             </button>
 
           </div>
@@ -184,7 +249,9 @@
         </div>
 
 
+        <!-- ========================================= -->
         <!-- GPS -->
+        <!-- ========================================= -->
 
         <div class="location-card">
 
@@ -209,13 +276,14 @@
         </div>
 
 
+        <!-- ========================================= -->
         <!-- BUTTON -->
+        <!-- ========================================= -->
 
         <button
-          type="button"
+          type="submit"
           class="register-button"
           [disabled]="loading"
-          (click)="registerVisit()"
         >
 
           <span *ngIf="!loading">
@@ -229,7 +297,7 @@
         </button>
 
 
-      </section>
+      </form>
 
 
       <!-- ========================================= -->
@@ -259,26 +327,35 @@
             class="refresh-button"
             (click)="refresh()"
           >
+
             ↻ Actualizar
+
           </button>
 
         </div>
 
 
+        <!-- ========================================= -->
         <!-- SEARCH -->
+        <!-- ========================================= -->
 
-        <div class="search-box">
+        <div
+          class="search-box"
+          [formGroup]="visitForm"
+        >
 
           <input
             type="text"
-            [(ngModel)]="searchTerm"
+            formControlName="searchTerm"
             placeholder="Buscar empresa o vendedor..."
           >
 
         </div>
 
 
+        <!-- ========================================= -->
         <!-- LOADING -->
+        <!-- ========================================= -->
 
         <div
           class="loading"
@@ -290,7 +367,9 @@
         </div>
 
 
+        <!-- ========================================= -->
         <!-- CARDS -->
+        <!-- ========================================= -->
 
         <div
           class="visits-grid"
@@ -348,15 +427,20 @@
                   type="button"
                   (click)="openVisit(visit)"
                 >
+
                   Ver visita
+
                 </button>
+
 
                 <button
                   type="button"
                   class="map-button"
                   (click)="openGoogleMaps(visit)"
                 >
+
                   📍 Ubicación
+
                 </button>
 
               </div>
@@ -370,7 +454,9 @@
         </div>
 
 
+        <!-- ========================================= -->
         <!-- EMPTY -->
+        <!-- ========================================= -->
 
         <div
           class="empty"
@@ -422,10 +508,13 @@
 
 
       <button
+        type="button"
         class="modal-close"
         (click)="closeModal()"
       >
+
         ×
+
       </button>
 
 
@@ -486,6 +575,7 @@
         <div class="gps-info">
 
           <div>
+
             <span>
               Latitud
             </span>
@@ -493,10 +583,12 @@
             <strong>
               {{ selectedVisit.latitude }}
             </strong>
+
           </div>
 
 
           <div>
+
             <span>
               Longitud
             </span>
@@ -504,10 +596,12 @@
             <strong>
               {{ selectedVisit.longitude }}
             </strong>
+
           </div>
 
 
           <div>
+
             <span>
               Precisión
             </span>
@@ -515,16 +609,20 @@
             <strong>
               {{ selectedVisit.accuracy }} m
             </strong>
+
           </div>
 
         </div>
 
 
         <button
+          type="button"
           class="location-button"
           (click)="openGoogleMaps(selectedVisit)"
         >
+
           📍 Ver ubicación en Google Maps
+
         </button>
 
 
@@ -535,3 +633,4 @@
   </div>
 
 </div>
+```
