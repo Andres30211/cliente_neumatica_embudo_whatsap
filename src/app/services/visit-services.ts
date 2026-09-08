@@ -86,155 +86,158 @@ export class VisitService {
    */
 
   createVisit(
-    formData: FormData
-  ): Observable<VisitResponse> {
+  formData: FormData
+): Observable<VisitResponse> {
+
+  /*
+   * =========================================================
+   * OBTENER IMAGEN ORIGINAL
+   * =========================================================
+   */
+
+  const image =
+    formData.get('image');
 
 
-    /*
-     * Obtener la imagen del FormData.
-     */
+  /*
+   * La imagen es obligatoria.
+   */
 
-    const image =
-      formData.get('image');
+  if (!(image instanceof File)) {
 
-
-    /*
-     * Si no existe imagen,
-     * enviamos directamente.
-     */
-
-    if (!(image instanceof File)) {
-
-      return this.http.post<VisitResponse>(
-        this.apiUrl,
-        formData
-      );
-
-    }
-
-
-    /*
-     * Comprimir imagen.
-     */
-
-    return from(
-      this.compressImage(image)
-    ).pipe(
-
-      switchMap(
-        compressedImage => {
-
-
-          /*
-           * Crear un nuevo FormData.
-           *
-           * No modificamos el original.
-           */
-
-          const compressedFormData =
-            new FormData();
-
-
-          /*
-           * Copiar datos.
-           */
-
-          const companyName =
-            formData.get('companyName');
-
-
-          const comment =
-            formData.get('comment');
-
-
-          const latitude =
-            formData.get('latitude');
-
-
-          const longitude =
-            formData.get('longitude');
-
-
-          const accuracy =
-            formData.get('accuracy');
-
-
-          if (companyName !== null) {
-
-            compressedFormData.append(
-              'companyName',
-              companyName.toString()
-            );
-
-          }
-
-
-          if (comment !== null) {
-
-            compressedFormData.append(
-              'comment',
-              comment.toString()
-            );
-
-          }
-
-
-          if (latitude !== null) {
-
-            compressedFormData.append(
-              'latitude',
-              latitude.toString()
-            );
-
-          }
-
-
-          if (longitude !== null) {
-
-            compressedFormData.append(
-              'longitude',
-              longitude.toString()
-            );
-
-          }
-
-
-          if (accuracy !== null) {
-
-            compressedFormData.append(
-              'accuracy',
-              accuracy.toString()
-            );
-
-          }
-
-
-          /*
-           * Agregar imagen comprimida.
-           */
-
-          compressedFormData.append(
-            'image',
-            compressedImage,
-            'visit-image.jpg'
-          );
-
-
-          /*
-           * Enviar.
-           */
-
-          return this.http.post<VisitResponse>(
-            this.apiUrl,
-            compressedFormData
-          );
-
-        }
-      )
-
+    throw new Error(
+      'La imagen es obligatoria.'
     );
 
   }
+
+
+  /*
+   * =========================================================
+   * COMPRIMIR SOLAMENTE LA IMAGEN
+   * =========================================================
+   *
+   * La petición NO se comprime.
+   *
+   * Primero reducimos la imagen y después
+   * construimos el multipart/form-data.
+   */
+
+  return from(
+    this.compressImage(image)
+  ).pipe(
+
+    switchMap(
+      compressedImage => {
+
+
+        /*
+         * =====================================================
+         * DATOS DE LA VISITA
+         * =====================================================
+         */
+
+        const data = {
+
+          companyName:
+            formData
+              .get('companyName')
+              ?.toString() || '',
+
+          comment:
+            formData
+              .get('comment')
+              ?.toString() || '',
+
+          latitude:
+            Number(
+              formData.get('latitude')
+            ),
+
+          longitude:
+            Number(
+              formData.get('longitude')
+            ),
+
+          accuracy:
+            Number(
+              formData.get('accuracy')
+            )
+
+        };
+
+
+        /*
+         * =====================================================
+         * CREAR NUEVO FORMDATA
+         * =====================================================
+         */
+
+        const requestData =
+          new FormData();
+
+
+        /*
+         * =====================================================
+         * PARTE "data"
+         * =====================================================
+         *
+         * Spring Boot espera:
+         *
+         * @RequestPart("data")
+         * VisitRequest request
+         *
+         */
+
+        const jsonBlob =
+          new Blob(
+            [
+              JSON.stringify(data)
+            ],
+            {
+              type: 'application/json'
+            }
+          );
+
+
+        requestData.append(
+          'data',
+          jsonBlob
+        );
+
+
+        /*
+         * =====================================================
+         * PARTE "image"
+         * =====================================================
+         *
+         * Aquí enviamos la imagen YA COMPRIMIDA.
+         */
+
+        requestData.append(
+          'image',
+          compressedImage,
+          'visit-image.jpg'
+        );
+
+
+        /*
+         * =====================================================
+         * ENVIAR PETICIÓN
+         * =====================================================
+         */
+
+        return this.http.post<VisitResponse>(
+          this.apiUrl,
+          requestData
+        );
+
+      }
+    )
+
+  );
+
+}
 
 
   /*
