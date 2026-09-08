@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnInit
 } from '@angular/core';
@@ -123,7 +124,8 @@ export class Visit implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private visitService: VisitService
+    private visitService: VisitService,
+    private dc: ChangeDetectorRef
   ) {
 
     /*
@@ -643,8 +645,9 @@ export class Visit implements OnInit {
           this.visits =
             response;
 
-          this.loadingVisits =
-            false;
+          this.loadingVisits = false;
+
+          this.dc.detectChanges();
 
         },
 
