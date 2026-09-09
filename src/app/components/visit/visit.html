@@ -17,7 +17,7 @@
       <section class="page-header">
 
         <div>
-
+          
           <span class="eyebrow">
             GESTIÓN COMERCIAL
           </span>
@@ -302,174 +302,177 @@
       <!-- ========================================= -->
       <!-- VISITAS -->
       <!-- ========================================= -->
+      @if (this.meRol('ROLE_ADMIN')) {
 
-      <section class="visits-section">
-
-
-        <div class="section-header">
-
-          <div>
-
-            <span class="eyebrow">
-              HISTORIAL
-            </span>
-
-            <h2>
-              Visitas registradas
-            </h2>
-
+        <section class="visits-section">
+  
+  
+          <div class="section-header">
+  
+            <div>
+  
+              <span class="eyebrow">
+                HISTORIAL
+              </span>
+  
+              <h2>
+                Visitas registradas
+              </h2>
+  
+            </div>
+  
+  
+            <button
+              type="button"
+              class="refresh-button"
+              (click)="refresh()"
+            >
+  
+              ↻ Actualizar
+  
+            </button>
+  
           </div>
-
-
-          <button
-            type="button"
-            class="refresh-button"
-            (click)="refresh()"
+  
+  
+          <!-- ========================================= -->
+          <!-- SEARCH -->
+          <!-- ========================================= -->
+  
+          <div
+            class="search-box"
+            [formGroup]="visitForm"
           >
-
-            ↻ Actualizar
-
-          </button>
-
-        </div>
-
-
-        <!-- ========================================= -->
-        <!-- SEARCH -->
-        <!-- ========================================= -->
-
-        <div
-          class="search-box"
-          [formGroup]="visitForm"
-        >
-
-          <input
-            type="text"
-            formControlName="searchTerm"
-            placeholder="Buscar empresa o vendedor..."
+  
+            <input
+              type="text"
+              formControlName="searchTerm"
+              placeholder="Buscar empresa o vendedor..."
+            >
+  
+          </div>
+  
+  
+          <!-- ========================================= -->
+          <!-- LOADING -->
+          <!-- ========================================= -->
+  
+          <div
+            class="loading"
+            *ngIf="loadingVisits"
           >
-
-        </div>
-
-
-        <!-- ========================================= -->
-        <!-- LOADING -->
-        <!-- ========================================= -->
-
-        <div
-          class="loading"
-          *ngIf="loadingVisits"
-        >
-
-          Cargando visitas...
-        </div>
-
-
-        <!-- ========================================= -->
-        <!-- CARDS -->
-        <!-- ========================================= -->
-
-        <div
-          class="visits-grid"
-          *ngIf="!loadingVisits"
-        >
-
-
-          <article
-            class="visit-card"
-            *ngFor="
-              let visit of filteredVisits
+  
+            Cargando visitas...
+          </div>
+  
+  
+          <!-- ========================================= -->
+          <!-- CARDS -->
+          <!-- ========================================= -->
+  
+          <div
+            class="visits-grid"
+            *ngIf="!loadingVisits"
+          >
+  
+  
+            <article
+              class="visit-card"
+              *ngFor="
+                let visit of filteredVisits
+              "
+            >
+  
+  
+              <!-- IMAGE -->
+  
+              <div class="card-image">
+                <img
+                  [src]="getImageUrl(visit.imageUrl)"
+                  [alt]="visit.companyName"
+                >
+  
+                <span class="visit-date">
+                  {{ formatDate(visit.visitedAt) }}
+                </span>
+  
+              </div>
+  
+  
+              <!-- CONTENT -->
+  
+              <div class="card-content">
+  
+  
+                <span class="seller">
+                  {{ visit.userName }}
+                </span>
+  
+  
+                <h3>
+                  {{ visit.companyName }}
+                </h3>
+  
+  
+                <p>
+                  {{ visit.comment }}
+                </p>
+  
+  
+                <div class="card-footer">
+  
+                  <button
+                    type="button"
+                    class="map-button"
+                    (click)="openGoogleMaps(visit)"
+                  >
+  
+                    📍 Ubicación
+  
+                  </button>
+  
+                </div>
+  
+  
+              </div>
+  
+            </article>
+  
+  
+          </div>
+  
+  
+          <!-- ========================================= -->
+          <!-- EMPTY -->
+          <!-- ========================================= -->
+  
+          <div
+            class="empty"
+            *ngIf="
+              !loadingVisits &&
+              filteredVisits.length === 0
             "
           >
-
-
-            <!-- IMAGE -->
-
-            <div class="card-image">
-              <img
-                [src]="getImageUrl(visit.imageUrl)"
-                [alt]="visit.companyName"
-              >
-
-              <span class="visit-date">
-                {{ formatDate(visit.visitedAt) }}
-              </span>
-
+  
+            <div>
+              📋
             </div>
-
-
-            <!-- CONTENT -->
-
-            <div class="card-content">
-
-
-              <span class="seller">
-                {{ visit.userName }}
-              </span>
-
-
-              <h3>
-                {{ visit.companyName }}
-              </h3>
-
-
-              <p>
-                {{ visit.comment }}
-              </p>
-
-
-              <div class="card-footer">
-
-                <button
-                  type="button"
-                  class="map-button"
-                  (click)="openGoogleMaps(visit)"
-                >
-
-                  📍 Ubicación
-
-                </button>
-
-              </div>
-
-
-            </div>
-
-          </article>
-
-
-        </div>
-
-
-        <!-- ========================================= -->
-        <!-- EMPTY -->
-        <!-- ========================================= -->
-
-        <div
-          class="empty"
-          *ngIf="
-            !loadingVisits &&
-            filteredVisits.length === 0
-          "
-        >
-
-          <div>
-            📋
+  
+            <h3>
+              No hay visitas registradas
+            </h3>
+  
+            <p>
+              Las visitas realizadas por los vendedores
+              aparecerán aquí.
+            </p>
+  
           </div>
-
-          <h3>
-            No hay visitas registradas
-          </h3>
-
-          <p>
-            Las visitas realizadas por los vendedores
-            aparecerán aquí.
-          </p>
-
-        </div>
-
-
-      </section>
+  
+  
+        </section>
+        
+      }
 
 
     </main>

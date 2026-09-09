@@ -27,6 +27,7 @@ import {
   VisitResponse,
   VisitService
 } from '../../services/visit-services';
+import { TokensServices } from '../../services/tokens-services';
 
 
 @Component({
@@ -125,7 +126,8 @@ export class Visit implements OnInit {
   constructor(
     private fb: FormBuilder,
     private visitService: VisitService,
-    private dc: ChangeDetectorRef
+    private dc: ChangeDetectorRef,
+    private tokensServices: TokensServices
   ) {
 
     /*
@@ -830,6 +832,13 @@ export class Visit implements OnInit {
 
     this.loadVisits();
 
+  }
+
+  public meRol(rol: string): boolean{
+
+    const roles = this.tokensServices.getRoles();
+
+    return roles.includes(rol);
   }
 
 }
