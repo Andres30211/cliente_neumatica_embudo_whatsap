@@ -150,41 +150,6 @@
 
 
 /* =========================================================
-   SEARCH ICON
-   ========================================================= */
-
-.topbar__search-icon {
-  position: absolute;
-
-  left: 14px;
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  width: 17px;
-  height: 17px;
-
-  color: #6b7280;
-
-  pointer-events: none;
-}
-
-
-.topbar__search-icon svg {
-  width: 100%;
-  height: 100%;
-
-  fill: none;
-
-  stroke: currentColor;
-
-  stroke-width: 1.8;
-
-  stroke-linecap: round;
-}
-
-
-/* =========================================================
    ICON BUTTONS
    ========================================================= */
 
@@ -223,26 +188,6 @@
   background: #f3f4f6;
 
   color: #111827;
-}
-
-
-/* =========================================================
-   CALENDAR
-   ========================================================= */
-
-.topbar__icon-button svg {
-  width: 19px;
-  height: 19px;
-
-  fill: none;
-
-  stroke: currentColor;
-
-  stroke-width: 1.7;
-
-  stroke-linecap: round;
-
-  stroke-linejoin: round;
 }
 
 

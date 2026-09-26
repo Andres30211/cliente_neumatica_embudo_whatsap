@@ -1,585 +1,844 @@
 import {
+  ChangeDetectorRef,
   Component,
-  computed,
-  inject,
   OnInit,
-  signal,
 } from '@angular/core';
 
+import {
+  ChartConfiguration,
+  ChartData
+} from 'chart.js';
+
 import { CommonModule } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { BaseChartDirective } from 'ng2-charts';
 
-import { ServicesWhatsapp } from '../../services/services-whatsapp';
-import { UserService } from '../../services/user-service';
+import { DashboardService } from '../../services/DashboardService';
 
-import { Contact } from '../../interfaces/Contact';
-import { User } from '../../interfaces/User';
-import { ContactPage } from '../../interfaces/ContactPage';
+import { DashboardSummary } from '../../interfaces/DashboardSummary';
+
+import { DailyMessageActivity } from '../../interfaces/DailyMessageActivity';
+
+import { DailyContactActivity } from '../../interfaces/DailyContactActivity';
+
 
 @Component({
   selector: 'app-dashboard-component',
-  imports: [CommonModule],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    BaseChartDirective
+  ],
+
   templateUrl: './dashboard-component.html',
+
   styleUrl: './dashboard-component.css',
 })
 export class DashboardComponent implements OnInit {
-  private readonly whatsappService = inject(ServicesWhatsapp);
-  private readonly usersService = inject(UserService);
 
-  // ============================================================
-  // DATA PRINCIPAL
-  // ============================================================
 
-  contacts = signal<Contact[]>([]);
+  // =========================================================
+  // DASHBOARD DATA
+  // =========================================================
 
-  users = signal<User[]>([]);
+  summary: DashboardSummary | null = null;
 
-  loading = signal<boolean>(true);
 
-  error = signal<string | null>(null);
+  // =========================================================
+  // STATE
+  // =========================================================
 
-  // ============================================================
-  // FECHA ACTUAL
-  // ============================================================
+  loading = false;
 
-  today = new Date();
+  error = false;
 
-  // ============================================================
-  // CONTACTOS
-  // ============================================================
 
-  totalContacts = computed(() => {
-    return this.contacts().length;
-  });
+  // =========================================================
+  // DATE FILTER
+  // =========================================================
 
-  contactsWithEmail = computed(() => {
-    return this.contacts().filter((contact) => {
-      return !!contact.email?.trim();
-    }).length;
-  });
+  from = '';
 
-  contactsWithoutEmail = computed(() => {
-    return Math.max(
-      0,
-      this.totalContacts() - this.contactsWithEmail()
-    );
-  });
+  to = '';
 
-  contactsWithCompany = computed(() => {
-    return this.contacts().filter((contact) => {
-      return !!contact.company?.trim();
-    }).length;
-  });
 
-  contactsWithoutCompany = computed(() => {
-    return Math.max(
-      0,
-      this.totalContacts() - this.contactsWithCompany()
-    );
-  });
+  // =========================================================
+  // MESSAGE ACTIVITY CHART
+  // =========================================================
 
-  // ============================================================
-  // PORCENTAJES
-  // ============================================================
+  messageChartData: ChartData<'line'> = {
 
-  emailPercentage = computed(() => {
-    const total = this.totalContacts();
+    labels: [],
 
-    if (total === 0) {
-      return 0;
-    }
+    datasets: [
 
-    return Math.round(
-      (this.contactsWithEmail() / total) * 100
-    );
-  });
+      {
+        label: 'Recibidos',
 
-  companyPercentage = computed(() => {
-    const total = this.totalContacts();
+        data: [],
 
-    if (total === 0) {
-      return 0;
-    }
+        tension: 0.35,
 
-    return Math.round(
-      (this.contactsWithCompany() / total) * 100
-    );
-  });
+        fill: false
+      },
 
-  // ============================================================
-  // CONTACTOS ACTIVOS
-  // ============================================================
+      {
+        label: 'Enviados',
 
-  activeContacts = computed(() => {
-    const now = Date.now();
+        data: [],
 
-    const twentyFourHours = 24 * 60 * 60 * 1000;
+        tension: 0.35,
 
-    return this.contacts().filter((contact) => {
-      if (!contact.lastInteraction) {
-        return false;
+        fill: false
       }
 
-      const interactionDate = new Date(
-        contact.lastInteraction
-      ).getTime();
+    ]
 
-      if (Number.isNaN(interactionDate)) {
-        return false;
-      }
+  };
 
-      const difference = now - interactionDate;
 
-      return (
-        difference >= 0 &&
-        difference <= twentyFourHours
-      );
-    });
-  });
+  messageChartOptions:
+    ChartConfiguration<'line'>['options'] = {
 
-  activeContactsCount = computed(() => {
-    return this.activeContacts().length;
-  });
+      responsive: true,
 
-  // ============================================================
-  // CONTACTOS NUEVOS HOY
-  // ============================================================
+      maintainAspectRatio: false,
 
-  newContactsToday = computed(() => {
-    const today = new Date();
+      interaction: {
 
-    return this.contacts().filter((contact) => {
-      if (!contact.createdAt) {
-        return false;
-      }
+        mode: 'index',
 
-      const date = new Date(contact.createdAt);
+        intersect: false
 
-      if (Number.isNaN(date.getTime())) {
-        return false;
-      }
+      },
 
-      return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      );
-    }).length;
-  });
+      plugins: {
 
-  // ============================================================
-  // REGISTROS INCOMPLETOS
-  // ============================================================
+        legend: {
 
-  incompleteContacts = computed(() => {
-    return this.contacts().filter((contact) => {
-      const step = contact.registrationStep
-        ?.toLowerCase()
-        ?.trim();
+          display: true,
 
-      if (!step) {
-        return false;
-      }
+          position: 'top'
 
-      return ![
-        'completed',
-        'complete',
-        'finalizado',
-        'finalizada',
-        'completado',
-        'completada',
-        'finished',
-      ].includes(step);
-    });
-  });
-
-  incompleteContactsCount = computed(() => {
-    return this.incompleteContacts().length;
-  });
-
-  // ============================================================
-  // CONTACTOS RECIENTES
-  // ============================================================
-
-  recentContacts = computed(() => {
-    return [...this.contacts()]
-      .filter((contact) => {
-        return !!(
-          contact.lastInteraction ||
-          contact.createdAt
-        );
-      })
-      .sort((a, b) => {
-        const dateA = new Date(
-          a.lastInteraction || a.createdAt
-        ).getTime();
-
-        const dateB = new Date(
-          b.lastInteraction || b.createdAt
-        ).getTime();
-
-        return dateB - dateA;
-      })
-      .slice(0, 6);
-  });
-
-  // ============================================================
-  // USUARIOS
-  // ============================================================
-
-  totalUsers = computed(() => {
-    return this.users().length;
-  });
-
-  enabledUsers = computed(() => {
-    return this.users().filter((user) => {
-      return user.enabled === true;
-    }).length;
-  });
-
-  disabledUsers = computed(() => {
-    return this.users().filter((user) => {
-      return user.enabled === false;
-    }).length;
-  });
-
-  // ============================================================
-  // NORMALIZACIÓN DE ROLES
-  // ============================================================
-
-  private normalizeRole(role: unknown): string {
-    return String(role ?? '')
-      .trim()
-      .toUpperCase()
-      .replace(/^ROLE_/, '');
-  }
-
-  // ============================================================
-  // VENDEDORES
-  // ============================================================
-
-  sellers = computed(() => {
-    return this.users().filter((user) => {
-      return user.roles?.some((role) => {
-        const normalizedRole = this.normalizeRole(role);
-
-        return (
-          normalizedRole === 'VENDEDOR' ||
-          normalizedRole === 'SELLER'
-        );
-      });
-    });
-  });
-
-  sellerCount = computed(() => {
-    return this.sellers().length;
-  });
-
-  // ============================================================
-  // ADMINISTRADORES
-  // ============================================================
-
-  administrators = computed(() => {
-    return this.users().filter((user) => {
-      return user.roles?.some((role) => {
-        const normalizedRole = this.normalizeRole(role);
-
-        return (
-          normalizedRole === 'ADMIN' ||
-          normalizedRole === 'ADMINISTRADOR' ||
-          normalizedRole === 'ADMINISTRATOR'
-        );
-      });
-    });
-  });
-
-  administratorCount = computed(() => {
-    return this.administrators().length;
-  });
-
-  // ============================================================
-  // DISTRIBUCIÓN DE REGISTROS
-  // ============================================================
-
-  registrationSteps = computed(() => {
-    const map = new Map<string, number>();
-
-    this.contacts().forEach((contact) => {
-      const step =
-        contact.registrationStep?.trim() ||
-        'Sin información';
-
-      map.set(
-        step,
-        (map.get(step) || 0) + 1
-      );
-    });
-
-    const total = this.totalContacts();
-
-    return Array.from(map.entries())
-      .map(([name, count]) => {
-        return {
-          name,
-          count,
-          percentage:
-            total > 0
-              ? Math.round((count / total) * 100)
-              : 0,
-        };
-      })
-      .sort((a, b) => b.count - a.count);
-  });
-
-  // ============================================================
-  // PASO CON MAYOR CANTIDAD
-  // ============================================================
-
-  mainRegistrationStep = computed(() => {
-    const steps = this.registrationSteps();
-
-    if (!steps.length) {
-      return null;
-    }
-
-    return steps[0];
-  });
-
-  // ============================================================
-  // ACTIVIDAD POR DÍA
-  // ============================================================
-
-  activityByDay = computed(() => {
-    const result: {
-      label: string;
-      date: string;
-      count: number;
-    }[] = [];
-
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-
-      date.setHours(0, 0, 0, 0);
-      date.setDate(date.getDate() - i);
-
-      const count = this.contacts().filter((contact) => {
-        if (!contact.createdAt) {
-          return false;
         }
 
-        const contactDate = new Date(
-          contact.createdAt
-        );
+      },
 
-        if (Number.isNaN(contactDate.getTime())) {
-          return false;
+      scales: {
+
+        x: {
+
+          grid: {
+
+            display: false
+
+          }
+
+        },
+
+        y: {
+
+          beginAtZero: true,
+
+          ticks: {
+
+            precision: 0
+
+          }
+
         }
 
-        return (
-          contactDate.getDate() === date.getDate() &&
-          contactDate.getMonth() === date.getMonth() &&
-          contactDate.getFullYear() === date.getFullYear()
-        );
-      }).length;
+      }
 
-      result.push({
-        label: date
-          .toLocaleDateString('es-CO', {
-            weekday: 'short',
-          })
-          .replace('.', ''),
+    };
 
-        date: date.toLocaleDateString('es-CO', {
-          day: 'numeric',
-          month: 'short',
-        }),
 
-        count,
-      });
-    }
+  // =========================================================
+  // CONVERSATION STATUS CHART
+  // =========================================================
 
-    return result;
-  });
+  conversationChartData: ChartData<'doughnut'> = {
 
-  maxActivity = computed(() => {
-    const values = this.activityByDay().map(
-      (item) => item.count
-    );
+    labels: [
 
-    return Math.max(...values, 1);
-  });
+      'Bot',
 
-  // ============================================================
-  // PORCENTAJE DE USUARIOS ACTIVOS
-  // ============================================================
+      'Atención humana',
 
-  enabledUsersPercentage = computed(() => {
-    const total = this.totalUsers();
+      'Cerradas'
 
-    if (total === 0) {
-      return 0;
-    }
+    ],
 
-    return Math.round(
-      (this.enabledUsers() / total) * 100
-    );
-  });
+    datasets: [
 
-  // ============================================================
-  // INICIALIZACIÓN
-  // ============================================================
+      {
+
+        data: []
+
+      }
+
+    ]
+
+  };
+
+
+  conversationChartOptions:
+    ChartConfiguration<'doughnut'>['options'] = {
+
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      cutout: '72%',
+
+      plugins: {
+
+        legend: {
+
+          display: false
+
+        },
+
+        tooltip: {
+
+          enabled: true
+
+        }
+
+      }
+
+    };
+
+
+  // =========================================================
+  // NEW CONTACTS CHART
+  // =========================================================
+
+  contactChartData: ChartData<'bar'> = {
+
+    labels: [],
+
+    datasets: [
+
+      {
+
+        label: 'Nuevos contactos',
+
+        data: []
+
+      }
+
+    ]
+
+  };
+
+
+  contactChartOptions:
+    ChartConfiguration<'bar'>['options'] = {
+
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      interaction: {
+
+        mode: 'index',
+
+        intersect: false
+
+      },
+
+      plugins: {
+
+        legend: {
+
+          display: false
+
+        },
+
+        tooltip: {
+
+          enabled: true
+
+        }
+
+      },
+
+      scales: {
+
+        x: {
+
+          grid: {
+
+            display: false
+
+          }
+
+        },
+
+        y: {
+
+          beginAtZero: true,
+
+          ticks: {
+
+            precision: 0
+
+          }
+
+        }
+
+      }
+
+    };
+
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
+
+  constructor(
+
+    private readonly dashboardService: DashboardService,
+
+    private readonly dc: ChangeDetectorRef
+
+  ) {}
+
+
+  // =========================================================
+  // INIT
+  // =========================================================
 
   ngOnInit(): void {
+
+    this.initializePeriod();
+
     this.loadDashboard();
+
   }
 
-  // ============================================================
-  // CARGAR TODOS LOS CONTACTOS
-  // ============================================================
 
-  private loadAllContacts() {
-    return this.whatsappService.getContacts(0);
+  // =========================================================
+  // INITIAL PERIOD
+  // =========================================================
+
+  private initializePeriod(): void {
+
+    const today =
+      new Date();
+
+
+    const sevenDaysAgo =
+      new Date();
+
+
+    sevenDaysAgo.setDate(
+
+      today.getDate() - 6
+
+    );
+
+
+    this.from =
+      this.formatDate(
+        sevenDaysAgo
+      );
+
+
+    this.to =
+      this.formatDate(
+        today
+      );
+
   }
 
-  // ============================================================
-  // CARGAR DASHBOARD
-  // ============================================================
+
+  // =========================================================
+  // LOAD DASHBOARD
+  // =========================================================
 
   loadDashboard(): void {
-    this.loading.set(true);
-    this.error.set(null);
 
-    // ----------------------------------------------------------
-    // PRIMERA PÁGINA DE CONTACTOS + USUARIOS
-    // ----------------------------------------------------------
 
-    forkJoin({
-      contactsPage: this.loadAllContacts(),
-      users: this.usersService.getUsers(),
-    }).subscribe({
-      next: ({ contactsPage, users }) => {
-        const totalPages = contactsPage.totalPages || 1;
+    // -------------------------------------------------------
+    // VALIDATE DATES
+    // -------------------------------------------------------
 
-        // ------------------------------------------------------
-        // SI SOLO EXISTE UNA PÁGINA
-        // ------------------------------------------------------
+    if (!this.from || !this.to) {
 
-        if (totalPages <= 1) {
-          this.contacts.set(
-            contactsPage.content || []
-          );
+      this.error = true;
 
-          this.users.set(users || []);
+      return;
 
-          this.loading.set(false);
-
-          return;
-        }
-
-        // ------------------------------------------------------
-        // CARGAR LAS PÁGINAS RESTANTES
-        // ------------------------------------------------------
-
-        const remainingRequests = [];
-
-        for (let page = 1; page < totalPages; page++) {
-          remainingRequests.push(
-            this.whatsappService.getContacts(page)
-          );
-        }
-
-        forkJoin(remainingRequests).subscribe({
-          next: (pages: ContactPage[]) => {
-            const allContacts: Contact[] = [
-              ...(contactsPage.content || []),
-              ...pages.flatMap(
-                (page) => page.content || []
-              ),
-            ];
-
-            this.contacts.set(allContacts);
-            this.users.set(users || []);
-
-            this.loading.set(false);
-          },
-
-          error: (error) => {
-            console.error(
-              'Error cargando páginas de contactos:',
-              error
-            );
-
-            this.error.set(
-              'No fue posible cargar todos los contactos.'
-            );
-
-            this.loading.set(false);
-          },
-        });
-      },
-
-      error: (error) => {
-        console.error(
-          'Error cargando dashboard:',
-          error
-        );
-
-        this.error.set(
-          'No fue posible cargar la información del dashboard.'
-        );
-
-        this.loading.set(false);
-      },
-    });
-  }
-
-  // ============================================================
-  // TRACKING
-  // ============================================================
-
-  trackContact(
-    index: number,
-    contact: Contact
-  ): string {
-    return contact.id;
-  }
-
-  trackUser(
-    index: number,
-    user: User
-  ): string {
-    return user.id;
-  }
-
-  // ============================================================
-  // INTERACCIÓN RECIENTE
-  // ============================================================
-
-  isRecentInteraction(
-    lastInteraction: string | Date | null
-  ): boolean {
-    if (!lastInteraction) {
-      return false;
     }
 
-    const now = Date.now();
 
-    const interactionTime =
-      new Date(lastInteraction).getTime();
+    if (this.from > this.to) {
 
-    if (Number.isNaN(interactionTime)) {
-      return false;
+      this.error = true;
+
+      return;
+
     }
 
-    const twentyFourHours =
-      24 * 60 * 60 * 1000;
 
-    const difference =
-      now - interactionTime;
+    // -------------------------------------------------------
+    // LOADING STATE
+    // -------------------------------------------------------
 
-    return (
-      difference >= 0 &&
-      difference < twentyFourHours
-    );
+    this.loading = true;
+
+    this.error = false;
+
+
+    // -------------------------------------------------------
+    // REQUEST
+    // -------------------------------------------------------
+
+    this.dashboardService
+      .getSummary(
+
+        this.from,
+
+        this.to
+
+      )
+      .subscribe({
+
+
+        // ===================================================
+        // SUCCESS
+        // ===================================================
+
+        next: response => {
+
+
+          console.log(
+
+            'DASHBOARD RESPONSE:',
+
+            response
+
+          );
+
+
+          // -----------------------------------------------
+          // STORE DASHBOARD DATA
+          // -----------------------------------------------
+
+          this.summary =
+            response;
+
+
+          // -----------------------------------------------
+          // BUILD MESSAGE ACTIVITY CHART
+          // -----------------------------------------------
+
+          this.buildMessageChart(
+
+            response.messageActivity ?? []
+
+          );
+
+
+          // -----------------------------------------------
+          // BUILD NEW CONTACTS CHART
+          // -----------------------------------------------
+
+          this.buildContactChart(
+
+            response.contactActivity ?? []
+
+          );
+
+
+          // -----------------------------------------------
+          // BUILD CONVERSATION STATUS CHART
+          // -----------------------------------------------
+
+          this.buildConversationChart();
+
+
+          // -----------------------------------------------
+          // FINISH LOADING
+          // -----------------------------------------------
+
+          this.loading = false;
+
+
+          // -----------------------------------------------
+          // REFRESH VIEW
+          // -----------------------------------------------
+
+          this.dc.detectChanges();
+
+        },
+
+
+        // ===================================================
+        // ERROR
+        // ===================================================
+
+        error: error => {
+
+
+          console.error(
+
+            'Error loading dashboard',
+
+            error
+
+          );
+
+
+          this.error = true;
+
+          this.loading = false;
+
+
+          this.dc.detectChanges();
+
+        }
+
+      });
+
   }
+
+
+  // =========================================================
+  // BUILD MESSAGE ACTIVITY CHART
+  // =========================================================
+
+  private buildMessageChart(
+
+    activity: DailyMessageActivity[]
+
+  ): void {
+
+
+    // -------------------------------------------------------
+    // LABELS
+    // -------------------------------------------------------
+
+    const labels =
+      activity.map(item => {
+
+
+        const [
+
+          ,
+
+          month,
+
+          day
+
+        ] = item.date.split('-');
+
+
+        return `${day}/${month}`;
+
+      });
+
+
+    // -------------------------------------------------------
+    // RECEIVED MESSAGES
+    // -------------------------------------------------------
+
+    const received =
+      activity.map(
+
+        item => item.received
+
+      );
+
+
+    // -------------------------------------------------------
+    // SENT MESSAGES
+    // -------------------------------------------------------
+
+    const sent =
+      activity.map(
+
+        item => item.sent
+
+      );
+
+
+    // -------------------------------------------------------
+    // UPDATE CHART
+    // -------------------------------------------------------
+
+    this.messageChartData = {
+
+      labels,
+
+      datasets: [
+
+        {
+
+          label: 'Recibidos',
+
+          data: received,
+
+          tension: 0.35,
+
+          fill: false,
+
+          pointRadius: 4,
+
+          pointHoverRadius: 6
+
+        },
+
+        {
+
+          label: 'Enviados',
+
+          data: sent,
+
+          tension: 0.35,
+
+          fill: false,
+
+          pointRadius: 4,
+
+          pointHoverRadius: 6
+
+        }
+
+      ]
+
+    };
+
+  }
+
+
+  // =========================================================
+  // BUILD NEW CONTACTS CHART
+  // =========================================================
+
+  private buildContactChart(
+
+    activity: DailyContactActivity[]
+
+  ): void {
+
+
+    // -------------------------------------------------------
+    // LABELS
+    // -------------------------------------------------------
+
+    const labels =
+      activity.map(item => {
+
+
+        const [
+
+          ,
+
+          month,
+
+          day
+
+        ] = item.date.split('-');
+
+
+        return `${day}/${month}`;
+
+      });
+
+
+    // -------------------------------------------------------
+    // NEW CONTACTS
+    // -------------------------------------------------------
+
+    const newContacts =
+      activity.map(
+
+        item => item.newContacts
+
+      );
+
+
+    // -------------------------------------------------------
+    // UPDATE CHART
+    // -------------------------------------------------------
+
+    this.contactChartData = {
+
+      labels,
+
+      datasets: [
+
+        {
+
+          label: 'Nuevos contactos',
+
+          data: newContacts,
+
+          borderWidth: 0,
+
+          borderRadius: 6,
+
+          maxBarThickness: 42
+
+        }
+
+      ]
+
+    };
+
+  }
+
+
+  // =========================================================
+  // BUILD CONVERSATION STATUS CHART
+  // =========================================================
+
+  private buildConversationChart(): void {
+
+
+    // -------------------------------------------------------
+    // VALIDATE DASHBOARD DATA
+    // -------------------------------------------------------
+
+    if (!this.summary?.conversations) {
+
+
+      this.conversationChartData = {
+
+        labels: [
+
+          'Bot',
+
+          'Atención humana',
+
+          'Cerradas'
+
+        ],
+
+        datasets: [
+
+          {
+
+            data: [
+
+              0,
+
+              0,
+
+              0
+
+            ]
+
+          }
+
+        ]
+
+      };
+
+
+      return;
+
+    }
+
+
+    // -------------------------------------------------------
+    // CONVERSATIONS
+    // -------------------------------------------------------
+
+    const conversations =
+      this.summary.conversations;
+
+
+    // -------------------------------------------------------
+    // UPDATE CHART
+    // -------------------------------------------------------
+
+    this.conversationChartData = {
+
+      labels: [
+
+        'Bot',
+
+        'Atención humana',
+
+        'Cerradas'
+
+      ],
+
+      datasets: [
+
+        {
+
+          data: [
+
+            conversations.botConversations,
+
+            conversations.humanConversations,
+
+            conversations.closedConversations
+
+          ]
+
+        }
+
+      ]
+
+    };
+
+  }
+
+
+  // =========================================================
+  // FORMAT DATE
+  // =========================================================
+
+  private formatDate(
+
+    date: Date
+
+  ): string {
+
+
+    const year =
+      date.getFullYear();
+
+
+    const month =
+      String(
+
+        date.getMonth() + 1
+
+      )
+        .padStart(
+
+          2,
+
+          '0'
+
+        );
+
+
+    const day =
+      String(
+
+        date.getDate()
+
+      )
+        .padStart(
+
+          2,
+
+          '0'
+
+        );
+
+
+    return `${year}-${month}-${day}`;
+
+  }
+
 }

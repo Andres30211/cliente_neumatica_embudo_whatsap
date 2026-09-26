@@ -1,929 +1,902 @@
-<main>
+<section class="dashboard">
 
-  <section class="dashboard">
 
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
+    <!-- ====================================================== -->
+    <!-- HEADER -->
+    <!-- ====================================================== -->
 
-    <header class="dashboard-header">
+    <header class="dashboard__header">
 
-      <div>
 
-        <span class="dashboard-eyebrow">
-          CENTRO DE CONTROL
-        </span>
+        <!-- ================================================== -->
+        <!-- TITLE -->
+        <!-- ================================================== -->
 
-        <h1>
-          Dashboard
-        </h1>
+        <div>
 
-        <p>
-          Resumen general de la actividad de tu CRM.
-        </p>
+            <span class="dashboard__eyebrow">
+                CRM
+            </span>
 
-      </div>
+            <h1>
+                Dashboard
+            </h1>
 
-      <div class="dashboard-date">
+            <p>
+                Resumen de actividad de contactos y mensajes.
+            </p>
 
-        <span>HOY</span>
+        </div>
 
-        <strong>
-          {{ today | date:'dd MMMM, yyyy':'':'es-CO' }}
-        </strong>
 
-      </div>
+        <!-- ================================================== -->
+        <!-- DATE FILTER -->
+        <!-- ================================================== -->
+
+        <div class="dashboard__filters">
+
+
+            <!-- FROM -->
+
+            <div class="date-field">
+
+                <label for="from">
+                    Desde
+                </label>
+
+                <input id="from" type="date" [(ngModel)]="from">
+
+            </div>
+
+
+            <!-- TO -->
+
+            <div class="date-field">
+
+                <label for="to">
+                    Hasta
+                </label>
+
+                <input id="to" type="date" [(ngModel)]="to">
+
+            </div>
+
+
+            <!-- APPLY -->
+
+            <button type="button" class="filter-button" [disabled]="loading" (click)="loadDashboard()">
+
+                {{
+                loading
+                ? 'Cargando...'
+                : 'Aplicar'
+                }}
+
+            </button>
+
+        </div>
 
     </header>
 
 
-    <!-- =====================================================
-         LOADING
-         ===================================================== -->
 
-    @if (loading()) {
+    <!-- ====================================================== -->
+    <!-- ERROR -->
+    <!-- ====================================================== -->
 
-      <div class="dashboard-loading">
+    <div *ngIf="error" class="dashboard__error">
 
-        <div class="loading-spinner"></div>
+        No fue posible cargar la información del dashboard.
 
-        <span>
-          Cargando información...
-        </span>
-
-      </div>
-
-    }
+    </div>
 
 
-    @if (!loading()) {
 
-      <!-- ===================================================
-           ERROR
-           =================================================== -->
+    <!-- ====================================================== -->
+    <!-- DASHBOARD CONTENT -->
+    <!-- ====================================================== -->
 
-      @if (error()) {
+    <ng-container *ngIf="summary as data">
 
-        <div class="dashboard-error">
 
-          <strong>
-            {{ error() }}
-          </strong>
+        <!-- ================================================== -->
+        <!-- KPI CARDS -->
+        <!-- ================================================== -->
+
+        <div class="dashboard__metrics">
+
+
+            <!-- ================================================== -->
+            <!-- CONTACTS -->
+            <!-- ================================================== -->
+
+            <article class="metric-card">
+
+                <div class="metric-card__header">
+
+                    <span class="metric-card__title">
+                        Contactos
+                    </span>
+
+                    <div class="metric-card__icon">
+                        👥
+                    </div>
+
+                </div>
+
+
+                <strong class="metric-card__value">
+
+                    {{
+                    data.contacts.totalContacts
+                    | number
+                    }}
+
+                </strong>
+
+
+                <span class="metric-card__detail">
+
+                    +
+                    {{
+                    data.contacts.newContacts
+                    | number
+                    }}
+
+                    en el período
+
+                </span>
+
+            </article>
+
+
+
+            <!-- ================================================== -->
+            <!-- ACTIVE CONTACTS -->
+            <!-- ================================================== -->
+
+            <article class="metric-card">
+
+                <div class="metric-card__header">
+
+                    <span class="metric-card__title">
+                        Contactos activos
+                    </span>
+
+                    <div class="metric-card__icon">
+                        ⚡
+                    </div>
+
+                </div>
+
+
+                <strong class="metric-card__value">
+
+                    {{
+                    data.contacts.activeContacts
+                    | number
+                    }}
+
+                </strong>
+
+
+                <span class="metric-card__detail">
+
+                    {{
+                    data.contacts.activePercentage
+                    | number:'1.1-2'
+                    }}%
+
+                    de la base
+
+                </span>
+
+            </article>
+
+
+
+            <!-- ================================================== -->
+            <!-- RECEIVED MESSAGES -->
+            <!-- ================================================== -->
+
+            <article class="metric-card">
+
+                <div class="metric-card__header">
+
+                    <span class="metric-card__title">
+                        Mensajes recibidos
+                    </span>
+
+                    <div class="metric-card__icon">
+                        ↓
+                    </div>
+
+                </div>
+
+
+                <strong class="metric-card__value">
+
+                    {{
+                    data.messages.receivedMessages
+                    | number
+                    }}
+
+                </strong>
+
+
+                <span class="metric-card__detail">
+
+                    {{
+                    data.messages.uniqueContactsWhoWrote
+                    | number
+                    }}
+
+                    contactos escribieron
+
+                </span>
+
+            </article>
+
+
+
+            <!-- ================================================== -->
+            <!-- SENT MESSAGES -->
+            <!-- ================================================== -->
+
+            <article class="metric-card">
+
+                <div class="metric-card__header">
+
+                    <span class="metric-card__title">
+                        Mensajes enviados
+                    </span>
+
+                    <div class="metric-card__icon">
+                        ↑
+                    </div>
+
+                </div>
+
+
+                <strong class="metric-card__value">
+
+                    {{
+                    data.messages.sentMessages
+                    | number
+                    }}
+
+                </strong>
+
+
+                <span class="metric-card__detail">
+
+                    {{
+                    data.messages.manualSentMessages
+                    | number
+                    }}
+
+                    enviados manualmente
+
+                </span>
+
+            </article>
 
         </div>
 
-      }
 
 
-      <!-- ===================================================
-           KPI CARDS
-           =================================================== -->
+        <!-- ====================================================== -->
+        <!-- MESSAGE ACTIVITY CHART -->
+        <!-- ====================================================== -->
 
-      <section class="kpi-grid">
+        <section class="dashboard-chart">
 
-        <!-- CONTACTOS -->
 
-        <article class="kpi-card kpi-card--primary">
+            <!-- CHART HEADER -->
 
-          <div class="kpi-icon">
-            <span>♙</span>
-          </div>
+            <header class="dashboard-chart__header">
 
-          <div class="kpi-content">
+                <div>
 
-            <span class="kpi-label">
-              CONTACTOS TOTALES
-            </span>
+                    <h2>
+                        Actividad de mensajes
+                    </h2>
 
-            <strong class="kpi-value">
-              {{ totalContacts() | number }}
-            </strong>
-
-            <span class="kpi-description">
-              Personas registradas en el CRM
-            </span>
-
-          </div>
-
-        </article>
-
-
-        <!-- ACTIVOS -->
-
-        <article class="kpi-card">
-
-          <div class="kpi-icon kpi-icon--green">
-            <span>●</span>
-          </div>
-
-          <div class="kpi-content">
-
-            <span class="kpi-label">
-              ACTIVOS
-            </span>
-
-            <strong class="kpi-value">
-              {{ activeContactsCount() | number }}
-            </strong>
-
-            <span class="kpi-description">
-              Interacción en últimas 24 horas
-            </span>
-
-          </div>
-
-        </article>
-
-
-        <!-- EMAIL -->
-
-        <article class="kpi-card">
-
-          <div class="kpi-icon kpi-icon--blue">
-            <span>✉</span>
-          </div>
-
-          <div class="kpi-content">
-
-            <span class="kpi-label">
-              CON CORREO
-            </span>
-
-            <strong class="kpi-value">
-              {{ contactsWithEmail() | number }}
-            </strong>
-
-            <span class="kpi-description">
-
-              <b>
-                {{ emailPercentage() }}%
-              </b>
-
-              de los contactos
-
-            </span>
-
-          </div>
-
-        </article>
-
-
-        <!-- NUEVOS -->
-
-        <article class="kpi-card">
-
-          <div class="kpi-icon kpi-icon--purple">
-            <span>✦</span>
-          </div>
-
-          <div class="kpi-content">
-
-            <span class="kpi-label">
-              NUEVOS HOY
-            </span>
-
-            <strong class="kpi-value">
-              {{ newContactsToday() | number }}
-            </strong>
-
-            <span class="kpi-description">
-              Contactos registrados hoy
-            </span>
-
-          </div>
-
-        </article>
-
-      </section>
-
-
-      <!-- ===================================================
-           MAIN GRID
-           =================================================== -->
-
-      <section class="dashboard-grid">
-
-        <!-- ACTIVIDAD -->
-
-        <article class="panel panel--activity">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                ACTIVIDAD
-              </span>
-
-              <h2>
-                Nuevos contactos
-              </h2>
-
-            </div>
-
-            <div class="panel-period">
-              Últimos 7 días
-            </div>
-
-          </div>
-
-
-          <div class="activity-chart">
-
-            @for (
-              day of activityByDay();
-              track day.date
-            ) {
-
-              <div class="chart-column">
-
-                <div class="chart-value">
-                  {{ day.count }}
-                </div>
-
-                <div class="chart-bar-wrapper">
-
-                  <div
-                    class="chart-bar"
-                    [style.height.%]="
-                      (day.count / maxActivity()) * 100
-                    "
-                  ></div>
-
-                </div>
-
-                <span class="chart-label">
-                  {{ day.label }}
-                </span>
-
-              </div>
-
-            }
-
-          </div>
-
-        </article>
-
-
-        <!-- INFORMACIÓN DE CONTACTOS -->
-
-        <article class="panel contact-quality">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                CALIDAD DE DATOS
-              </span>
-
-              <h2>
-                Información de contactos
-              </h2>
-
-            </div>
-
-          </div>
-
-
-          <div class="quality-list">
-
-            <!-- EMAIL -->
-
-            <div class="quality-item">
-
-              <div class="quality-icon quality-icon--blue">
-                ✉
-              </div>
-
-              <div class="quality-info">
-
-                <strong>
-                  {{ contactsWithEmail() | number }}
-                </strong>
-
-                <span>
-                  Con correo electrónico
-                </span>
-
-              </div>
-
-              <div class="quality-progress">
-
-                <div
-                  class="quality-progress__bar"
-                  [style.width.%]="emailPercentage()"
-                ></div>
-
-              </div>
-
-              <span class="quality-percentage">
-                {{ emailPercentage() }}%
-              </span>
-
-            </div>
-
-
-            <!-- SIN EMAIL -->
-
-            <div class="quality-item">
-
-              <div class="quality-icon quality-icon--orange">
-                !
-              </div>
-
-              <div class="quality-info">
-
-                <strong>
-                  {{ contactsWithoutEmail() | number }}
-                </strong>
-
-                <span>
-                  Sin correo electrónico
-                </span>
-
-              </div>
-
-              <div class="quality-progress">
-
-                <div
-                  class="quality-progress__bar quality-progress__bar--warning"
-                  [style.width.%]="
-                    100 - emailPercentage()
-                  "
-                ></div>
-
-              </div>
-
-              <span class="quality-percentage">
-                {{ 100 - emailPercentage() }}%
-              </span>
-
-            </div>
-
-
-            <!-- EMPRESA -->
-
-            <div class="quality-item">
-
-              <div class="quality-icon quality-icon--green">
-                ▦
-              </div>
-
-              <div class="quality-info">
-
-                <strong>
-                  {{ contactsWithCompany() | number }}
-                </strong>
-
-                <span>
-                  Con empresa registrada
-                </span>
-
-              </div>
-
-              <div class="quality-progress">
-
-                <div
-                  class="quality-progress__bar quality-progress__bar--green"
-                  [style.width.%]="companyPercentage()"
-                ></div>
-
-              </div>
-
-              <span class="quality-percentage">
-                {{ companyPercentage() }}%
-              </span>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      </section>
-
-
-      <!-- ===================================================
-           SEGUNDA FILA
-           =================================================== -->
-
-      <section class="dashboard-grid dashboard-grid--secondary">
-
-        <!-- EMBUDO -->
-
-        <article class="panel funnel-panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                REGISTRO
-              </span>
-
-              <h2>
-                Embudo de contactos
-              </h2>
-
-            </div>
-
-            @if (mainRegistrationStep()) {
-
-              <div class="funnel-highlight">
-
-                <span>
-                  Mayor concentración
-                </span>
-
-                <strong>
-                  {{ mainRegistrationStep()?.name }}
-                </strong>
-
-              </div>
-
-            }
-
-          </div>
-
-
-          <div class="funnel">
-
-            @for (
-              step of registrationSteps();
-              track step.name;
-              let i = $index
-            ) {
-
-              <div class="funnel-row">
-
-                <div class="funnel-label">
-
-                  <span class="funnel-number">
-                    {{ i + 1 }}
-                  </span>
-
-                  <span>
-                    {{ step.name }}
-                  </span>
+                    <p>
+                        Mensajes recibidos y enviados durante
+                        el período seleccionado.
+                    </p>
 
                 </div>
 
 
-                <div class="funnel-track">
+                <!-- TOTAL MESSAGES -->
 
-                  <div
-                    class="funnel-bar"
-                    [style.width.%]="step.percentage"
-                  >
+                <div class="dashboard-chart__total">
 
                     <span>
-                      {{ step.count }}
+                        Total del período
                     </span>
 
-                  </div>
+                    <strong>
+
+                        {{
+                        data.messages.totalMessages
+                        | number
+                        }}
+
+                    </strong>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ================================================== -->
+            <!-- LINE CHART -->
+            <!-- ================================================== -->
+
+            <div class="dashboard-chart__canvas" *ngIf="data.messageActivity.length > 0">
+
+                <canvas baseChart [type]="'line'" [data]="messageChartData" [options]="messageChartOptions">
+                </canvas>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- EMPTY CHART -->
+            <!-- ================================================== -->
+
+            <div class="dashboard-chart__empty" *ngIf="data.messageActivity.length === 0">
+
+                No hay actividad de mensajes
+                durante el período seleccionado.
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ====================================================== -->
+        <!-- SECONDARY DASHBOARD GRID -->
+        <!-- ====================================================== -->
+
+        <div class="dashboard-secondary-grid">
+
+
+            <!-- ================================================== -->
+            <!-- CONTACT QUALITY -->
+            <!-- ================================================== -->
+
+            <section class="contact-quality">
+
+                <header class="contact-quality__header">
+
+                    <div>
+
+                        <h2>
+                            Calidad de los contactos
+                        </h2>
+
+                        <p>
+                            Nivel de información disponible
+                            en tu base de contactos.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <div class="contact-quality__content">
+
+
+                    <!-- ========================================== -->
+                    <!-- PHONE -->
+                    <!-- ========================================== -->
+
+                    <div class="quality-item">
+
+                        <div class="quality-item__header">
+
+                            <span>
+                                Teléfono
+                            </span>
+
+                            <strong>
+
+                                {{
+                                data.contactQuality.phone.percentage
+                                | number:'1.1-1'
+                                }}%
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="quality-progress">
+
+                            <div class="quality-progress__value" [style.width.%]="
+                                    data.contactQuality.phone.percentage
+                                ">
+                            </div>
+
+                        </div>
+
+
+                        <span class="quality-item__detail">
+
+                            {{
+                            data.contactQuality.phone.count
+                            | number
+                            }}
+
+                            de
+
+                            {{
+                            data.contacts.totalContacts
+                            | number
+                            }}
+
+                            contactos
+
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- ========================================== -->
+                    <!-- NAME -->
+                    <!-- ========================================== -->
+
+                    <div class="quality-item">
+
+                        <div class="quality-item__header">
+
+                            <span>
+                                Nombre
+                            </span>
+
+                            <strong>
+
+                                {{
+                                data.contactQuality.name.percentage
+                                | number:'1.1-1'
+                                }}%
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="quality-progress">
+
+                            <div class="quality-progress__value" [style.width.%]="
+                                    data.contactQuality.name.percentage
+                                ">
+                            </div>
+
+                        </div>
+
+
+                        <span class="quality-item__detail">
+
+                            {{
+                            data.contactQuality.name.count
+                            | number
+                            }}
+
+                            de
+
+                            {{
+                            data.contacts.totalContacts
+                            | number
+                            }}
+
+                            contactos
+
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- ========================================== -->
+                    <!-- EMAIL -->
+                    <!-- ========================================== -->
+
+                    <div class="quality-item">
+
+                        <div class="quality-item__header">
+
+                            <span>
+                                Email
+                            </span>
+
+                            <strong>
+
+                                {{
+                                data.contactQuality.email.percentage
+                                | number:'1.1-1'
+                                }}%
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="quality-progress">
+
+                            <div class="quality-progress__value" [style.width.%]="
+                                    data.contactQuality.email.percentage
+                                ">
+                            </div>
+
+                        </div>
+
+
+                        <span class="quality-item__detail">
+
+                            {{
+                            data.contactQuality.email.count
+                            | number
+                            }}
+
+                            de
+
+                            {{
+                            data.contacts.totalContacts
+                            | number
+                            }}
+
+                            contactos
+
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- ========================================== -->
+                    <!-- COMPANY -->
+                    <!-- ========================================== -->
+
+                    <div class="quality-item">
+
+                        <div class="quality-item__header">
+
+                            <span>
+                                Empresa
+                            </span>
+
+                            <strong>
+
+                                {{
+                                data.contactQuality.company.percentage
+                                | number:'1.1-1'
+                                }}%
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="quality-progress">
+
+                            <div class="quality-progress__value" [style.width.%]="
+                                    data.contactQuality.company.percentage
+                                ">
+                            </div>
+
+                        </div>
+
+
+                        <span class="quality-item__detail">
+
+                            {{
+                            data.contactQuality.company.count
+                            | number
+                            }}
+
+                            de
+
+                            {{
+                            data.contacts.totalContacts
+                            | number
+                            }}
+
+                            contactos
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================== -->
+            <!-- CONVERSATION STATUS -->
+            <!-- ================================================== -->
+
+            <section class="conversation-status" *ngIf="data.conversations as conversations">
+
+                <header class="conversation-status__header">
+
+                    <div>
+
+                        <h2>
+                            Estado de conversaciones
+                        </h2>
+
+                        <p>
+                            Distribución actual de las conversaciones.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <div class="conversation-status__content">
+
+
+                    <!-- ========================================== -->
+                    <!-- DOUGHNUT CHART -->
+                    <!-- ========================================== -->
+
+                    <div class="conversation-chart">
+
+                        <canvas baseChart [type]="'doughnut'" [data]="conversationChartData"
+                            [options]="conversationChartOptions">
+                        </canvas>
+
+
+                        <!-- CENTER VALUE -->
+
+                        <div class="conversation-chart__center">
+
+                            <strong>
+
+                                {{
+                                conversations.totalConversations
+                                | number
+                                }}
+
+                            </strong>
+
+                            <span>
+                                conversaciones
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ========================================== -->
+                    <!-- CONVERSATION LEGEND -->
+                    <!-- ========================================== -->
+
+                    <div class="conversation-legend">
+
+
+                        <!-- BOT -->
+
+                        <div class="conversation-legend__item">
+
+                            <div>
+
+                                <span class="
+                                        conversation-dot
+                                        conversation-dot--bot
+                                    ">
+                                </span>
+
+                                <span>
+                                    Bot
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+
+                                {{
+                                conversations.botConversations
+                                | number
+                                }}
+
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- HUMAN -->
+
+                        <div class="conversation-legend__item">
+
+                            <div>
+
+                                <span class="
+                                        conversation-dot
+                                        conversation-dot--human
+                                    ">
+                                </span>
+
+                                <span>
+                                    Atención humana
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+
+                                {{
+                                conversations.humanConversations
+                                | number
+                                }}
+
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- CLOSED -->
+
+                        <div class="conversation-legend__item">
+
+                            <div>
+
+                                <span class="
+                                        conversation-dot
+                                        conversation-dot--closed
+                                    ">
+                                </span>
+
+                                <span>
+                                    Cerradas
+                                </span>
+
+                            </div>
+
+
+                            <strong>
+
+                                {{
+                                conversations.closedConversations
+                                | number
+                                }}
+
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- STARTED IN PERIOD -->
+
+                        <div class="conversation-legend__started">
+
+                            <span>
+                                Iniciadas en el período
+                            </span>
+
+
+                            <strong>
+
+                                +
+                                {{
+                                conversations.startedConversations
+                                | number
+                                }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- ====================================================== -->
+        <!-- NEW CONTACTS -->
+        <!-- ====================================================== -->
+
+        <section class="contact-activity-chart">
+
+
+            <!-- ================================================== -->
+            <!-- HEADER -->
+            <!-- ================================================== -->
+
+            <header class="contact-activity-chart__header">
+
+                <div>
+
+                    <h2>
+                        Nuevos contactos
+                    </h2>
+
+                    <p>
+                        Contactos registrados durante
+                        el período seleccionado.
+                    </p>
 
                 </div>
 
 
-                <strong class="funnel-percentage">
-                  {{ step.percentage }}%
-                </strong>
+                <!-- TOTAL -->
 
-              </div>
+                <div class="contact-activity-chart__total">
 
-            }
+                    <span>
+                        Nuevos en el período
+                    </span>
 
+                    <strong>
 
-            @if (!registrationSteps().length) {
+                        +{{
+                        data.contacts.newContacts
+                        | number
+                        }}
 
-              <div class="empty-state">
-                No hay información de registro disponible.
-              </div>
-
-            }
-
-          </div>
-
-        </article>
-
-
-        <!-- USUARIOS -->
-
-        <article class="panel users-panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                EQUIPO
-              </span>
-
-              <h2>
-                Usuarios del CRM
-              </h2>
-
-            </div>
-
-          </div>
-
-
-          <div class="user-summary">
-
-            <div class="user-main-stat">
-
-              <div class="user-stat-icon">
-                ♟
-              </div>
-
-              <div>
-
-                <span>
-                  Usuarios totales
-                </span>
-
-                <strong>
-                  {{ totalUsers() }}
-                </strong>
-
-              </div>
-
-            </div>
-
-
-            <div class="user-role">
-
-              <span class="role-dot role-dot--green"></span>
-
-              <div>
-
-                <strong>
-                  {{ enabledUsers() }}
-                </strong>
-
-                <span>
-                  Activos
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <div class="user-role">
-
-              <span class="role-dot role-dot--yellow"></span>
-
-              <div>
-
-                <strong>
-                  {{ sellerCount() }}
-                </strong>
-
-                <span>
-                  Vendedores
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <div class="user-role">
-
-              <span class="role-dot role-dot--purple"></span>
-
-              <div>
-
-                <strong>
-                  {{ administratorCount() }}
-                </strong>
-
-                <span>
-                  Administradores
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="user-status">
-
-            <div class="status-header">
-
-              <span>
-                Usuarios habilitados
-              </span>
-
-              <strong>
-                {{ enabledUsersPercentage() }}%
-              </strong>
-
-            </div>
-
-            <div class="status-progress">
-
-              <div
-                [style.width.%]="enabledUsersPercentage()"
-              ></div>
-
-            </div>
-
-          </div>
-
-
-          @if (sellerCount() === 0) {
-
-            <div class="seller-empty">
-
-              <div class="seller-empty__icon">
-                ♙
-              </div>
-
-              <div>
-
-                <strong>
-                  Sin vendedores registrados
-                </strong>
-
-                <span>
-                  Los vendedores aparecerán aquí cuando sean creados.
-                </span>
-
-              </div>
-
-            </div>
-
-          }
-
-        </article>
-
-      </section>
-
-
-      <!-- ===================================================
-           TERCERA FILA
-           =================================================== -->
-
-      <section class="dashboard-grid dashboard-grid--bottom">
-
-        <!-- CONTACTOS RECIENTES -->
-
-        <article class="panel recent-panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                ACTIVIDAD RECIENTE
-              </span>
-
-              <h2>
-                Contactos recientes
-              </h2>
-
-            </div>
-
-            <span class="live-indicator">
-              <i></i>
-              En vivo
-            </span>
-
-          </div>
-
-
-          <div class="recent-list">
-
-            @for (
-              contact of recentContacts();
-              track contact.id
-            ) {
-
-              <div class="recent-contact">
-
-                <div class="contact-avatar">
-
-                  {{
-                    contact.name
-                      ? contact.name.charAt(0).toUpperCase()
-                      : '?'
-                  }}
+                    </strong>
 
                 </div>
 
-
-                <div class="contact-data">
-
-                  <strong>
-                    {{ contact.name }}
-                  </strong>
-
-                  <span>
-
-                    @if (contact.company) {
-                      {{ contact.company }}
-                    } @else {
-                      Sin empresa registrada
-                    }
-
-                  </span>
-
-                </div>
+            </header>
 
 
-                <div class="contact-status">
 
-                  @if (
-                    isRecentInteraction(
-                      contact.lastInteraction
-                    )
-                  ) {
+            <!-- ================================================== -->
+            <!-- CHART -->
+            <!-- ================================================== -->
 
-                    <span class="status-active">
-                      ● Activo
-                    </span>
+            <div class="contact-activity-chart__canvas" *ngIf="
+            data.contactActivity &&
+            data.contactActivity.length > 0
+        ">
 
-                  } @else {
-
-                    <span class="status-inactive">
-                      Última actividad
-                    </span>
-
-                  }
-
-                  <small>
-
-                    {{
-                      (
-                        contact.lastInteraction ||
-                        contact.createdAt
-                      ) | date:'dd/MM HH:mm'
-                    }}
-
-                  </small>
-
-                </div>
-
-
-                <div class="contact-email">
-
-                  @if (contact.email) {
-
-                    <span class="email-found">
-                      ✉
-                    </span>
-
-                  } @else {
-
-                    <span class="email-missing">
-                      —
-                    </span>
-
-                  }
-
-                </div>
-
-              </div>
-
-            }
-
-
-            @if (!recentContacts().length) {
-
-              <div class="empty-state">
-                Todavía no existen contactos.
-              </div>
-
-            }
-
-          </div>
-
-        </article>
-
-
-        <!-- ALERTAS / ATENCIÓN -->
-
-        <article class="panel attention-panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                INFORMACIÓN
-              </span>
-
-              <h2>
-                Requieren atención
-              </h2>
-
-            </div>
-
-            <span class="attention-badge">
-              {{
-                contactsWithoutEmail() +
-                incompleteContactsCount()
-              }}
-            </span>
-
-          </div>
-
-
-          <div class="attention-list">
-
-            <!-- SIN EMAIL -->
-
-            <div class="attention-item">
-
-              <div class="attention-icon attention-icon--yellow">
-                ✉
-              </div>
-
-              <div>
-
-                <strong>
-                  Contactos sin correo
-                </strong>
-
-                <span>
-                  Puedes completar su información posteriormente.
-                </span>
-
-              </div>
-
-              <strong class="attention-number">
-                {{ contactsWithoutEmail() }}
-              </strong>
+                <canvas baseChart [type]="'bar'" [data]="contactChartData" [options]="contactChartOptions">
+                </canvas>
 
             </div>
 
 
-            <!-- INCOMPLETOS -->
 
-            <div class="attention-item">
+            <!-- ================================================== -->
+            <!-- EMPTY -->
+            <!-- ================================================== -->
 
-              <div class="attention-icon attention-icon--orange">
-                !
-              </div>
+            <div class="contact-activity-chart__empty" *ngIf="
+            !data.contactActivity ||
+            data.contactActivity.length === 0
+        ">
 
-              <div>
-
-                <strong>
-                  Registros incompletos
-                </strong>
-
-                <span>
-                  Contactos que no han terminado el registro.
-                </span>
-
-              </div>
-
-              <strong class="attention-number">
-                {{ incompleteContactsCount() }}
-              </strong>
+                No hay información de nuevos contactos
+                durante el período seleccionado.
 
             </div>
 
+        </section>
 
-            <!-- ACTIVOS -->
+    </ng-container>
 
-            <div class="attention-item">
-
-              <div class="attention-icon attention-icon--green">
-                ●
-              </div>
-
-              <div>
-
-                <strong>
-                  Contactos activos
-                </strong>
-
-                <span>
-                  Han interactuado durante las últimas 24 horas.
-                </span>
-
-              </div>
-
-              <strong class="attention-number">
-                {{ activeContactsCount() }}
-              </strong>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      </section>
-
-    }
-
-  </section>
-
-</main>
+</section>

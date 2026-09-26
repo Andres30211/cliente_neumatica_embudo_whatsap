@@ -1,77 +1,228 @@
+/* =========================================================
+   HOST
+   ========================================================= */
+
 :host {
-
-  --graphite-900: #ffffff;
-
-  --graphite-800: #181e23;
-
-  --graphite-700: #1f262c;
-
-  --bubble-in: #262f36;
-
-  --steel-600: #313c44;
-
-  --steel-500: #465158;
-
-  --steel-400: #7c8890;
-
-  --paper: #e9edf0;
-
-  --paper-dim: #aeb8bf;
-
-  --amber: #e2a33d;
-
-  --green: #52a373;
-
-  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
-
-  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
-
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 
   display: block;
 
   width: 100%;
 
-  color-scheme: dark;
+  min-width: 0;
+
 }
 
 
 /* =========================================================
-   CARD PRINCIPAL
+   ITEM
    ========================================================= */
 
-.record {
+.conversation-item {
 
   position: relative;
+
+  display: flex;
+
+  align-items: center;
 
   width: 100%;
 
   min-width: 0;
 
+  min-height: 88px;
+
   box-sizing: border-box;
 
-  background: var(--graphite-800);
+  padding: 11px 13px;
 
-  border: 1px solid var(--steel-600);
+  background: #ffffff;
 
-  border-top: 2px solid var(--amber);
+  border: 0;
 
-  border-radius: 6px;
+  border-bottom: 1px solid #e0e6ea;
 
-  padding: 12px 14px 14px;
+  border-radius: 0;
 
-  overflow: hidden;
+  cursor: pointer;
 
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, .25);
+  transition:
+    background-color .15s ease,
+    border-color .15s ease;
+
 }
 
 
 /* =========================================================
-   HEADER
+   HOVER
    ========================================================= */
 
-.record__header {
+.conversation-item:hover {
+
+  background: #f5f8fa;
+
+}
+
+
+/* =========================================================
+   CONVERSACIÓN SELECCIONADA
+   ========================================================= */
+
+/*
+ * IMPORTANTE:
+ *
+ * SELECTED significa únicamente que esta conversación
+ * se está visualizando en el panel derecho.
+ *
+ * NO significa HUMAN.
+ */
+
+.conversation-item--selected {
+
+  background: #e9f1f5;
+
+}
+
+
+.conversation-item--selected:hover {
+
+  background: #e4edf2;
+
+}
+
+
+/* =========================================================
+   INDICADOR DE SELECCIÓN
+   ========================================================= */
+
+.conversation-item--selected::before {
+
+  content: '';
+
+  position: absolute;
+
+  top: 0;
+
+  bottom: 0;
+
+  left: 0;
+
+  width: 4px;
+
+  background: #23689b;
+
+}
+
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+
+.conversation-item__avatar {
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 44px;
+
+  height: 44px;
+
+  margin-right: 11px;
+
+  border: 1px solid #d7e2e9;
+
+  border-radius: 50%;
+
+  background: #eaf0f4;
+
+  color: #35576d;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+}
+
+
+/* =========================================================
+   AVATAR HUMAN
+   ========================================================= */
+
+.conversation-item--human
+.conversation-item__avatar {
+
+  background: #dcefe6;
+
+  border-color: #b9dcc8;
+
+  color: #28734c;
+
+}
+
+
+/* =========================================================
+   AVATAR BOT
+   ========================================================= */
+
+.conversation-item--bot
+.conversation-item__avatar {
+
+  background: #e7eef8;
+
+  border-color: #c9d8e9;
+
+  color: #315d8a;
+
+}
+
+
+/* =========================================================
+   AVATAR CLOSED
+   ========================================================= */
+
+.conversation-item--closed
+.conversation-item__avatar {
+
+  background: #eceff1;
+
+  border-color: #d9dde0;
+
+  color: #68737b;
+
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.conversation-item__content {
+
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+}
+
+
+/* =========================================================
+   PARTE SUPERIOR
+   ========================================================= */
+
+.conversation-item__top {
 
   display: flex;
 
@@ -79,838 +230,612 @@
 
   justify-content: space-between;
 
-  gap: 8px;
-
-  margin-bottom: 10px;
-}
-
-
-.record__id {
-
-  display: none;
-}
-
-
-.record__name {
-
-  margin: 0;
-
-  min-width: 0;
-
-  font-family: var(--font-display);
-
-  font-weight: 600;
-
-  font-size: 15.5px;
-
-  letter-spacing: .01em;
-
-  color: var(--paper);
-
-  text-transform: uppercase;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   ESTADO DEL CONTACTO
-   ========================================================= */
-
-.stamp {
-
-  flex-shrink: 0;
-
-  font-family: var(--font-mono);
-
-  font-size: 9px;
-
-  font-weight: 600;
-
-  letter-spacing: .05em;
-
-  text-transform: uppercase;
-
-  background: var(--amber);
-
-  color: #000;
-
-  border: 1px solid var(--amber);
-
-  padding: 3px 6px;
-
-  border-radius: 3px;
-
-  white-space: nowrap;
-}
-
-
-.stamp--pending {
-
-  background: #6d6d6d;
-
-  border-color: #6d6d6d;
-
-  color: #fff;
-}
-
-
-/* =========================================================
-   INFORMACIÓN DEL CONTACTO
-   ========================================================= */
-
-.record__grid {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 6px 0;
-
-  margin: 0 0 10px;
-
-  padding-bottom: 10px;
-
-  border-bottom: 1px solid var(--steel-600);
-}
-
-
-.record__field {
-
-  flex: 1 1 50%;
-
-  min-width: 0;
-
-  padding-right: 8px;
-}
-
-
-.record__field dt {
-
-  font-family: var(--font-mono);
-
-  font-size: 8.5px;
-
-  letter-spacing: .06em;
-
-  text-transform: uppercase;
-
-  color: var(--steel-400);
-
-  margin-bottom: 2px;
-}
-
-
-.record__field dd {
-
-  margin: 0;
-
-  font-size: 12px;
-
-  color: var(--paper);
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   BLOQUE DE CONVERSACIÓN
-   ========================================================= */
-
-.thread-block {
-
   width: 100%;
 
   min-width: 0;
-}
 
+  gap: 10px;
 
-.thread-block__title {
-
-  font-family: var(--font-mono);
-
-  font-size: 9.5px;
-
-  letter-spacing: .1em;
-
-  text-transform: uppercase;
-
-  color: var(--steel-400);
-
-  margin: 0 0 8px;
-}
-
-
-.thread-block__title::before {
-
-  content: '// ';
-
-  color: var(--amber);
 }
 
 
 /* =========================================================
-   CONVERSACIÓN
+   NOMBRE
    ========================================================= */
 
-.thread {
+.conversation-item__name {
 
-  background: var(--graphite-700);
+  flex: 1;
 
-  padding: 8px 10px 10px;
+  min-width: 0;
 
-  margin-bottom: 8px;
+  margin: 0;
 
-  border-radius: 4px;
+  overflow: hidden;
 
-  /*
-   * Altura máxima de la conversación.
-   *
-   * Cuando la conversación supera esta altura,
-   * aparece un scroll vertical interno.
-   */
-  max-height: 500px;
+  text-overflow: ellipsis;
 
-  overflow-y: auto;
+  white-space: nowrap;
 
-  /*
-   * Evita que el contenido multimedia
-   * provoque crecimiento horizontal.
-   */
-  overflow-x: hidden;
+  color: #202b33;
 
-  /*
-   * Permite que el scroll sea más natural
-   * en dispositivos táctiles.
-   */
-  overscroll-behavior: contain;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 
-  /*
-   * Scroll suave.
-   */
-  scroll-behavior: smooth;
+  font-size: 13px;
+
+  font-weight: 700;
+
+  line-height: 17px;
+
 }
 
 
-.thread:last-child {
+/* =========================================================
+   HUMAN
+   ========================================================= */
 
-  margin-bottom: 0;
+.conversation-item--human
+.conversation-item__name {
+
+  color: #1f5f3e;
+
 }
 
 
-.thread--empty {
+/* =========================================================
+   HORA
+   ========================================================= */
 
-  font-family: var(--font-mono);
+.conversation-item__time {
+
+  flex-shrink: 0;
+
+  color: #7c878e;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 
   font-size: 10px;
 
-  color: var(--steel-400);
+  font-weight: 400;
 
-  text-align: center;
+  line-height: 15px;
 
-  max-height: none;
+  white-space: nowrap;
 
-  overflow: hidden;
 }
 
 
 /* =========================================================
-   SCROLLBAR DE LA CONVERSACIÓN
+   PARTE INFERIOR
    ========================================================= */
 
-.thread::-webkit-scrollbar {
-
-  width: 7px;
-}
-
-
-.thread::-webkit-scrollbar-track {
-
-  background: var(--graphite-800);
-
-  border-radius: 10px;
-}
-
-
-.thread::-webkit-scrollbar-thumb {
-
-  background: var(--steel-500);
-
-  border-radius: 10px;
-
-  border: 1px solid var(--graphite-800);
-}
-
-
-.thread::-webkit-scrollbar-thumb:hover {
-
-  background: var(--steel-400);
-}
-
-
-/*
- * Firefox
- */
-.thread {
-
-  scrollbar-width: thin;
-
-  scrollbar-color:
-    var(--steel-500)
-    var(--graphite-800);
-}
-
-
-/* =========================================================
-   INFORMACIÓN DE LA CONVERSACIÓN
-   ========================================================= */
-
-.thread__meta {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  align-items: center;
-
-  gap: 6px 10px;
-
-  margin-bottom: 8px;
-}
-
-
-.thread__status {
-
-  font-family: var(--font-mono);
-
-  font-size: 9px;
-
-  font-weight: 600;
-
-  letter-spacing: .05em;
-
-  text-transform: uppercase;
-
-  background: var(--amber);
-
-  color: #000;
-
-  padding: 2px 8px;
-
-  border-radius: 3px;
-
-  flex-shrink: 0;
-}
-
-
-.thread__dates {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 6px 8px;
-
-  font-family: var(--font-mono);
-
-  font-size: 9px;
-
-  color: var(--steel-400);
-}
-
-
-/* =========================================================
-   LISTA DE MENSAJES
-   ========================================================= */
-
-.log {
-
-  list-style: none;
-
-  margin: 0;
-
-  padding: 0;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 7px;
-
-  width: 100%;
-
-  min-width: 0;
-}
-
-
-.log__entry {
-
-  display: flex;
-
-  align-self: flex-start;
-
-  max-width: 82%;
-
-  min-width: 0;
-}
-
-
-/* =========================================================
-   MENSAJE DE TEXTO
-   ========================================================= */
-
-.log__body {
-
-  margin: 0;
-
-  padding: 6px 10px;
-
-  font-family: var(--font-body);
-
-  font-size: 12px;
-
-  line-height: 1.4;
-
-  color: var(--paper);
-
-  background: var(--bubble-in);
-
-  border-radius: 10px 10px 10px 3px;
-
-  overflow-wrap: anywhere;
-
-  word-break: break-word;
-}
-
-
-/* =========================================================
-   CONTENEDOR GENERAL DE MULTIMEDIA
-   ========================================================= */
-
-.media-message {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-start;
-
-  gap: 7px;
-
-  max-width: 100%;
-
-  min-width: 0;
-
-  padding: 7px;
-
-  background: var(--bubble-in);
-
-  border-radius: 10px 10px 10px 3px;
-
-  box-sizing: border-box;
-}
-
-
-/* =========================================================
-   IMÁGENES
-   ========================================================= */
-
-.media-message__image {
-
-  display: block;
-
-  /*
-   * Tamaño máximo de la imagen.
-   *
-   * En escritorio:
-   * máximo 320px de ancho
-   * máximo 320px de alto
-   */
-  width: auto;
-
-  max-width: 320px;
-
-  max-height: 320px;
-
-  height: auto;
-
-  object-fit: contain;
-
-  border-radius: 7px;
-
-  background: #11161a;
-
-  cursor: pointer;
-
-  transition:
-    transform .15s ease,
-    opacity .15s ease;
-}
-
-
-/*
- * Pequeño efecto visual al pasar
- * el mouse sobre la imagen.
- */
-.media-message__image:hover {
-
-  opacity: .92;
-
-  transform: scale(1.01);
-}
-
-
-/* =========================================================
-   VIDEO
-   ========================================================= */
-
-.media-message__video {
-
-  display: block;
-
-  width: 320px;
-
-  max-width: 100%;
-
-  height: auto;
-
-  max-height: 320px;
-
-  object-fit: contain;
-
-  border-radius: 7px;
-
-  background: #000;
-}
-
-
-/* =========================================================
-   AUDIO
-   ========================================================= */
-
-.media-message__audio {
-
-  display: block;
-
-  width: 320px;
-
-  max-width: 100%;
-
-  height: 40px;
-}
-
-
-/* =========================================================
-   CAPTION
-   ========================================================= */
-
-.media-message__caption {
-
-  margin: 0;
-
-  padding: 0 3px;
-
-  font-family: var(--font-body);
-
-  font-size: 11px;
-
-  line-height: 1.4;
-
-  color: var(--paper-dim);
-
-  overflow-wrap: anywhere;
-
-  word-break: break-word;
-
-  max-width: 100%;
-}
-
-
-/* =========================================================
-   DOCUMENTOS
-   ========================================================= */
-
-.media-message__document {
+.conversation-item__bottom {
 
   display: flex;
 
   align-items: center;
 
-  gap: 8px;
-
-  margin: 0;
-
-  padding: 8px 10px;
-
   width: 100%;
 
-  max-width: 300px;
+  min-width: 0;
 
-  box-sizing: border-box;
+  margin-top: 2px;
 
-  background: var(--graphite-800);
-
-  border: 1px solid var(--steel-600);
-
-  border-radius: 6px;
-
-  color: var(--paper);
-
-  font-family: var(--font-body);
-
-  font-size: 11px;
-
-  overflow-wrap: anywhere;
-
-  word-break: break-word;
 }
 
 
 /* =========================================================
-   UBICACIÓN
+   MENSAJE
    ========================================================= */
 
-.location-message {
+.conversation-item__message {
+
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+}
+
+
+/* =========================================================
+   PREVIEW
+   ========================================================= */
+
+.conversation-item__preview {
 
   display: flex;
 
-  flex-direction: column;
+  align-items: center;
 
-  gap: 5px;
+  min-width: 0;
 
-  padding: 8px 10px;
+  overflow: hidden;
 
-  background: var(--bubble-in);
+  text-overflow: ellipsis;
 
-  border-radius: 10px 10px 10px 3px;
+  white-space: nowrap;
 
-  color: var(--paper);
+  color: #66737c;
 
-  font-family: var(--font-body);
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 
   font-size: 11px;
 
-  max-width: 300px;
+  font-weight: 400;
 
-  overflow-wrap: anywhere;
-}
+  line-height: 17px;
 
-
-.location-message strong {
-
-  color: var(--amber);
-
-  font-family: var(--font-mono);
-
-  font-size: 10px;
-}
-
-
-.location-message p {
-
-  margin: 0;
-
-  line-height: 1.4;
 }
 
 
 /* =========================================================
-   BOTONES DE DESCARGA
+   ICONO DE TIPO
    ========================================================= */
 
-.media-message button {
+.conversation-item__type-icon {
 
-  border: 1px solid var(--steel-500);
+  flex-shrink: 0;
 
-  background: var(--graphite-800);
+  display: inline-flex;
 
-  color: var(--paper);
+  align-items: center;
 
-  padding: 5px 9px;
+  justify-content: center;
 
-  border-radius: 4px;
+  margin-right: 5px;
 
-  font-family: var(--font-mono);
+  color: #61717b;
+
+  font-size: 11px;
+
+  line-height: 1;
+
+}
+
+
+/* =========================================================
+   META
+   ========================================================= */
+
+.conversation-item__meta {
+
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  min-width: 0;
+
+  margin-top: 5px;
+
+}
+
+
+/* =========================================================
+   ATENCIÓN
+   ========================================================= */
+
+.conversation-item__attention {
+
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+}
+
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+
+.conversation-item__status {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  max-width: 100%;
+
+  padding: 2px 7px;
+
+  border-radius: 5px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 
   font-size: 9px;
 
-  cursor: pointer;
+  font-weight: 600;
 
-  transition:
-    background .15s ease,
-    border-color .15s ease,
-    color .15s ease;
-}
+  line-height: 13px;
 
+  white-space: nowrap;
 
-.media-message button:hover {
-
-  background: var(--amber);
-
-  border-color: var(--amber);
-
-  color: #000;
-}
-
-
-.media-message button:active {
-
-  transform: translateY(1px);
 }
 
 
 /* =========================================================
-   TABLET
+   PUNTO
    ========================================================= */
 
-@media (max-width: 900px) {
+.conversation-item__status-dot {
 
-  .record__field {
+  flex-shrink: 0;
 
-    flex-basis: 50%;
-  }
+  width: 6px;
 
+  height: 6px;
 
-  /*
-   * Reducimos ligeramente el tamaño
-   * de los archivos multimedia.
-   */
-  .media-message__image {
+  margin-right: 5px;
 
-    max-width: 280px;
+  border-radius: 50%;
 
-    max-height: 280px;
-  }
-
-
-  .media-message__video {
-
-    width: 280px;
-
-    max-height: 280px;
-  }
-
-
-  .media-message__audio {
-
-    width: 280px;
-  }
 }
 
 
 /* =========================================================
-   MÓVIL
+   HUMAN
+   ========================================================= */
+
+.conversation-item__status--human {
+
+  background: #e3f3e9;
+
+  border: 1px solid #c3e2ce;
+
+  color: #28734c;
+
+}
+
+
+.conversation-item__status--human
+.conversation-item__status-dot {
+
+  background: #28734c;
+
+}
+
+
+/* =========================================================
+   BOT
+   ========================================================= */
+
+.conversation-item__status--bot {
+
+  background: #e9f0f8;
+
+  border: 1px solid #cfdeed;
+
+  color: #315d8a;
+
+}
+
+
+.conversation-item__status--bot
+.conversation-item__status-dot {
+
+  background: #477eae;
+
+}
+
+
+/* =========================================================
+   CLOSED
+   ========================================================= */
+
+.conversation-item__status--closed {
+
+  background: #eef0f2;
+
+  border: 1px solid #dce0e3;
+
+  color: #68737b;
+
+}
+
+
+.conversation-item__status--closed
+.conversation-item__status-dot {
+
+  background: #7b858c;
+
+}
+
+
+/* =========================================================
+   DESCONOCIDO
+   ========================================================= */
+
+.conversation-item__status--unknown {
+
+  background: #f1f3f5;
+
+  border: 1px solid #dfe3e6;
+
+  color: #737d84;
+
+}
+
+
+.conversation-item__status--unknown
+.conversation-item__status-dot {
+
+  background: #8c969d;
+
+}
+
+
+/* =========================================================
+   REGISTRO
+   ========================================================= */
+
+.conversation-item__registration {
+
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+}
+
+
+/* =========================================================
+   BADGE REGISTRO
+   ========================================================= */
+
+.conversation-item__registration-badge {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  max-width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 2px 7px;
+
+  border-radius: 5px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  line-height: 13px;
+
+  white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   ICONO REGISTRO
+   ========================================================= */
+
+.conversation-item__registration-icon {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 11px;
+
+  height: 11px;
+
+  margin-right: 4px;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+}
+
+
+/* =========================================================
+   REGISTRO COMPLETADO
+   ========================================================= */
+
+.conversation-item__registration-badge--completed {
+
+  background: #fff5cc;
+
+  color: #866400;
+
+  border: 1px solid #eedb8b;
+
+}
+
+
+.conversation-item__registration-badge--completed
+.conversation-item__registration-icon {
+
+  color: #806000;
+
+}
+
+
+/* =========================================================
+   REGISTRO INCOMPLETO
+   ========================================================= */
+
+.conversation-item__registration-badge--incomplete {
+
+  background: #faecea;
+
+  color: #a24b43;
+
+  border: 1px solid #ebd2cf;
+
+}
+
+
+.conversation-item__registration-badge--incomplete
+.conversation-item__registration-icon {
+
+  color: #a24b43;
+
+}
+
+
+/* =========================================================
+   FLECHA
+   ========================================================= */
+
+.conversation-item__arrow {
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 18px;
+
+  margin-left: 7px;
+
+  color: #a0a8ad;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 20px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  transition:
+    color .15s ease,
+    transform .15s ease;
+
+}
+
+
+.conversation-item:hover
+.conversation-item__arrow {
+
+  color: #52616b;
+
+  transform: translateX(2px);
+
+}
+
+
+/* =========================================================
+   FLECHA SELECCIONADA
+   ========================================================= */
+
+.conversation-item--selected
+.conversation-item__arrow {
+
+  color: #23689b;
+
+}
+
+
+/* =========================================================
+   HUMAN - DESTACAR BADGE
+   ========================================================= */
+
+.conversation-item--human
+.conversation-item__status--human {
+
+  font-weight: 700;
+
+}
+
+
+/* =========================================================
+   MOBILE
    ========================================================= */
 
 @media (max-width: 600px) {
 
-  .record {
+  .conversation-item {
 
-    padding: 11px;
+    min-height: 82px;
+
+    padding: 9px 10px;
+
   }
 
 
-  .record__name {
+  .conversation-item__avatar {
 
-    font-size: 14px;
+    width: 40px;
+
+    height: 40px;
+
+    margin-right: 9px;
+
   }
 
 
-  .record__field {
+  .conversation-item__name {
 
-    flex-basis: 100%;
+    font-size: 12.5px;
+
   }
 
 
-  .thread__dates {
+  .conversation-item__preview {
 
-    flex-direction: column;
+    font-size: 11px;
 
-    gap: 3px;
   }
 
 
-  .log__entry {
+  .conversation-item__time {
 
-    max-width: 95%;
+    font-size: 9.5px;
+
   }
 
 
-  /*
-   * La conversación ocupa menos altura
-   * en dispositivos pequeños.
-   */
-  .thread {
+  .conversation-item__meta {
 
-    max-height: 420px;
+    gap: 4px;
 
-    padding: 7px 8px 9px;
   }
 
 
-  /*
-   * Las imágenes se adaptan
-   * completamente al ancho disponible.
-   */
-  .media-message {
+  .conversation-item__status,
+  .conversation-item__registration-badge {
 
-    max-width: 100%;
+    font-size: 8.5px;
+
   }
 
-
-  .media-message__image {
-
-    width: auto;
-
-    max-width: 100%;
-
-    max-height: 260px;
-  }
-
-
-  /*
-   * El video nunca puede superar
-   * el ancho de la pantalla.
-   */
-  .media-message__video {
-
-    width: 100%;
-
-    max-width: 100%;
-
-    max-height: 260px;
-  }
-
-
-  /*
-   * El audio también se adapta.
-   */
-  .media-message__audio {
-
-    width: 100%;
-
-    max-width: 100%;
-  }
-
-
-  .media-message__document {
-
-    max-width: 100%;
-  }
-
-
-  .location-message {
-
-    max-width: 100%;
-  }
 }
 
 
@@ -920,34 +845,56 @@
 
 @media (max-width: 380px) {
 
-  .record__header {
+  .conversation-item {
 
-    align-items: flex-start;
+    min-height: 78px;
 
-    flex-direction: column;
+    padding-left: 8px;
+
+    padding-right: 8px;
+
   }
 
 
-  .stamp {
+  .conversation-item__avatar {
 
-    align-self: flex-start;
+    width: 36px;
+
+    height: 36px;
+
+    margin-right: 8px;
+
+    font-size: 12px;
+
   }
 
 
-  .thread {
+  .conversation-item__arrow {
 
-    max-height: 360px;
+    width: 12px;
+
+    margin-left: 3px;
+
+    font-size: 17px;
+
   }
 
 
-  .media-message__image {
+  .conversation-item__meta {
 
-    max-height: 220px;
+    gap: 3px;
+
   }
 
 
-  .media-message__video {
+  .conversation-item__registration-badge {
 
-    max-height: 220px;
+    max-width: 150px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
   }
+
 }

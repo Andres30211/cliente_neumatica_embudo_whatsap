@@ -1,7 +1,7 @@
-import { Contact } from "./Contact";
+import { ConversationSummaryResponse } from "./ConversationSummaryResponse";
 
 export interface ContactPage {
-  content: Contact[];
+  content: ConversationSummaryResponse[];
   totalPages: number;
   totalElements: number;
   number: number;

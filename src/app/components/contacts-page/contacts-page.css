@@ -3,6 +3,7 @@
   display: block;
 
   width: 100%;
+
   min-height: 100vh;
 
   --background: #eef1f5;
@@ -12,47 +13,65 @@
   --muted: #68737d;
   --blue: #23689b;
   --blue-dark: #1b547d;
+
 }
 
+
+/* =========================================================
+   LAYOUT PRINCIPAL
+   ========================================================= */
 
 .contacts-layout {
 
   width: 100%;
 
+  min-height: 100vh;
+
   background: var(--background);
 
   box-sizing: border-box;
+
 }
 
 
-/* MAIN */
+/* =========================================================
+   MAIN
+   ========================================================= */
 
 .main-content {
 
-  flex: 1;
+  display: flex;
 
   min-width: 0;
-
-  display: flex;
 
 }
 
 
-/* PAGE */
+/* =========================================================
+   PAGE
+   ========================================================= */
 
 .page {
 
   flex: 1;
 
+  min-width: 0;
+
   padding: 20px;
 
   overflow-x: hidden;
+
+  box-sizing: border-box;
+
 }
+
 
 .page__header {
 
   margin-bottom: 12px;
+
 }
+
 
 .page__header h1 {
 
@@ -67,12 +86,17 @@
   font-size: 24px;
 
   font-weight: 700;
+
 }
 
 
-/* PANEL */
+/* =========================================================
+   PANEL
+   ========================================================= */
 
 .contacts-panel {
+
+  width: 100%;
 
   background: rgba(248, 250, 252, .95);
 
@@ -84,10 +108,15 @@
     0 8px 20px rgba(40, 55, 70, .12);
 
   overflow: hidden;
+
+  box-sizing: border-box;
+
 }
 
 
-/* FILTERS */
+/* =========================================================
+   MARKETING
+   ========================================================= */
 
 .buttons-marketing {
 
@@ -102,70 +131,134 @@
   border-bottom: 1px solid var(--border);
 
   background: #f7f9fb;
+
 }
 
-.buttons-marketing .email-marketing{
 
-  padding: 0.6rem;
-  border-style: none;
-  border-radius: 0.4rem;
+.buttons-marketing .email-marketing {
+
+  padding: .6rem;
+
+  border: none;
+
+  border-radius: .4rem;
+
   cursor: pointer;
+
   background-color: rgb(255, 196, 0);
-  transition: 100ms;
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease;
 
 }
 
-.buttons-marketing .email-marketing:hover{
 
-  padding: 0.7rem;
+.buttons-marketing .email-marketing:hover:not(:disabled) {
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, .12);
 
 }
 
-.buttons-marketing .excel-contacts{
 
-  padding: 0.6rem;
-  border-style: none;
-  border-radius: 0.4rem;
+.buttons-marketing .excel-contacts {
+
+  padding: .6rem;
+
+  border: none;
+
+  border-radius: .4rem;
+
   cursor: pointer;
+
   background-color: rgb(25, 136, 6);
-  transition: 100ms;
+
+  color: #fff;
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease;
 
 }
 
-.buttons-marketing .excel-contacts:hover{
 
-  padding: 0.7rem;
+.buttons-marketing .excel-contacts:hover {
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, .12);
 
 }
 
-/* REGISTRY */
 
-.registry {
+.buttons-marketing button:disabled {
+
+  opacity: .6;
+
+  cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
+
+.whatsapp-workspace {
 
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+    minmax(340px, 390px)
+    minmax(0, 1fr);
 
-  gap: 14px;
+  width: 100%;
 
-  padding: 15px;
+  height: calc(100vh - 190px);
 
-  background: #f4f6f8;
+  min-height: 580px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
 }
 
-.registry h3{
 
-  text-align: center;
-  padding: 3rem;
-  border-radius: 1rem;
-  background-color: #f8be00;
+/* =========================================================
+   COLUMNA IZQUIERDA
+   ========================================================= */
+
+.whatsapp-workspace__sidebar {
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+
+  min-height: 0;
+
+  overflow: hidden;
+
+  background: #f1f4f7;
+
+  border-right: 1px solid #d6dde3;
+
 }
 
 
-/* PAGINATION */
+/* =========================================================
+   HEADER DE CONVERSACIONES
+   ========================================================= */
 
-.pagination {
+.conversation-list-header {
+
+  flex-shrink: 0;
 
   display: flex;
 
@@ -173,19 +266,346 @@
 
   justify-content: space-between;
 
-  gap: 15px;
+  gap: 12px;
 
-  padding: 12px 15px;
+  min-height: 66px;
 
-  min-height: 58px;
+  padding: 10px 15px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #dfe5e9;
+
+}
+
+
+.conversation-list-header__label {
+
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #28734c;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: .08em;
+
+}
+
+
+.conversation-list-header h2 {
+
+  margin: 0;
+
+  color: #202b33;
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+}
+
+
+.conversation-list-header__count {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 28px;
+
+  height: 28px;
+
+  padding: 0 7px;
+
+  box-sizing: border-box;
+
+  border-radius: 14px;
+
+  background: #e5ecef;
+
+  color: #53636d;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+}
+
+
+/* =========================================================
+   LISTADO
+   ========================================================= */
+
+.registry {
+
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: stretch;
+
+  width: 100%;
+
+  gap: 0;
+
+  padding: 0;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  background: #f4f6f8;
+
+  box-sizing: border-box;
+
+}
+
+
+.registry > whatsapp-embudo {
+
+  display: block;
+
+  width: 100%;
+
+  min-width: 0;
+
+  flex: 0 0 auto;
+
+}
+
+
+.registry > * {
+
+  box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   COLUMNA DERECHA
+   ========================================================= */
+
+.whatsapp-workspace__chat {
+
+  min-width: 0;
+
+  min-height: 0;
+
+  overflow: hidden;
+
+  background: #14191d;
+
+}
+
+
+.whatsapp-workspace__chat > conversation-chat {
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  min-width: 0;
+
+  min-height: 0;
+
+}
+
+
+/* =========================================================
+   CHAT VACÍO
+   ========================================================= */
+
+.conversation-empty-state {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 30px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  background: #f8fafb;
+
+}
+
+
+.conversation-empty-state__icon {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 72px;
+
+  height: 72px;
+
+  margin-bottom: 18px;
+
+  border-radius: 50%;
+
+  background: #e4eaee;
+
+  font-size: 32px;
+
+}
+
+
+.conversation-empty-state h2 {
+
+  margin: 0 0 8px;
+
+  color: #26343d;
+
+  font-size: 22px;
+
+}
+
+
+.conversation-empty-state p {
+
+  margin: 0;
+
+  color: #66757e;
+
+  font-size: 14px;
+
+}
+
+
+.conversation-empty-state span {
+
+  margin-top: 10px;
+
+  color: #8a969d;
+
+  font-size: 11px;
+
+}
+
+
+/* =========================================================
+   SIN CONVERSACIONES
+   ========================================================= */
+
+.empty-conversations {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 60px 25px;
+
+  text-align: center;
+
+  background: #f8fafc;
+
+}
+
+
+.empty-conversations__icon {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 64px;
+
+  height: 64px;
+
+  margin: 0 auto 15px;
+
+  border-radius: 50%;
+
+  background: #e7edf3;
+
+  font-size: 30px;
+
+}
+
+
+.empty-conversations h3 {
+
+  margin: 0 0 8px;
+
+  color: #222;
+
+  font-size: 18px;
+
+}
+
+
+.empty-conversations p {
+
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 14px;
+
+}
+
+
+/* =========================================================
+   PAGINACIÓN
+   ========================================================= */
+
+.pagination {
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 9px 8px;
 
   border-top: 1px solid var(--border);
 
   background: #f8fafc;
+
 }
 
-
-/* INFO */
 
 .pagination__info {
 
@@ -193,14 +613,18 @@
 
   align-items: center;
 
-  gap: 6px;
+  justify-content: center;
 
-  color: #222;
+  gap: 5px;
 
-  font-size: 14px;
+  color: #4d5961;
+
+  font-size: 11px;
 
   white-space: nowrap;
+
 }
+
 
 .pagination__info strong {
 
@@ -210,9 +634,11 @@
 
   justify-content: center;
 
-  min-width: 30px;
+  min-width: 25px;
 
-  height: 30px;
+  height: 25px;
+
+  padding: 0 4px;
 
   border: 1px solid #bfc7cf;
 
@@ -220,11 +646,12 @@
 
   background: #fff;
 
-  font-weight: 500;
+  color: #173b59;
+
+  font-weight: 600;
+
 }
 
-
-/* CONTROLS */
 
 .pagination__controls {
 
@@ -232,12 +659,24 @@
 
   align-items: center;
 
-  gap: 5px;
+  justify-content: center;
+
+  gap: 2px;
+
+  max-width: 100%;
+
 }
+
 
 .pagination button {
 
-  height: 34px;
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  height: 28px;
 
   border: 1px solid transparent;
 
@@ -247,126 +686,127 @@
 
   color: #173b59;
 
-  font-size: 14px;
+  font-size: 11px;
 
   cursor: pointer;
 
-  transition:
-    background .2s ease,
-    border-color .2s ease;
 }
+
 
 .pagination__number {
 
-  min-width: 34px;
+  min-width: 27px;
+
+  padding: 0 5px;
+
 }
 
-.pagination__number:hover:not(
-  :disabled
-) {
+
+.pagination__number:hover:not(:disabled) {
 
   background: #e2e9ef;
+
 }
+
 
 .pagination__number--active {
 
   background: var(--blue) !important;
 
+  border-color: var(--blue) !important;
+
   color: #fff !important;
+
+  font-weight: 600;
+
 }
+
 
 .pagination__arrow {
 
-  width: 30px;
+  width: 28px;
 
-  font-size: 24px !important;
+  border-color: #d0d7de !important;
+
+  background: #fff !important;
+
+  font-size: 18px !important;
+
 }
+
 
 .pagination__next {
 
-  padding: 0 15px;
+  gap: 4px;
+
+  padding: 0 8px;
 
   background: var(--blue) !important;
 
+  border-color: var(--blue) !important;
+
   color: #fff !important;
 
-  border-color: var(--blue) !important;
-}
-
-.pagination__next:hover:not(
-  :disabled
-) {
-
-  background: var(--blue-dark) !important;
 }
 
 
-/* DISABLED */
+.pagination__next-icon {
 
-.pagination button:disabled {
+  font-size: 17px;
 
-  opacity: .45;
-
-  cursor: not-allowed;
 }
 
 
-/* SIZE */
+.pagination__ellipsis {
 
-.pagination__size {
-
-  display: flex;
+  display: inline-flex;
 
   align-items: center;
 
-  gap: 7px;
+  justify-content: center;
 
-  color: #222;
+  min-width: 15px;
 
-  font-size: 14px;
+  height: 28px;
 
-  white-space: nowrap;
-}
+  color: #7b8791;
 
-.pagination__size select {
+  font-size: 11px;
 
-  height: 34px;
-
-  padding: 0 10px;
-
-  border: 1px solid #bfc7cf;
-
-  border-radius: 5px;
-
-  background: #fff;
-
-  color: #222;
 }
 
 
-/* TABLET */
+.pagination button:disabled {
 
-@media (max-width: 1100px) {
+  opacity: .4;
 
-  .registry {
+  cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+  .whatsapp-workspace {
 
     grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
-  }
-
-  .pagination {
-
-    flex-wrap: wrap;
+      minmax(300px, 340px)
+      minmax(0, 1fr);
 
   }
 
 }
 
 
-/* MOBILE */
+/* =========================================================
+   MÓVIL
+   ========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width: 760px) {
 
   .page {
 
@@ -374,13 +814,15 @@
 
   }
 
+
   .page__header h1 {
 
     font-size: 20px;
 
   }
 
-  .filters {
+
+  .buttons-marketing {
 
     flex-direction: column;
 
@@ -388,72 +830,79 @@
 
   }
 
-  .filter {
 
-    justify-content: space-between;
+  .buttons-marketing button {
 
-  }
-
-  .filter select {
-
-    flex: 1;
+    width: 100%;
 
   }
 
-  .registry {
+
+  .whatsapp-workspace {
 
     grid-template-columns: 1fr;
 
-    padding: 10px;
+    height: auto;
+
+    min-height: 0;
 
   }
 
-  .pagination {
 
-    flex-direction: column;
+  .whatsapp-workspace__sidebar {
 
-    align-items: stretch;
+    min-height: 420px;
 
-  }
+    max-height: 520px;
 
-  .pagination__info {
+    border-right: 0;
 
-    justify-content: center;
-
-  }
-
-  .pagination__controls {
-
-    justify-content: center;
-
-    flex-wrap: wrap;
+    border-bottom: 1px solid #d6dde3;
 
   }
 
-  .pagination__size {
 
-    justify-content: center;
+  .whatsapp-workspace__chat {
+
+    min-height: 600px;
 
   }
 
 }
 
 
-/* VERY SMALL */
+/* =========================================================
+   MUY PEQUEÑO
+   ========================================================= */
 
 @media (max-width: 400px) {
 
-  .pagination__next {
+  .page {
 
-    padding: 0 10px;
-
-    font-size: 12px;
+    padding: 8px;
 
   }
 
-  .pagination__number {
 
-    min-width: 30px;
+  .pagination__controls {
+
+    flex-wrap: wrap;
+
+  }
+
+
+  .pagination__next span:first-child {
+
+    display: none;
+
+  }
+
+
+  .pagination__next {
+
+    width: 30px;
+
+    padding: 0;
 
   }
 

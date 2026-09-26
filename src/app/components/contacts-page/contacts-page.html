@@ -1,154 +1,419 @@
 <div class="contacts-layout">
 
+
+  <!-- ========================================================= -->
+  <!-- TOPBAR -->
+  <!-- ========================================================= -->
+
   <app-topbar></app-topbar>
+
+
+  <!-- ========================================================= -->
+  <!-- CONTENIDO PRINCIPAL -->
+  <!-- ========================================================= -->
 
   <main class="main-content">
 
+
+    <!-- ======================================================= -->
+    <!-- SIDEBAR -->
+    <!-- ======================================================= -->
+
     <app-sidebar></app-sidebar>
 
+
+    <!-- ======================================================= -->
+    <!-- PÁGINA -->
+    <!-- ======================================================= -->
+
     <section class="page">
+
+
+      <!-- ===================================================== -->
+      <!-- HEADER -->
+      <!-- ===================================================== -->
 
       <div class="page__header">
 
         <h1>
-          Gestor de Embudos de Conversación en Whatsapp
+          Gestor de Embudos de Conversación en WhatsApp
         </h1>
 
       </div>
 
 
-      <!-- CONTENEDOR PRINCIPAL -->
+      <!-- ===================================================== -->
+      <!-- PANEL PRINCIPAL -->
+      <!-- ===================================================== -->
 
       <section class="contacts-panel">
 
 
+        <!-- =================================================== -->
         <!-- MARKETING -->
+        <!-- =================================================== -->
 
-        @if(this.meRol('ROLE_ADMIN') || this.meRol('ROLE_PUBLICISTA')){
+        @if (
+          meRol('ROLE_ADMIN') ||
+          meRol('ROLE_PUBLICISTA')
+        ) {
 
           <div class="buttons-marketing">
-  
-            <button class="email-marketing" (click)="sendCampaing()">Enviar Email Marketing</button>
-            
-            <button class="excel-contacts" (click)="descargarExcel()">Descargar Contactos en Excel</button>
-  
+
+
+            <button
+              class="email-marketing"
+              type="button"
+              (click)="sendCampaing()"
+              [disabled]="enviado"
+            >
+
+              @if (enviado) {
+
+                Enviando...
+
+              } @else {
+
+                Enviar Email Marketing
+
+              }
+
+            </button>
+
+
+            <button
+              class="excel-contacts"
+              type="button"
+              (click)="descargarExcel()"
+            >
+
+              Descargar Contactos en Excel
+
+            </button>
+
+
           </div>
 
         }
 
 
-        <!-- TARJETAS -->
+        <!-- =================================================== -->
+        <!-- WORKSPACE DE WHATSAPP -->
+        <!-- =================================================== -->
 
-        <div class="registry">
-          
-          @if (this.contacts().length > 0) {
+        <div class="whatsapp-workspace">
 
-            @for (contact of contacts(); track contact.id) {
-  
-              <whatsapp-embudo
-                [contact]="contact">
-              </whatsapp-embudo>
-  
+
+          <!-- ================================================= -->
+          <!-- COLUMNA IZQUIERDA -->
+          <!-- ================================================= -->
+
+          <aside class="whatsapp-workspace__sidebar">
+
+
+            <div class="conversation-list-header">
+
+              <div>
+
+                <span class="conversation-list-header__label">
+                  WHATSAPP
+                </span>
+
+                <h2>
+                  Conversaciones
+                </h2>
+
+              </div>
+
+
+              <span class="conversation-list-header__count">
+
+                {{ totalElements() }}
+
+              </span>
+
+            </div>
+
+
+            <!-- =============================================== -->
+            <!-- LISTA -->
+            <!-- =============================================== -->
+
+            <div class="registry">
+
+
+              @if (contacts().length > 0) {
+
+
+                @for (
+                  conversation of contacts();
+                  track conversation.conversationId
+                ) {
+
+
+                  <whatsapp-embudo
+
+                    [conversation]="conversation"
+
+                    [selected]="
+                      isConversationSelected(
+                        conversation
+                      )
+                    "
+
+                    (conversationSelected)="
+                      selectConversation(
+                        $event
+                      )
+                    "
+
+                  >
+                  </whatsapp-embudo>
+
+
+                }
+
+
+              } @else {
+
+
+                <div class="empty-conversations">
+
+                  <div class="empty-conversations__icon">
+                    💬
+                  </div>
+
+                  <h3>
+                    No hay conversaciones
+                  </h3>
+
+                  <p>
+                    Todavía no existen conversaciones
+                    para mostrar.
+                  </p>
+
+                </div>
+
+
+              }
+
+
+            </div>
+
+
+            <!-- =============================================== -->
+            <!-- PAGINACIÓN -->
+            <!-- =============================================== -->
+
+            @if (totalPages() > 0) {
+
+              <div class="pagination">
+
+
+                <div class="pagination__info">
+
+                  <span>
+                    Página
+                  </span>
+
+                  <strong>
+                    {{ currentPage() + 1 }}
+                  </strong>
+
+                  <span>
+                    de {{ totalPages() }}
+                  </span>
+
+                </div>
+
+
+                <div class="pagination__controls">
+
+
+                  <button
+                    class="pagination__arrow"
+                    type="button"
+                    (click)="previousPage()"
+                    [disabled]="
+                      currentPage() === 0
+                    "
+                    aria-label="Página anterior"
+                    title="Página anterior"
+                  >
+
+                    ‹
+
+                  </button>
+
+
+                  @for (
+                    page of paginationItems;
+                    track $index
+                  ) {
+
+
+                    @if (
+                      isPageNumber(page)
+                    ) {
+
+
+                      <button
+                        type="button"
+                        class="pagination__number"
+
+                        [class.pagination__number--active]="
+                          currentPage() === page
+                        "
+
+                        (click)="
+                          goToPage(page)
+                        "
+
+                        [attr.aria-label]="
+                          'Ir a página ' +
+                          (page + 1)
+                        "
+
+                        [attr.aria-current]="
+                          currentPage() === page
+                            ? 'page'
+                            : null
+                        "
+                      >
+
+                        {{ page + 1 }}
+
+                      </button>
+
+
+                    } @else {
+
+
+                      <span
+                        class="pagination__ellipsis"
+                        aria-hidden="true"
+                      >
+
+                        …
+
+                      </span>
+
+
+                    }
+
+
+                  }
+
+
+                  <button
+                    class="pagination__next"
+                    type="button"
+
+                    (click)="nextPage()"
+
+                    [disabled]="
+                      currentPage() >=
+                      totalPages() - 1
+                    "
+
+                    aria-label="Página siguiente"
+                    title="Página siguiente"
+                  >
+
+                    <span>
+                      Siguiente
+                    </span>
+
+                    <span
+                      class="pagination__next-icon"
+                    >
+                      ›
+                    </span>
+
+                  </button>
+
+
+                </div>
+
+
+              </div>
+
             }
 
-          }@else {
-            
-            <h3>No hay contactos filtrados...</h3>
-          }
 
-        </div>
+          </aside>
 
 
-        <!-- PAGINACIÓN -->
+          <!-- ================================================= -->
+          <!-- COLUMNA DERECHA -->
+          <!-- ================================================= -->
 
-        <div class="pagination">
-
-
-          <div class="pagination__info">
-
-            <span>
-              Página
-            </span>
-
-            <strong>
-              {{ currentPage() + 1 }}
-            </strong>
-
-            <span>
-              de {{ totalPages() }}
-            </span>
-
-          </div>
+          <main class="whatsapp-workspace__chat">
 
 
-          <div class="pagination__controls">
+            @if (
+              selectedConversation();
+              as conversation
+            ) {
 
 
-            <!-- ANTERIOR -->
-
-            <button
-              class="pagination__arrow"
-              type="button"
-              (click)="previousPage()"
-              [disabled]="currentPage() === 0"
-            >
-              ‹
-            </button>
-
-
-            <!-- NÚMEROS -->
-
-            @for (page of pageNumbers; track page) {
-
-              <button
-                type="button"
-                class="pagination__number"
-                [class.pagination__number--active]="
-                  currentPage() === page
-                "
-                (click)="goToPage(page)"
+              <conversation-chat
+                [conversation]="conversation"
               >
-                {{ page + 1 }}
-              </button>
+              </conversation-chat>
+
+
+            } @else {
+
+
+              <!-- ============================================= -->
+              <!-- SIN CONVERSACIÓN SELECCIONADA -->
+              <!-- ============================================= -->
+
+              <div class="conversation-empty-state">
+
+
+                <div class="conversation-empty-state__icon">
+                  💬
+                </div>
+
+
+                <h2>
+                  WhatsApp
+                </h2>
+
+
+                <p>
+                  Selecciona una conversación para
+                  visualizar los mensajes.
+                </p>
+
+
+                <span>
+                  Seleccionar una conversación no cambia
+                  su estado de atención.
+                </span>
+
+
+              </div>
+
 
             }
 
 
-            <!-- SIGUIENTE -->
+          </main>
 
-            <button
-              class="pagination__next"
-              type="button"
-              (click)="nextPage()"
-              [disabled]="
-                currentPage() === totalPages() - 1
-              "
-            >
-              Siguiente
-            </button>
-
-
-          </div>
-
-
-          <div class="pagination__size">
-
-            <span>
-              Ver
-            </span>
-
-            <select disabled>
-              <option>5 por página</option>
-            </select>
-
-          </div>
 
         </div>
+
 
       </section>
 
+
     </section>
 
+
   </main>
+
 
 </div>

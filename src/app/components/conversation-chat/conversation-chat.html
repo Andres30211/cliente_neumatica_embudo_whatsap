@@ -1,0 +1,915 @@
+<section class="chat-panel">
+
+
+  <!-- ===================================================== -->
+  <!-- HEADER -->
+  <!-- ===================================================== -->
+
+  <header class="chat-header">
+
+    <div class="chat-header__avatar">
+
+      {{
+      conversation?.contact?.name
+      ? conversation.contact.name.charAt(0).toUpperCase()
+      : (
+      conversation?.contactName
+      ? conversation.contactName.charAt(0).toUpperCase()
+      : '?'
+      )
+      }}
+
+    </div>
+
+
+    <div class="chat-header__info">
+
+      <div class="chat-header__top">
+
+        <h2>
+
+          {{
+          conversation?.contact?.name ||
+          conversation?.contactName ||
+          'Contacto'
+          }}
+
+        </h2>
+
+
+        @if (
+        conversation?.status === 'HUMAN'
+        ) {
+
+        <span class="
+              chat-header__status
+              chat-header__status--human
+            ">
+
+          <span></span>
+
+          VENDEDOR
+
+        </span>
+
+        }
+
+        @else if (
+        conversation?.status === 'BOT'
+        ) {
+
+        <span class="
+              chat-header__status
+              chat-header__status--bot
+            ">
+
+          <span></span>
+
+          BOT
+
+        </span>
+
+        }
+
+        @else if (
+        conversation?.status === 'CLOSED'
+        ) {
+
+        <span class="
+              chat-header__status
+              chat-header__status--closed
+            ">
+
+          <span></span>
+
+          CERRADA
+
+        </span>
+
+        }
+
+      </div>
+
+
+      <span class="chat-header__phone">
+
+        {{
+        conversation?.contact?.phone ||
+        conversation?.phone ||
+        ''
+        }}
+
+      </span>
+
+      @if (
+      conversation?.status === 'HUMAN'
+      ) {
+
+      <span class="chat-header__seller">
+
+        @if (
+        conversation?.assignedUserName
+        ) {
+
+        👤 Atendido por:
+        <strong>
+          {{ conversation.assignedUserName }}
+        </strong>
+
+        } @else {
+
+        👤 Vendedor asignado
+
+        }
+
+      </span>
+
+      }
+
+    </div>
+
+  </header>
+
+
+  <!-- ===================================================== -->
+  <!-- LOADING -->
+  <!-- ===================================================== -->
+
+  @if (loading) {
+
+  <div class="chat-loading">
+
+    <span class="chat-loading__spinner"></span>
+
+    Cargando conversación...
+
+  </div>
+
+  }
+
+
+  <!-- ===================================================== -->
+  <!-- ERROR -->
+  <!-- ===================================================== -->
+
+  @if (errorMessage) {
+
+  <div class="chat-error">
+
+    {{ errorMessage }}
+
+  </div>
+
+  }
+
+
+  <!-- ===================================================== -->
+  <!-- MENSAJES -->
+  <!-- ===================================================== -->
+
+  <div class="chat-messages">
+
+
+    @if (
+    !loading &&
+    (
+    !conversation?.messages ||
+    conversation.messages.length === 0
+    )
+    ) {
+
+    <div class="chat-messages__empty">
+
+      <div class="chat-messages__empty-icon">
+        💬
+      </div>
+
+      <span>
+        No hay mensajes en esta conversación.
+      </span>
+
+    </div>
+
+    }
+
+
+    @for (
+    message of conversation?.messages || [];
+    track message.id;
+    let i = $index
+    ) {
+
+
+    <!-- ================================================= -->
+    <!-- FECHA -->
+    <!-- ================================================= -->
+
+    @if (
+    shouldShowDateSeparator(i)
+    ) {
+
+    <div class="chat-date-separator">
+
+      <span>
+
+        {{
+        getDateLabel(
+        message.createdAt
+        )
+        }}
+
+      </span>
+
+    </div>
+
+    }
+
+
+    <!-- ================================================= -->
+    <!-- MENSAJE -->
+    <!-- ================================================= -->
+
+    <div class="chat-message" [class.chat-message--incoming]="
+          !isOutgoing(message)
+        " [class.chat-message--outgoing]="
+          isOutgoing(message)
+        ">
+
+
+      <div class="chat-message__bubble" [class.chat-message__bubble--media]="
+            isMediaMessage(message)
+          ">
+
+
+        <!-- ============================================= -->
+        <!-- TEXTO -->
+        <!-- ============================================= -->
+
+        @if (
+        message.type === 'TEXT'
+        ) {
+
+        <p class="chat-message__text">
+
+          {{
+          message.body ||
+          ''
+          }}
+
+        </p>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- IMAGEN -->
+        <!-- ============================================= -->
+
+        @else if (
+        message.type === 'IMAGE'
+        ) {
+
+        <div class="media-message">
+
+
+          @if (
+          isMediaLoading(message)
+          ) {
+
+          <div class="media-loading">
+
+            <span class="media-loading__spinner"></span>
+
+            <span>
+              Cargando imagen...
+            </span>
+
+          </div>
+
+          }
+
+
+          @else if (
+          hasMediaError(message)
+          ) {
+
+          <div class="media-error">
+
+            <span class="media-error__icon">
+              !
+            </span>
+
+            <span>
+              No fue posible cargar la imagen.
+            </span>
+
+            <button type="button" (click)="retryMedia(message)">
+              Reintentar
+            </button>
+
+          </div>
+
+          }
+
+
+          @else if (
+          getMediaUrl(message);
+          as mediaUrl
+          ) {
+
+          <img class="media-message__image" [src]="mediaUrl" alt="Imagen recibida" loading="lazy" />
+
+          }
+
+
+          @if (message.caption) {
+
+          <p class="media-message__caption">
+
+            {{ message.caption }}
+
+          </p>
+
+          }
+
+
+          @if (
+          getMediaUrl(message)
+          ) {
+
+          <div class="media-message__actions">
+
+            <button type="button" (click)="downloadMedia(message)">
+              ↓ Descargar imagen
+            </button>
+
+          </div>
+
+          }
+
+        </div>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- STICKER -->
+        <!-- ============================================= -->
+
+        @else if (
+        message.type === 'STICKER'
+        ) {
+
+        <div class="
+                media-message
+                media-message--sticker
+              ">
+
+
+          @if (
+          isMediaLoading(message)
+          ) {
+
+          <div class="media-loading">
+
+            <span class="media-loading__spinner"></span>
+
+            <span>
+              Cargando sticker...
+            </span>
+
+          </div>
+
+          }
+
+
+          @else if (
+          hasMediaError(message)
+          ) {
+
+          <div class="media-error">
+
+            <span>
+              No fue posible cargar el sticker.
+            </span>
+
+            <button type="button" (click)="retryMedia(message)">
+              Reintentar
+            </button>
+
+          </div>
+
+          }
+
+
+          @else if (
+          getMediaUrl(message);
+          as mediaUrl
+          ) {
+
+          <img class="media-message__sticker" [src]="mediaUrl" alt="Sticker recibido" loading="lazy" />
+
+          }
+
+        </div>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- VIDEO -->
+        <!-- ============================================= -->
+
+        @else if (
+        message.type === 'VIDEO'
+        ) {
+
+        <div class="media-message">
+
+
+          @if (
+          isMediaLoading(message)
+          ) {
+
+          <div class="media-loading">
+
+            <span class="media-loading__spinner"></span>
+
+            <span>
+              Cargando video...
+            </span>
+
+          </div>
+
+          }
+
+
+          @else if (
+          hasMediaError(message)
+          ) {
+
+          <div class="media-error">
+
+            <span>
+              No fue posible cargar el video.
+            </span>
+
+            <button type="button" (click)="retryMedia(message)">
+              Reintentar
+            </button>
+
+          </div>
+
+          }
+
+
+          @else if (
+          getMediaUrl(message);
+          as mediaUrl
+          ) {
+
+          <video class="media-message__video" [src]="mediaUrl" controls playsinline preload="metadata">
+            Tu navegador no puede reproducir este video.
+          </video>
+
+          }
+
+
+          @if (message.caption) {
+
+          <p class="media-message__caption">
+
+            {{ message.caption }}
+
+          </p>
+
+          }
+
+
+          @if (
+          getMediaUrl(message)
+          ) {
+
+          <div class="media-message__actions">
+
+            <button type="button" (click)="downloadMedia(message)">
+              ↓ Descargar video
+            </button>
+
+          </div>
+
+          }
+
+        </div>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- AUDIO -->
+        <!-- ============================================= -->
+
+        @else if (
+        message.type === 'AUDIO'
+        ) {
+
+        <div class="
+                media-message
+                media-message--audio
+              ">
+
+
+          <div class="media-message__audio-title">
+
+            <span class="media-message__audio-icon">
+              ♪
+            </span>
+
+            <span>
+              Mensaje de audio
+            </span>
+
+          </div>
+
+
+          @if (
+          isMediaLoading(message)
+          ) {
+
+          <div class="media-loading">
+
+            <span class="media-loading__spinner"></span>
+
+            <span>
+              Cargando audio...
+            </span>
+
+          </div>
+
+          }
+
+
+          @else if (
+          hasMediaError(message)
+          ) {
+
+          <div class="media-error">
+
+            <span>
+              No fue posible cargar el audio.
+            </span>
+
+            <button type="button" (click)="retryMedia(message)">
+              Reintentar
+            </button>
+
+          </div>
+
+          }
+
+
+          @else if (
+          getMediaUrl(message);
+          as mediaUrl
+          ) {
+
+          <audio class="media-message__audio" [src]="mediaUrl" controls preload="metadata">
+            Tu navegador no puede reproducir este audio.
+          </audio>
+
+          }
+
+
+          @if (
+          getMediaUrl(message)
+          ) {
+
+          <div class="media-message__actions">
+
+            <button type="button" (click)="downloadMedia(message)">
+              ↓ Descargar audio
+            </button>
+
+          </div>
+
+          }
+
+        </div>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- DOCUMENTO -->
+        <!-- ============================================= -->
+
+        @else if (
+        message.type === 'DOCUMENT'
+        ) {
+
+        <div class="
+                media-message
+                media-message--document
+              ">
+
+
+          <div class="media-document">
+
+            <div class="media-document__icon">
+              ▤
+            </div>
+
+
+            <div class="media-document__info">
+
+              <strong>
+
+                {{
+                message.fileName ||
+                getMediaFileName(message)
+                }}
+
+              </strong>
+
+
+              @if (
+              message.mimeType
+              ) {
+
+              <span>
+                {{ message.mimeType }}
+              </span>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          @if (
+          isMediaLoading(message)
+          ) {
+
+          <div class="media-loading">
+
+            <span class="media-loading__spinner"></span>
+
+            <span>
+              Cargando documento...
+            </span>
+
+          </div>
+
+          }
+
+
+          @else if (
+          hasMediaError(message)
+          ) {
+
+          <div class="media-error">
+
+            <span>
+              No fue posible cargar el documento.
+            </span>
+
+            <button type="button" (click)="retryMedia(message)">
+              Reintentar
+            </button>
+
+          </div>
+
+          }
+
+
+          @if (message.caption) {
+
+          <p class="media-message__caption">
+
+            {{ message.caption }}
+
+          </p>
+
+          }
+
+
+          @if (
+          getMediaUrl(message)
+          ) {
+
+          <div class="media-message__actions">
+
+            <button type="button" (click)="openMedia(message)">
+              ↗ Abrir
+            </button>
+
+
+            <button type="button" (click)="downloadMedia(message)">
+              ↓ Descargar
+            </button>
+
+          </div>
+
+          }
+
+        </div>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- UBICACIÓN -->
+        <!-- ============================================= -->
+
+        @else if (
+        message.type === 'LOCATION'
+        ) {
+
+        <div class="chat-message__media">
+
+          <span class="chat-message__media-icon">
+            ●
+          </span>
+
+          <span>
+            Ubicación
+          </span>
+
+        </div>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- OTROS -->
+        <!-- ============================================= -->
+
+        @else {
+
+        <p>
+
+          {{
+          message.body ||
+          message.caption ||
+          'Mensaje multimedia'
+          }}
+
+        </p>
+
+        }
+
+
+        <!-- ============================================= -->
+        <!-- HORA -->
+        <!-- ============================================= -->
+
+        <span class="chat-message__time">
+
+          {{
+          message.createdAt
+          | date:'HH:mm'
+          }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+    }
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- BOT -->
+  <!-- ===================================================== -->
+
+  @if (
+  conversation?.status === 'BOT'
+  ) {
+
+  <div class="chat-attention">
+
+    <div class="chat-attention__info">
+
+      <span class="chat-attention__icon">
+        ◉
+      </span>
+
+      <div>
+
+        <strong>
+          Atención automática
+        </strong>
+
+        <span>
+          Esta conversación está siendo atendida
+          actualmente por el BOT.
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <button type="button" class="chat-attention__button" (click)="takeConversation()" [disabled]="
+          takingConversation ||
+          loading
+        ">
+
+      @if (
+      takingConversation
+      ) {
+
+      TOMANDO...
+
+      } @else {
+
+      ATENDER CONVERSACIÓN
+
+      }
+
+    </button>
+
+  </div>
+
+  }
+
+
+  <!-- ===================================================== -->
+  <!-- HUMAN -->
+  <!-- ===================================================== -->
+
+  @else if (
+  conversation?.status === 'HUMAN'
+  ) {
+
+
+  <form class="chat-form" (ngSubmit)="sendMessage()">
+
+    <textarea name="message" [(ngModel)]="messageText" (keydown)="onKeyDown($event)" placeholder="Escribe un mensaje..."
+      rows="2" [disabled]="
+          sending ||
+          loading
+        "></textarea>
+
+
+    <button type="submit" [disabled]="
+          sending ||
+          loading ||
+          !messageText.trim()
+        ">
+
+      @if (
+      sending
+      ) {
+
+      ENVIANDO...
+
+      } @else {
+
+      ENVIAR
+
+      }
+
+    </button>
+
+  </form>
+
+  }
+
+
+  <!-- ===================================================== -->
+  <!-- CLOSED -->
+  <!-- ===================================================== -->
+
+  @else if (
+  conversation?.status === 'CLOSED'
+  ) {
+
+  <div class="chat-closed">
+
+    <span class="chat-closed__icon">
+      ✓
+    </span>
+
+    <div>
+
+      <strong>
+        Conversación cerrada
+      </strong>
+
+      <span>
+        Esta conversación no permite enviar
+        nuevos mensajes.
+      </span>
+
+    </div>
+
+  </div>
+
+  }
+
+</section>

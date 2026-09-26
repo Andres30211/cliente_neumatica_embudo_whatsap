@@ -1,353 +1,438 @@
-<article class="record" [class.record--complete]="contact.registrationStep === 'COMPLETED'">
+<article class="conversation-item" [class.conversation-item--human]="
+    conversation.status === 'HUMAN'
+  " [class.conversation-item--bot]="
+    conversation.status === 'BOT'
+  " [class.conversation-item--closed]="
+    conversation.status === 'CLOSED'
+  " [class.conversation-item--selected]="
+    selected
+  " (click)="selectConversation()">
 
-  <div class="record__corner record__corner--tl"></div>
-  <div class="record__corner record__corner--tr"></div>
-  <div class="record__corner record__corner--bl"></div>
-  <div class="record__corner record__corner--br"></div>
 
-  <header class="record__header">
+  <!-- ===================================================== -->
+  <!-- AVATAR -->
+  <!-- ===================================================== -->
 
-    <div class="record__id">
-      Ficha
+  <div class="conversation-item__avatar">
+
+    {{
+    conversation.contactName
+    ? conversation.contactName.charAt(0).toUpperCase()
+    : '?'
+    }}
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- CONTENIDO -->
+  <!-- ===================================================== -->
+
+  <div class="conversation-item__content">
+
+
+    <!-- =================================================== -->
+    <!-- NOMBRE + HORA -->
+    <!-- =================================================== -->
+
+    <div class="conversation-item__top">
+
+
+      <h3 class="conversation-item__name">
+
+        {{
+        conversation.contactName ||
+        'Contacto sin nombre'
+        }}
+
+      </h3>
+
+
+      <time class="conversation-item__time" [title]="conversation.lastMessageAt || ''">
+
+        {{
+        conversation.lastMessageAt
+        | date:'HH:mm'
+        }}
+
+      </time>
+
+
     </div>
 
-    <h3 class="record__name">
-      {{ contact.name }}
-    </h3>
 
-    <span class="stamp" [class.stamp--pending]="
-        contact.registrationStep !== 'COMPLETED'
-      ">
-      {{
-      contact.registrationStep === 'COMPLETED'
-      ? 'Datos completos'
-      : 'Incompleto'
-      }}
-    </span>
+    <!-- =================================================== -->
+    <!-- ÚLTIMO MENSAJE -->
+    <!-- =================================================== -->
 
-  </header>
+    <div class="conversation-item__bottom">
 
 
-  <dl class="record__grid">
-
-    <div class="record__field">
-      <dt>Teléfono</dt>
-      <dd>{{ contact.phone }}</dd>
-    </div>
-
-    <div class="record__field">
-      <dt>Correo electrónico</dt>
-      <dd>{{ contact.email }}</dd>
-    </div>
-
-    <div class="record__field">
-      <dt>Empresa</dt>
-      <dd>{{ contact.company }}</dd>
-    </div>
-
-    <div class="record__field">
-      <dt>Alta</dt>
-      <dd>
-        {{ contact.createdAt | date:'dd/MM/yyyy' }}
-      </dd>
-    </div>
-
-    <div class="record__field">
-      <dt>Primer contacto</dt>
-      <dd>
-        {{ contact.firstContact | date:'dd/MM/yyyy' }}
-      </dd>
-    </div>
-
-    <div class="record__field">
-      <dt>Última interacción</dt>
-      <dd>
-        {{ contact.lastInteraction | date:'dd/MM/yyyy' }}
-      </dd>
-    </div>
-
-  </dl>
+      <div class="conversation-item__message">
 
 
-  <section class="thread-block">
+        <!-- =============================================== -->
+        <!-- TEXTO -->
+        <!-- =============================================== -->
 
-    <h4 class="thread-block__title">
-      Conversación
-    </h4>
+        @if (
+        conversation.lastMessageType === 'TEXT'
+        ) {
 
+        <span class="conversation-item__preview">
 
-    @if (contact.conversations.length > 0) {
+          {{
+          conversation.lastMessage ||
+          'Sin mensaje'
+          }}
 
-    @for (conv of contact.conversations; track conv.id) {
-
-    <div class="thread">
-
-      <div class="thread__meta">
-
-        <span class="thread__status" [attr.data-status]="conv.status">
-          {{ conv.status }}
         </span>
 
-        <span class="thread__dates">
+        }
 
-          <span>
-            Inicio:
-            {{ conv.startedAt | date:'yyyy-MM-dd HH:mm' }}
+
+        <!-- =============================================== -->
+        <!-- IMAGEN -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.lastMessageType === 'IMAGE'
+        ) {
+
+        <span class="conversation-item__preview">
+
+          <span class="conversation-item__type-icon">
+            ▧
           </span>
 
-          <span>
-            Último mensaje:
-            {{ conv.lastMessageAt | date:'yyyy-MM-dd HH:mm' }}
-          </span>
+          Imagen
 
         </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- VIDEO -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.lastMessageType === 'VIDEO'
+        ) {
+
+        <span class="conversation-item__preview">
+
+          <span class="conversation-item__type-icon">
+            ▶
+          </span>
+
+          Video
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- AUDIO -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.lastMessageType === 'AUDIO'
+        ) {
+
+        <span class="conversation-item__preview">
+
+          <span class="conversation-item__type-icon">
+            ♪
+          </span>
+
+          Audio
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- DOCUMENTO -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.lastMessageType === 'DOCUMENT'
+        ) {
+
+        <span class="conversation-item__preview">
+
+          <span class="conversation-item__type-icon">
+            ▤
+          </span>
+
+          Documento
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- STICKER -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.lastMessageType === 'STICKER'
+        ) {
+
+        <span class="conversation-item__preview">
+
+          <span class="conversation-item__type-icon">
+            ▧
+          </span>
+
+          Sticker
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- UBICACIÓN -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.lastMessageType === 'LOCATION'
+        ) {
+
+        <span class="conversation-item__preview">
+
+          <span class="conversation-item__type-icon">
+            ●
+          </span>
+
+          Ubicación
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- OTRO -->
+        <!-- =============================================== -->
+
+        @else {
+
+        <span class="conversation-item__preview">
+
+          {{
+          conversation.lastMessage ||
+          'Nuevo mensaje'
+          }}
+
+        </span>
+
+        }
+
 
       </div>
 
 
-      <ol class="log">
+      <!-- ================================================= -->
+      <!-- FLECHA -->
+      <!-- ================================================= -->
 
-        @for (
-        message of conv.messages;
-        track message.id
+      <span class="conversation-item__arrow">
+
+        ›
+
+      </span>
+
+
+    </div>
+
+
+    <!-- =================================================== -->
+    <!-- INFORMACIÓN INFERIOR -->
+    <!-- =================================================== -->
+
+    <div class="conversation-item__meta">
+
+
+      <!-- ================================================= -->
+      <!-- ESTADO DE ATENCIÓN -->
+      <!-- ================================================= -->
+
+      <div class="conversation-item__attention">
+
+
+        <!-- =============================================== -->
+        <!-- HUMAN -->
+        <!-- =============================================== -->
+
+        @if (
+        conversation.status === 'HUMAN'
         ) {
 
-        <li class="log__entry">
+        <div class="conversation-item__human-info">
 
-          <!-- ========================= -->
-          <!-- MENSAJE DE TEXTO           -->
-          <!-- ========================= -->
+          <span class="
+        conversation-item__status
+        conversation-item__status--human
+      ">
 
-          @if (message.type === 'TEXT') {
+            <span class="conversation-item__status-dot"></span>
 
-          <p class="log__body">
-            {{ message.body }}
-          </p>
+            Atención personalizada
 
-          }
+          </span>
 
 
-          <!-- ========================= -->
-          <!-- IMAGEN                     -->
-          <!-- ========================= -->
+          @if (
+          conversation.assignedUserName
+          ) {
 
-          @if (message.type === 'IMAGE') {
+          <span class="conversation-item__seller">
 
-          <div class="media-message">
+            👤
+            {{ conversation.assignedUserName }}
 
-            <img class="media-message__image" [src]="
-              'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
-              + message.whatsappMessageId
-              + '/media'
-            " alt="Imagen recibida" />
-
-            @if (message.caption) {
-
-            <p class="media-message__caption">
-              {{ message.caption }}
-            </p>
-
-            }
-
-            <button type="button" (click)="
-              downloadMedia(
-                message.whatsappMessageId,
-                message.fileName
-              )
-            ">
-              Descargar imagen
-            </button>
-
-          </div>
+          </span>
 
           }
 
-
-          <!-- ========================= -->
-          <!-- VIDEO                      -->
-          <!-- ========================= -->
-
-          @if (message.type === 'VIDEO') {
-
-          <div class="media-message">
-
-            <video class="media-message__video" controls>
-
-              <source [src]="
-                'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
-                + message.whatsappMessageId
-                + '/media'
-              " [type]="message.mimeType" />
-
-              Tu navegador no soporta
-              reproducción de video.
-
-            </video>
-
-            @if (message.caption) {
-
-            <p class="media-message__caption">
-              {{ message.caption }}
-            </p>
-
-            }
-
-            <button type="button" (click)="
-              downloadMedia(
-                message.whatsappMessageId,
-                message.fileName
-              )
-            ">
-              Descargar video
-            </button>
-
-          </div>
-
-          }
-
-
-          <!-- ========================= -->
-          <!-- AUDIO                      -->
-          <!-- ========================= -->
-
-          @if (message.type === 'AUDIO') {
-
-          <div class="media-message">
-
-            <audio controls class="media-message__audio">
-
-              <source [src]="
-                'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
-                + message.whatsappMessageId
-                + '/media'
-              " [type]="message.mimeType" />
-
-              Tu navegador no soporta
-              reproducción de audio.
-
-            </audio>
-
-            <button type="button" (click)="
-              downloadMedia(
-                message.whatsappMessageId,
-                message.fileName
-              )
-            ">
-              Descargar audio
-            </button>
-
-          </div>
-
-          }
-
-
-          <!-- ========================= -->
-          <!-- DOCUMENTO                  -->
-          <!-- ========================= -->
-
-          @if (message.type === 'DOCUMENT') {
-
-          <div class="media-message">
-
-            <p class="media-message__document">
-
-              📄
-
-              {{
-              message.fileName
-              || 'Documento recibido'
-              }}
-
-            </p>
-
-            @if (message.caption) {
-
-            <p class="media-message__caption">
-              {{ message.caption }}
-            </p>
-
-            }
-
-            <button type="button" (click)="
-              downloadMedia(
-                message.whatsappMessageId,
-                message.fileName
-              )
-            ">
-              Descargar documento
-            </button>
-
-          </div>
-
-          }
-
-
-          <!-- ========================= -->
-          <!-- STICKER                    -->
-          <!-- ========================= -->
-
-          @if (message.type === 'STICKER') {
-
-          <div class="media-message">
-
-            <img class="media-message__image" [src]="
-              'https://neumatica-embudo-whatsap.onrender.com/webhook/messages/'
-              + message.whatsappMessageId
-              + '/media'
-            " alt="Sticker recibido" />
-
-            <button type="button" (click)="
-              downloadMedia(
-                message.whatsappMessageId,
-                message.fileName
-              )
-            ">
-              Descargar sticker
-            </button>
-
-          </div>
-
-          }
-
-
-          <!-- ========================= -->
-          <!-- UBICACIÓN                  -->
-          <!-- ========================= -->
-
-          @if (message.type === 'LOCATION') {
-
-          <div class="location-message">
-
-            <strong>
-              📍 Ubicación recibida
-            </strong>
-
-            <p>
-              {{ message.body }}
-            </p>
-
-          </div>
-
-          }
-
-        </li>
+        </div>
 
         }
 
-      </ol>
+
+        <!-- =============================================== -->
+        <!-- BOT -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.status === 'BOT'
+        ) {
+
+        <span class="
+              conversation-item__status
+              conversation-item__status--bot
+            ">
+
+          <span class="conversation-item__status-dot"></span>
+
+          Atención BOT
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- CLOSED -->
+        <!-- =============================================== -->
+
+        @else if (
+        conversation.status === 'CLOSED'
+        ) {
+
+        <span class="
+              conversation-item__status
+              conversation-item__status--closed
+            ">
+
+          <span class="conversation-item__status-dot"></span>
+
+          Conversación cerrada
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- OTRO -->
+        <!-- =============================================== -->
+
+        @else {
+
+        <span class="
+              conversation-item__status
+              conversation-item__status--unknown
+            ">
+
+          <span class="conversation-item__status-dot"></span>
+
+          Sin estado
+
+        </span>
+
+        }
+
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- REGISTRO -->
+      <!-- ================================================= -->
+
+      <div class="conversation-item__registration">
+
+
+        <!-- =============================================== -->
+        <!-- COMPLETADO -->
+        <!-- =============================================== -->
+
+        @if (
+        conversation.registrationStep === 'COMPLETED'
+        ) {
+
+        <span class="
+              conversation-item__registration-badge
+              conversation-item__registration-badge--completed
+            ">
+
+          <span class="conversation-item__registration-icon">
+            ✓
+          </span>
+
+          Registro completado
+
+        </span>
+
+        }
+
+
+        <!-- =============================================== -->
+        <!-- INCOMPLETO -->
+        <!-- =============================================== -->
+
+        @else {
+
+        <span class="
+              conversation-item__registration-badge
+              conversation-item__registration-badge--incomplete
+            ">
+
+          <span class="conversation-item__registration-icon">
+            !
+          </span>
+
+          Registro incompleto
+
+        </span>
+
+        }
+
+
+      </div>
+
 
     </div>
 
-    }
 
-    } @else {
+  </div>
 
-    <div class="thread thread--empty">
-      No hay conversaciones registradas.
-    </div>
-
-    }
-
-  </section>
 
 </article>

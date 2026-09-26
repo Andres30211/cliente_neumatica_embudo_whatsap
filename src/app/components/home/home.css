@@ -2,6 +2,11 @@ main {
     display: flex;
 }
 
+.home{
+
+    width: 87%;
+}
+
 .carousel {
     margin: 1rem;
     position: relative;

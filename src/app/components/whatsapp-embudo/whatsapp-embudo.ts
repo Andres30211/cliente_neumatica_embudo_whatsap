@@ -1,112 +1,106 @@
-import { ChangeDetectorRef, Component, Input, OnInit, signal } from '@angular/core';
-import { ServicesWhatsapp } from '../../services/services-whatsapp';
-import { Contact } from '../../interfaces/Contact';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { ServicesWebsocket } from '../../services/services-websocket';
-import { BrowserNotificationService } from '../../services/browser-notification-service';
+
+import { ConversationSummaryResponse }
+  from '../../interfaces/ConversationSummaryResponse';
+
 
 @Component({
   selector: 'whatsapp-embudo',
-  imports: [CommonModule],
+
+  imports: [
+    CommonModule
+  ],
+
   templateUrl: './whatsapp-embudo.html',
+
   styleUrl: './whatsapp-embudo.css',
 })
-export class WhatsappEmbudo implements OnInit{
+export class WhatsappEmbudo {
 
+
+  // =========================================================
+  // CONVERSACIÓN
+  // =========================================================
+
+  /**
+   * Resumen de la conversación que este card representa.
+   */
   @Input({ required: true })
-  contact!: Contact;
+  conversation!: ConversationSummaryResponse;
 
-  constructor(private servicesWhat: ServicesWhatsapp,
-    private browserNotificationService: BrowserNotificationService
-  ){}
 
-  ngOnInit(): void {
-
-    this.browserNotificationService.requestPermission();
-  }
+  // =========================================================
+  // SELECCIONADA
+  // =========================================================
 
   /**
-   * Descarga un archivo multimedia.
+   * Indica si esta conversación es la que actualmente
+   * está siendo visualizada en la columna derecha.
+   *
+   * IMPORTANTE:
+   *
+   * selected NO tiene relación con:
+   *
+   * BOT
+   * HUMAN
+   * CLOSED
+   *
+   * Es únicamente un estado visual del frontend.
    */
-  public downloadMedia(
-    messageId: string,
-    fileName?: string
-  ): void {
+  @Input()
+  selected = false;
 
-    this.servicesWhat
-      .getMessageMedia(messageId)
-      .subscribe({
 
-        next: (blob) => {
-
-          const url =
-            window.URL.createObjectURL(blob);
-
-          const link =
-            document.createElement('a');
-
-          link.href = url;
-
-          link.download =
-            fileName || 'archivo';
-
-          link.click();
-
-          window.URL.revokeObjectURL(url);
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error descargando multimedia:',
-            error
-          );
-
-          alert(
-            'No fue posible descargar el archivo.'
-          );
-        }
-
-      });
-  }
+  // =========================================================
+  // EVENTO DE SELECCIÓN
+  // =========================================================
 
   /**
-   * Abre el archivo multimedia
-   * en una nueva pestaña.
+   * Informa al componente padre que el usuario desea
+   * visualizar esta conversación.
+   *
+   * Este evento:
+   *
+   * NO toma la conversación.
+   * NO llama takeConversation().
+   * NO cambia BOT -> HUMAN.
+   * NO asigna vendedor.
    */
-  public openMedia(
-    messageId: string
-  ): void {
+  @Output()
+  conversationSelected =
+    new EventEmitter<ConversationSummaryResponse>();
 
-    this.servicesWhat
-      .getMessageMedia(messageId)
-      .subscribe({
 
-        next: (blob) => {
+  // =========================================================
+  // SELECCIONAR
+  // =========================================================
 
-          const url =
-            window.URL.createObjectURL(blob);
+  public selectConversation(): void {
 
-          window.open(
-            url,
-            '_blank'
-          );
+    if (
+      !this.conversation?.conversationId
+    ) {
 
-        },
+      console.error(
+        'No se puede seleccionar una conversación sin ID.'
+      );
 
-        error: (error) => {
+      return;
 
-          console.error(
-            'Error abriendo multimedia:',
-            error
-          );
+    }
 
-          alert(
-            'No fue posible abrir el archivo.'
-          );
-        }
 
-      });
+    this.conversationSelected.emit(
+      this.conversation
+    );
+
   }
 
 }

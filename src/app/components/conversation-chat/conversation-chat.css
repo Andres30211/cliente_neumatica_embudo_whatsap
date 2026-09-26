@@ -1,0 +1,1337 @@
+/* =========================================================
+   HOST
+   ========================================================= */
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  font-family:
+    'IBM Plex Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}
+
+
+/* =========================================================
+   PANEL
+   ========================================================= */
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+
+  background: #14191d;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.chat-header {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 66px;
+
+  padding: 10px 17px;
+
+  box-sizing: border-box;
+
+  background: #1f262c;
+
+  border-bottom: 1px solid #313c44;
+}
+
+
+.chat-header__avatar {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid #45525b;
+  border-radius: 50%;
+
+  background: #303a41;
+
+  color: #e9edf0;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.chat-header__info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.chat-header__top {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  min-width: 0;
+}
+
+
+.chat-header h2 {
+  min-width: 0;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #e9edf0;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+
+.chat-header__phone {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #89959d;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+
+.chat-header__status {
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 2px 7px;
+
+  border-radius: 5px;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: .03em;
+}
+
+
+.chat-header__status > span {
+  width: 5px;
+  height: 5px;
+
+  margin-right: 5px;
+
+  border-radius: 50%;
+}
+
+
+.chat-header__status--human {
+  background: rgba(67, 151, 102, .15);
+
+  border: 1px solid rgba(94, 181, 130, .32);
+
+  color: #83d4a5;
+}
+
+
+.chat-header__status--human > span {
+  background: #65c78e;
+}
+
+
+.chat-header__status--bot {
+  background: rgba(65, 117, 166, .15);
+
+  border: 1px solid rgba(85, 140, 192, .35);
+
+  color: #8bb8df;
+}
+
+
+.chat-header__status--bot > span {
+  background: #6ca1d0;
+}
+
+
+.chat-header__status--closed {
+  background: rgba(125, 135, 143, .14);
+
+  border: 1px solid rgba(140, 150, 158, .28);
+
+  color: #aeb7bd;
+}
+
+
+.chat-header__status--closed > span {
+  background: #89939a;
+}
+
+
+/* =========================================================
+   MENSAJES
+   ========================================================= */
+
+.chat-messages {
+  position: relative;
+
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+
+  padding: 20px 22px;
+
+  box-sizing: border-box;
+
+  background: #14191d;
+}
+
+
+.chat-messages::-webkit-scrollbar {
+  width: 7px;
+}
+
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #374149;
+
+  border-radius: 5px;
+}
+
+
+/* =========================================================
+   SIN MENSAJES
+   ========================================================= */
+
+.chat-messages__empty {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 250px;
+
+  color: #75828a;
+
+  font-size: 12px;
+
+  text-align: center;
+}
+
+
+.chat-messages__empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 54px;
+  height: 54px;
+
+  margin-bottom: 10px;
+
+  border-radius: 50%;
+
+  background: #20272c;
+
+  font-size: 23px;
+}
+
+
+/* =========================================================
+   MENSAJE
+   ========================================================= */
+
+.chat-message {
+  display: flex;
+
+  width: 100%;
+}
+
+
+.chat-message--incoming {
+  justify-content: flex-start;
+}
+
+
+.chat-message--outgoing {
+  justify-content: flex-end;
+}
+
+
+.chat-message__bubble {
+  max-width: min(72%, 650px);
+
+  padding: 8px 11px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, .15);
+}
+
+
+.chat-message__bubble--media {
+  min-width: 220px;
+}
+
+
+.chat-message--incoming .chat-message__bubble {
+  background: #262f36;
+
+  border-radius:
+    10px 10px 10px 3px;
+}
+
+
+.chat-message--outgoing .chat-message__bubble {
+  background: #3d664e;
+
+  border-radius:
+    10px 10px 3px 10px;
+}
+
+
+.chat-message__bubble p {
+  margin: 0;
+
+  color: #e9edf0;
+
+  font-size: 12px;
+
+  line-height: 1.45;
+
+  white-space: pre-wrap;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   MULTIMEDIA GENERAL
+   ========================================================= */
+
+.media-message {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   IMAGEN
+   ========================================================= */
+
+.media-message__image {
+  display: block;
+
+  width: auto;
+  max-width: 100%;
+
+  max-height: 430px;
+
+  object-fit: contain;
+
+  border-radius: 7px;
+
+  background: #171c20;
+}
+
+
+/* =========================================================
+   STICKER
+   ========================================================= */
+
+.media-message--sticker {
+  min-width: 150px;
+}
+
+
+.media-message__sticker {
+  display: block;
+
+  width: auto;
+  max-width: 220px;
+
+  max-height: 220px;
+
+  object-fit: contain;
+}
+
+
+/* =========================================================
+   VIDEO
+   ========================================================= */
+
+.media-message__video {
+  display: block;
+
+  width: 100%;
+
+  max-width: 520px;
+
+  max-height: 430px;
+
+  border-radius: 7px;
+
+  background: #000;
+
+  outline: none;
+}
+
+
+/* =========================================================
+   AUDIO
+   ========================================================= */
+
+.media-message--audio {
+  width: min(360px, 100%);
+}
+
+
+.media-message__audio-title {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #dce3e7;
+
+  font-size: 11px;
+}
+
+
+.media-message__audio-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, .08);
+
+  color: #dce3e7;
+
+  font-size: 13px;
+}
+
+
+.media-message__audio {
+  display: block;
+
+  width: 100%;
+
+  min-width: 260px;
+
+  height: 38px;
+}
+
+
+/* =========================================================
+   DOCUMENTO
+   ========================================================= */
+
+.media-message--document {
+  min-width: 260px;
+}
+
+
+.media-document {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+
+  padding: 10px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, .08);
+
+  border-radius: 7px;
+
+  background: rgba(0, 0, 0, .12);
+}
+
+
+.media-document__icon {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 7px;
+
+  background: rgba(255, 255, 255, .08);
+
+  color: #dce3e7;
+
+  font-size: 18px;
+}
+
+
+.media-document__info {
+  min-width: 0;
+
+  flex: 1;
+}
+
+
+.media-document__info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #e9edf0;
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.media-document__info span {
+  display: block;
+
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  color: #89959d;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   CAPTION
+   ========================================================= */
+
+.media-message__caption {
+  margin-top: 2px !important;
+
+  color: #e9edf0 !important;
+
+  font-size: 12px !important;
+
+  line-height: 1.45 !important;
+}
+
+
+/* =========================================================
+   ACCIONES MULTIMEDIA
+   ========================================================= */
+
+.media-message__actions {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+
+  margin-top: 2px;
+}
+
+
+.media-message__actions button {
+  padding: 5px 8px;
+
+  border: 1px solid rgba(255, 255, 255, .15);
+
+  border-radius: 5px;
+
+  background: rgba(0, 0, 0, .13);
+
+  color: #cbd4da;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease;
+}
+
+
+.media-message__actions button:hover {
+  background: rgba(255, 255, 255, .08);
+
+  border-color: rgba(255, 255, 255, .25);
+}
+
+
+/* =========================================================
+   LOADING MULTIMEDIA
+   ========================================================= */
+
+.media-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 75px;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  border-radius: 7px;
+
+  background: rgba(0, 0, 0, .12);
+
+  color: #96a2aa;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 8px;
+}
+
+
+.media-loading__spinner {
+  width: 12px;
+  height: 12px;
+
+  flex-shrink: 0;
+
+  border: 2px solid #56636c;
+
+  border-top-color: #e2a33d;
+
+  border-radius: 50%;
+
+  animation:
+    chat-spin .7s linear infinite;
+}
+
+
+/* =========================================================
+   ERROR MULTIMEDIA
+   ========================================================= */
+
+.media-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 80px;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(185, 92, 92, .25);
+
+  border-radius: 7px;
+
+  background: rgba(155, 69, 69, .08);
+
+  color: #d6a3a3;
+
+  font-size: 9px;
+
+  text-align: center;
+}
+
+
+.media-error__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  background: rgba(155, 69, 69, .18);
+
+  color: #e8a5a5;
+
+  font-weight: 700;
+}
+
+
+.media-error button {
+  padding: 5px 9px;
+
+  border: 1px solid rgba(232, 165, 165, .25);
+
+  border-radius: 5px;
+
+  background: transparent;
+
+  color: #e8a5a5;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   MULTIMEDIA SIMPLE
+   ========================================================= */
+
+.chat-message__media {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  min-width: 130px;
+
+  color: #e9edf0;
+
+  font-size: 12px;
+}
+
+
+.chat-message__media + p {
+  margin-top: 7px;
+}
+
+
+.chat-message__media-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, .08);
+
+  color: #d5dde2;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   HORA
+   ========================================================= */
+
+.chat-message__time {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #aeb8bf;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 8px;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.chat-form {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: flex-end;
+
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  box-sizing: border-box;
+
+  background: #1f262c;
+
+  border-top: 1px solid #313c44;
+}
+
+
+.chat-form textarea {
+  flex: 1;
+
+  resize: none;
+
+  box-sizing: border-box;
+
+  min-height: 42px;
+  max-height: 120px;
+
+  padding: 10px 11px;
+
+  background: #181e23;
+
+  border: 1px solid #465158;
+  border-radius: 6px;
+
+  outline: none;
+
+  color: #e9edf0;
+
+  font-family:
+    'IBM Plex Sans',
+    sans-serif;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+}
+
+
+.chat-form textarea::placeholder {
+  color: #727e86;
+}
+
+
+.chat-form textarea:focus {
+  border-color: #e2a33d;
+}
+
+
+.chat-form button {
+  flex-shrink: 0;
+
+  height: 42px;
+
+  padding: 0 17px;
+
+  border: 1px solid #e2a33d;
+  border-radius: 6px;
+
+  background: #e2a33d;
+
+  color: #161616;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    filter .15s ease,
+    transform .15s ease;
+}
+
+
+.chat-form button:hover:not(:disabled) {
+  filter: brightness(1.08);
+
+  transform: translateY(-1px);
+}
+
+
+.chat-form button:disabled {
+  opacity: .45;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   BOT / ATENDER
+   ========================================================= */
+
+.chat-attention {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 12px 15px;
+
+  box-sizing: border-box;
+
+  background: #1f262c;
+
+  border-top: 1px solid #313c44;
+}
+
+
+.chat-attention__info {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+
+.chat-attention__icon {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: rgba(65, 117, 166, .18);
+
+  color: #82b2da;
+
+  font-size: 13px;
+}
+
+
+.chat-attention__info > div {
+  min-width: 0;
+}
+
+
+.chat-attention__info strong {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #dce3e7;
+
+  font-size: 11px;
+}
+
+
+.chat-attention__info div > span {
+  display: block;
+
+  color: #849098;
+
+  font-size: 9px;
+
+  line-height: 1.4;
+}
+
+
+.chat-attention__button {
+  flex-shrink: 0;
+
+  min-height: 40px;
+
+  padding: 0 15px;
+
+  border: 1px solid #e2a33d;
+  border-radius: 6px;
+
+  background: #e2a33d;
+
+  color: #171717;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    filter .15s ease,
+    transform .15s ease;
+}
+
+
+.chat-attention__button:hover:not(:disabled) {
+  filter: brightness(1.08);
+
+  transform: translateY(-1px);
+}
+
+
+.chat-attention__button:disabled {
+  opacity: .5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   CLOSED
+   ========================================================= */
+
+.chat-closed {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  min-height: 64px;
+
+  padding: 10px 15px;
+
+  box-sizing: border-box;
+
+  background: #1f262c;
+
+  border-top: 1px solid #313c44;
+}
+
+
+.chat-closed__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 50%;
+
+  background: rgba(125, 135, 143, .16);
+
+  color: #aeb7bd;
+
+  font-size: 12px;
+}
+
+
+.chat-closed strong {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #c5cdd2;
+
+  font-size: 11px;
+}
+
+
+.chat-closed div > span {
+  display: block;
+
+  color: #7e8a92;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   LOADING GENERAL
+   ========================================================= */
+
+.chat-loading {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 32px;
+
+  padding: 6px 15px;
+
+  box-sizing: border-box;
+
+  background: #262f36;
+
+  color: #aeb8bf;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 9px;
+}
+
+
+.chat-loading__spinner {
+  width: 10px;
+  height: 10px;
+
+  border: 2px solid #56636c;
+
+  border-top-color: #e2a33d;
+
+  border-radius: 50%;
+
+  animation:
+    chat-spin .7s linear infinite;
+}
+
+
+@keyframes chat-spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* =========================================================
+   ERROR GENERAL
+   ========================================================= */
+
+.chat-error {
+  flex-shrink: 0;
+
+  padding: 8px 15px;
+
+  box-sizing: border-box;
+
+  background: rgba(155, 69, 69, .15);
+
+  border-bottom: 1px solid #9b4545;
+
+  color: #e8a5a5;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   SEPARADOR DE FECHA
+   ========================================================= */
+
+.chat-date-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  margin: 10px 0 6px;
+}
+
+
+.chat-date-separator span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px 10px;
+
+  border: 1px solid #364149;
+  border-radius: 6px;
+
+  background: #20272c;
+
+  color: #9ba7ae;
+
+  font-family:
+    'IBM Plex Mono',
+    monospace;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: .04em;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .chat-message__bubble {
+    max-width: 80%;
+  }
+
+
+  .chat-attention {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .chat-attention__button {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .chat-header {
+    padding: 9px 11px;
+  }
+
+
+  .chat-header__avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+
+  .chat-header h2 {
+    font-size: 13px;
+  }
+
+
+  .chat-messages {
+    padding: 14px 10px;
+  }
+
+
+  .chat-message__bubble {
+    max-width: 92%;
+  }
+
+
+  .chat-message__bubble--media {
+    min-width: 190px;
+  }
+
+
+  .media-message__audio {
+    min-width: 210px;
+  }
+
+
+  .media-message--document {
+    min-width: 210px;
+  }
+
+
+  .chat-form {
+    padding: 8px;
+  }
+
+
+  .chat-form button {
+    padding: 0 11px;
+  }
+
+}
+
+
+
+.chat-header__seller{
+
+  color: white;
+}
