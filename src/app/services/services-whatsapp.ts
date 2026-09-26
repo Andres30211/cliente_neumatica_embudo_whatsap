@@ -26,11 +26,9 @@ export class ServicesWhatsapp {
   // API
   // =========================================================
 
-  private readonly urlWhatsappM =
-    'https://neumatica-embudo-whatsap.onrender.com/webhook';
+  private readonly urlWhatsapp ='https://neumatica-embudo-whatsap.onrender.com/webhook';
 
-  private readonly urlWhatsapp =
-    'http://localhost:8080/webhook';
+  // private readonly urlWhatsapp = 'http://localhost:8080/webhook';
 
 
   constructor(
@@ -83,7 +81,7 @@ export class ServicesWhatsapp {
   ): Observable<Blob> {
 
     return this.http.get(
-      `${this.urlWhatsappM}/messages/${encodeURIComponent(
+      `${this.urlWhatsapp}/messages/${encodeURIComponent(
         whatsappMessageId
       )}/media`,
       {

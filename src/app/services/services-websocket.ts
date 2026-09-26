@@ -196,8 +196,7 @@ export class ServicesWebsocket {
     this.client =
       new Client({
 
-        brokerURL:
-          'ws://localhost:8080/wss',
+        brokerURL: 'wss://neumatica-embudo-whatsap.onrender.com/wss',
           // 'wss://neumatica-embudo-whatsap.onrender.com/wss'
 
         /*
