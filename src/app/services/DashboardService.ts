@@ -8,8 +8,9 @@ import { DashboardSummary } from '../interfaces/DashboardSummary';
 })
 export class DashboardService {
 
-  private readonly baseUrl =
-    'http://localhost:8080/api/dashboard';
+  private readonly baseUrl ='https://neumatica-embudo-whatsap.onrender.com/api/dashboard';
+  // private readonly baseUrl = 'http://localhost:8080/api/dashboard';
+
 
   constructor(
     private readonly http: HttpClient
