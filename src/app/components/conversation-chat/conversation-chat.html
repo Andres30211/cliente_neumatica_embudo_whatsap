@@ -128,6 +128,64 @@
 
     </div>
 
+    <!-- MENÚ DE ACCIONES DE LA CONVERSACIÓN -->
+    <div class="conversation-actions">
+
+      <!-- Botón de tres puntos -->
+      <button type="button" class="more-options-button" (click)="toggleActionsMenu()"
+        [attr.aria-expanded]="actionsMenuOpen" title="Más opciones">
+
+        <span class="three-dots">⋮</span>
+
+      </button>
+
+      <!-- Menú desplegable -->
+      @if (actionsMenuOpen) {
+
+      <div class="actions-menu">
+
+        <!-- Opción: Devolver al BOT -->
+        @if (conversation?.status === 'HUMAN' && (conversation.assignedUserName === getName() || hasRole('ROLE_ADMIN'))) {
+
+        <button type="button" class="action-menu-item return-bot-item" (click)="returnConversationToBot()"
+          [disabled]="returningToBot || sending || loading">
+
+          <span class="action-icon">↩</span>
+
+          <span class="action-text">
+
+            @if (returningToBot) {
+            DEVOLVIENDO...
+            } @else {
+            DEVOLVER AL BOT
+            }
+
+          </span>
+
+        </button>
+
+        }
+
+        <!-- Aquí puedes agregar más opciones posteriormente -->
+
+        <!-- Ejemplo:
+      <button
+        type="button"
+        class="action-menu-item"
+        (click)="otraAccion()">
+
+        <span class="action-icon">📌</span>
+        <span class="action-text">Fijar conversación</span>
+
+      </button>
+      -->
+
+      </div>
+
+      }
+
+    </div>
+
   </header>
 
 
@@ -849,22 +907,57 @@
 
   <form class="chat-form" (ngSubmit)="sendMessage()">
 
+    <!-- Botón para seleccionar archivo -->
+    <label class="file-button" for="fileInput" title="Adjuntar archivo">
+      📎
+    </label>
+
+    <input #fileInput id="fileInput" type="file" hidden (change)="onFileSelected($event)"
+      [disabled]="sending || loading" />
+
+    <!-- Área de escritura -->
     <textarea name="message" [(ngModel)]="messageText" (keydown)="onKeyDown($event)" placeholder="Escribe un mensaje..."
-      rows="2" [disabled]="
-          sending ||
-          loading
-        "></textarea>
+      rows="2" [disabled]="sending || loading"></textarea>
 
+    <!-- Archivo seleccionado -->
+    @if (selectedFile) {
 
+    <div class="selected-file">
+
+      <div class="file-info">
+
+        <span class="file-icon">
+          📎
+        </span>
+
+        <div>
+          <strong>
+            {{ selectedFile.name }}
+          </strong>
+
+          <small>
+            {{ formatFileSize(selectedFile.size) }}
+          </small>
+        </div>
+
+      </div>
+
+      <button type="button" class="remove-file" (click)="removeSelectedFile(fileInput)" [disabled]="sending">
+        ✕
+      </button>
+
+    </div>
+
+    }
+
+    <!-- Botón enviar -->
     <button type="submit" [disabled]="
-          sending ||
-          loading ||
-          !messageText.trim()
-        ">
+      sending ||
+      loading ||
+      (!messageText.trim() && !selectedFile)
+    ">
 
-      @if (
-      sending
-      ) {
+      @if (sending) {
 
       ENVIANDO...
 

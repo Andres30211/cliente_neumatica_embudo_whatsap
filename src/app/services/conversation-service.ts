@@ -63,6 +63,56 @@ export class ConversationService {
     );
   }
 
+  /**
+   * =====================================================
+   * ENVIAR IMAGEN / DOCUMENTO
+   * =====================================================
+   */
+  public sendMedia(
+    conversationId: string,
+    file: File,
+    caption?: string | null
+  ): Observable<any> {
+
+    const formData =
+      new FormData();
+
+    /*
+     * IMPORTANTE:
+     *
+     * Este nombre debe coincidir exactamente
+     * con @RequestParam("file") de Spring.
+     */
+    formData.append(
+      'file',
+      file,
+      file.name
+    );
+
+
+    /*
+     * Caption opcional.
+     */
+    if (
+      caption &&
+      caption.trim()
+    ) {
+
+      formData.append(
+        'caption',
+        caption.trim()
+      );
+
+    }
+
+
+    return this.http.post<any>(
+      `${this.urlApi}/${conversationId}/media`,
+      formData
+    );
+
+  }
+
 
   /**
    * Cierra conversación.

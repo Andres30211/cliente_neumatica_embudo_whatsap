@@ -197,7 +197,7 @@ export class ServicesWebsocket {
       new Client({
 
         brokerURL: 'wss://neumatica-embudo-whatsap.onrender.com/wss',
-          // 'wss://neumatica-embudo-whatsap.onrender.com/wss'
+          // 'ws://localhost:8080/wss',
 
         /*
          * STOMP intentará reconectar automáticamente

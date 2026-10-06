@@ -35,6 +35,7 @@ import {
 import {
   ConversationSummaryResponse
 } from '../../interfaces/ConversationSummaryResponse';
+import { TokensServices } from '../../services/tokens-services';
 
 
 @Component({
@@ -84,6 +85,11 @@ export class ConversationChat
   public errorMessage:
     string | null = null;
 
+  selectedFile: File | null = null;
+
+  returningToBot = false;
+
+  actionsMenuOpen = false;
 
   // =========================================================
   // WEBSOCKET
@@ -153,7 +159,10 @@ export class ConversationChat
       ElementRef,
 
     private cd:
-      ChangeDetectorRef
+      ChangeDetectorRef,
+
+    private tokenServices:
+     TokensServices
 
   ) { }
 
@@ -214,6 +223,20 @@ export class ConversationChat
       this.loadRequestVersion
     );
 
+  }
+
+  // =========================================================
+  // NOMBRE DEL USUARIO QUE HACE LOGIN
+  // =========================================================
+  public getName(): string | null{
+    return this.tokenServices.getName();
+  }
+
+  // =========================================================
+  // ROL DEL USUARIO
+  // =========================================================
+  public hasRole(role: string): boolean {
+    return this.tokenServices.hasRole(role);
   }
 
 
@@ -388,6 +411,10 @@ export class ConversationChat
 
       });
 
+  }
+
+  toggleActionsMenu(): void {
+    this.actionsMenuOpen = !this.actionsMenuOpen;
   }
 
 
@@ -1445,27 +1472,24 @@ export class ConversationChat
 
   public sendMessage(): void {
 
-    const text =
-      this.messageText.trim();
-
+    const text = this.messageText.trim();
 
     const conversationId =
-      this.getConversationId(
-        this.conversation
-      );
+      this.getConversationId(this.conversation);
 
-
-    if (!text) {
+    /*
+     * Validamos que exista la conversación
+     */
+    if (!conversationId) {
 
       return;
 
     }
 
-
-    if (
-      this.conversation?.status !==
-      'HUMAN'
-    ) {
+    /*
+     * La conversación debe estar siendo atendida
+     */
+    if (this.conversation?.status !== 'HUMAN') {
 
       this.errorMessage =
         'Debes atender la conversación antes de enviar mensajes.';
@@ -1474,21 +1498,160 @@ export class ConversationChat
 
     }
 
+    /*
+     * Evitamos múltiples envíos
+     */
+    if (this.sending || this.loading) {
+
+      return;
+
+    }
+
+    /*
+     * =====================================================
+     * SI HAY ARCHIVO
+     * =====================================================
+     */
+    if (this.selectedFile) {
+
+      this.sendMedia(
+        conversationId,
+        this.selectedFile,
+        text || null
+      );
+
+      return;
+
+    }
+
+    /*
+     * =====================================================
+     * SI ES SOLAMENTE TEXTO
+     * =====================================================
+     */
+    if (!text) {
+
+      return;
+
+    }
+
+    this.sendText(
+      conversationId,
+      text
+    );
+
+  }
+
+  /**
+   * =====================================================
+   * SELECCIONAR ARCHIVO
+   * =====================================================
+   */
+  public onFileSelected(
+    event: Event
+  ): void {
+
+    const input =
+      event.target as HTMLInputElement;
 
     if (
-      this.sending ||
-      !conversationId
+      !input.files ||
+      input.files.length === 0
     ) {
 
       return;
 
     }
 
+    const file =
+      input.files[0];
+
+    /*
+     * Límite de seguridad del frontend.
+     *
+     * 100 MB
+     */
+    const maxSize =
+      100 * 1024 * 1024;
+
+    if (
+      file.size > maxSize
+    ) {
+
+      this.errorMessage =
+        'El archivo no puede superar los 100 MB.';
+
+      input.value = '';
+
+      return;
+
+    }
+
+    this.errorMessage = null;
+
+    this.selectedFile = file;
+
+  }
+
+
+  /**
+   * =====================================================
+   * ELIMINAR ARCHIVO SELECCIONADO
+   * =====================================================
+   */
+  public removeSelectedFile(
+    input: HTMLInputElement
+  ): void {
+
+    this.selectedFile = null;
+
+    input.value = '';
+
+  }
+
+
+  /**
+   * =====================================================
+   * FORMATEAR TAMAÑO DEL ARCHIVO
+   * =====================================================
+   */
+  public formatFileSize(
+    size: number
+  ): string {
+
+    if (size < 1024) {
+
+      return `${size} B`;
+
+    }
+
+    if (size < 1024 * 1024) {
+
+      return `${(size / 1024).toFixed(1)} KB`;
+
+    }
+
+    return `${(
+      size /
+      (1024 * 1024)
+    ).toFixed(1)} MB`;
+
+  }
+
+
+  /**
+   * =====================================================
+   * ENVIAR TEXTO
+   * =====================================================
+   */
+  private sendText(
+    conversationId: string,
+    text: string
+  ): void {
 
     this.sending = true;
 
     this.errorMessage = null;
-
 
     this.conversationService
       .sendMessage(
@@ -1499,59 +1662,17 @@ export class ConversationChat
 
         next: (message) => {
 
-
-          if (
-            !Array.isArray(
-              this.conversation?.messages
-            )
-          ) {
-
-            this.conversation.messages = [];
-
-          }
-
-
-          if (
-            !this.messageAlreadyExists(
-              message
-            )
-          ) {
-
-            this.conversation.messages.push(
-              message
-            );
-
-          }
-
-
-          this.sortMessagesByDate();
-
-
-          if (
-            this.isMediaMessage(
-              message
-            )
-          ) {
-
-            this.loadMedia(
-              message
-            );
-
-          }
-
+          this.addMessageToConversation(message);
 
           this.messageText = '';
 
           this.sending = false;
 
-
           this.cd.detectChanges();
-
 
           this.scrollToBottom();
 
         },
-
 
         error: (error) => {
 
@@ -1560,20 +1681,136 @@ export class ConversationChat
             error
           );
 
-
           this.errorMessage =
             error?.error?.message ||
             'No fue posible enviar el mensaje.';
 
-
           this.sending = false;
-
 
           this.cd.detectChanges();
 
         }
 
       });
+
+  }
+
+
+  /**
+   * =====================================================
+   * ENVIAR ARCHIVO
+   * =====================================================
+   */
+  private sendMedia(
+    conversationId: string,
+    file: File,
+    caption: string | null
+  ): void {
+
+    this.sending = true;
+
+    this.errorMessage = null;
+
+    this.conversationService
+      .sendMedia(
+        conversationId,
+        file,
+        caption
+      )
+      .subscribe({
+
+        next: (message) => {
+
+          this.addMessageToConversation(message);
+
+          /*
+           * Limpiamos el archivo seleccionado
+           */
+          this.selectedFile = null;
+
+          /*
+           * Limpiamos el texto/caption
+           */
+          this.messageText = '';
+
+          this.sending = false;
+
+          this.cd.detectChanges();
+
+          this.scrollToBottom();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error enviando archivo:',
+            error
+          );
+
+          this.errorMessage =
+            error?.error?.message ||
+            'No fue posible enviar el archivo.';
+
+          this.sending = false;
+
+          this.cd.detectChanges();
+
+        }
+
+      });
+
+  }
+
+
+  /**
+   * =====================================================
+   * AGREGAR MENSAJE A LA CONVERSACIÓN
+   * =====================================================
+   */
+  private addMessageToConversation(
+    message: any
+  ): void {
+
+    if (
+      !Array.isArray(
+        this.conversation?.messages
+      )
+    ) {
+
+      this.conversation.messages = [];
+
+    }
+
+    if (
+      !this.messageAlreadyExists(
+        message
+      )
+    ) {
+
+      this.conversation.messages.push(
+        message
+      );
+
+    }
+
+    this.sortMessagesByDate();
+
+    /*
+     * Si es un mensaje multimedia,
+     * cargamos la información correspondiente.
+     */
+    if (
+      this.isMediaMessage(
+        message
+      )
+    ) {
+
+      this.loadMedia(
+        message
+      );
+
+    }
 
   }
 
@@ -1838,6 +2075,176 @@ export class ConversationChat
       second.getDate()
 
     );
+
+  }
+
+
+  /**
+   * =====================================================
+   * DEVOLVER CONVERSACIÓN AL BOT
+   * =====================================================
+   */
+  public returnConversationToBot(): void {
+
+    this.actionsMenuOpen = false;
+
+    /*
+     * Obtenemos el ID de la conversación actual.
+     */
+    const conversationId =
+      this.getConversationId(
+        this.conversation
+      );
+
+
+    /*
+     * Si no existe conversación,
+     * no hacemos nada.
+     */
+    if (!conversationId) {
+
+      this.errorMessage =
+        'No se encontró la conversación.';
+
+      return;
+
+    }
+
+
+    /*
+     * Solo permitimos esta acción
+     * cuando la conversación está en HUMAN.
+     */
+    if (
+      this.conversation?.status !== 'HUMAN'
+    ) {
+
+      this.errorMessage =
+        'La conversación no está siendo atendida por un vendedor.';
+
+      return;
+
+    }
+
+
+    /*
+     * Evitamos enviar varias solicitudes
+     * al mismo tiempo.
+     */
+    if (
+      this.returningToBot ||
+      this.sending ||
+      this.loading
+    ) {
+
+      return;
+
+    }
+
+
+    /*
+     * Activamos estado de carga.
+     */
+    this.returningToBot = true;
+
+    this.errorMessage = null;
+
+
+    /*
+     * Llamamos al servicio Angular.
+     */
+    this.conversationService
+      .returnToBot(conversationId)
+      .subscribe({
+
+        next: (conversation) => {
+
+          console.log(
+            'Conversación devuelta al BOT:',
+            conversation
+          );
+
+
+          /*
+           * Actualizamos la conversación local.
+           *
+           * Si el backend devuelve la conversación
+           * completa, aprovechamos esa respuesta.
+           */
+          if (conversation) {
+
+            this.conversation =
+              conversation;
+
+          } else {
+
+            /*
+             * Si el endpoint no devuelve
+             * la conversación completa,
+             * actualizamos solamente el estado.
+             */
+            this.conversation.status =
+              'BOT';
+
+          }
+
+
+          /*
+           * Nos aseguramos de que el estado
+           * quede actualizado localmente.
+           */
+          if (
+            this.conversation
+          ) {
+
+            this.conversation.status =
+              'BOT';
+
+          }
+
+
+          this.returningToBot = false;
+
+
+          /*
+           * Actualizamos la vista.
+           */
+          this.cd.detectChanges();
+
+
+          /*
+           * Mostramos el cambio en consola
+           * para la primera prueba.
+           */
+          console.log(
+            'Estado actual:',
+            this.conversation?.status
+          );
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Error devolviendo conversación al BOT:',
+            error
+          );
+
+
+          this.errorMessage =
+            error?.error?.message ||
+            'No fue posible devolver la conversación al BOT.';
+
+
+          this.returningToBot = false;
+
+
+          this.cd.detectChanges();
+
+        }
+
+      });
 
   }
 
