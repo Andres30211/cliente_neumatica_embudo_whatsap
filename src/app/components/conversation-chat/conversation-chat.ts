@@ -162,7 +162,7 @@ export class ConversationChat
       ChangeDetectorRef,
 
     private tokenServices:
-     TokensServices
+      TokensServices
 
   ) { }
 
@@ -228,7 +228,7 @@ export class ConversationChat
   // =========================================================
   // NOMBRE DEL USUARIO QUE HACE LOGIN
   // =========================================================
-  public getName(): string | null{
+  public getName(): string | null {
     return this.tokenServices.getName();
   }
 
@@ -237,6 +237,89 @@ export class ConversationChat
   // =========================================================
   public hasRole(role: string): boolean {
     return this.tokenServices.hasRole(role);
+  }
+
+  onPaste(event: ClipboardEvent): void {
+
+    const clipboardData = event.clipboardData;
+
+    if (!clipboardData) {
+      return;
+    }
+
+    /*
+    * ============================================
+    * 1. Revisar si el portapapeles contiene archivos
+    * ============================================
+    */
+
+    const files = clipboardData.files;
+
+    if (files && files.length > 0) {
+
+      const file = files[0];
+
+      console.log('Archivo pegado:', file);
+      console.log('Nombre:', file.name);
+      console.log('Tipo:', file.type);
+      console.log('Tamaño:', file.size);
+
+      /*
+      * Evitamos que el navegador intente
+      * pegar el archivo dentro del textarea.
+      */
+      event.preventDefault();
+
+      /*
+      * En este punto ya tenemos un File,
+      * por lo que NO debemos llamar directamente
+      * a onFileSelected(), porque ese método
+      * espera un Event.
+      */
+      this.processSelectedFile(file);
+
+      return;
+    }
+
+    /*
+    * ============================================
+    * 2. Revisar los items del clipboard
+    * ============================================
+    *
+    * Esto ayuda especialmente con imágenes
+    * copiadas desde navegador, capturas de pantalla,
+    * etc.
+    */
+
+    for (const item of clipboardData.items) {
+
+      if (item.kind === 'file') {
+
+        const file = item.getAsFile();
+
+        if (file) {
+
+          console.log('Archivo pegado desde clipboard:', file);
+
+          event.preventDefault();
+
+          this.processSelectedFile(file);
+
+          return;
+        }
+      }
+    }
+
+    /*
+    * ============================================
+    * 3. Si es texto
+    * ============================================
+    *
+    * No hacemos nada.
+    *
+    * El textarea se encargará de pegar
+    * normalmente el texto.
+    */
   }
 
 
@@ -1547,50 +1630,65 @@ export class ConversationChat
    * SELECCIONAR ARCHIVO
    * =====================================================
    */
-  public onFileSelected(
-    event: Event
-  ): void {
+  public onFileSelected(event: Event): void {
 
-    const input =
-      event.target as HTMLInputElement;
+    const input = event.target as HTMLInputElement;
 
     if (
       !input.files ||
       input.files.length === 0
     ) {
-
       return;
-
     }
 
-    const file =
-      input.files[0];
+    const file = input.files[0];
 
     /*
-     * Límite de seguridad del frontend.
+    * Enviamos el archivo al método común
+    * de procesamiento.
+    */
+    this.processSelectedFile(file);
+
+    /*
+    * Limpiamos el input para permitir
+    * seleccionar nuevamente el mismo archivo.
+    */
+    input.value = '';
+  }
+
+  private processSelectedFile(file: File): void {
+
+    /*
+     * ============================================
+     * Límite de seguridad del frontend
+     * ============================================
      *
      * 100 MB
      */
-    const maxSize =
-      100 * 1024 * 1024;
 
-    if (
-      file.size > maxSize
-    ) {
+    const maxSize = 100 * 1024 * 1024;
+
+    if (file.size > maxSize) {
 
       this.errorMessage =
         'El archivo no puede superar los 100 MB.';
 
-      input.value = '';
-
       return;
-
     }
+
+    /*
+     * Archivo válido
+     */
 
     this.errorMessage = null;
 
     this.selectedFile = file;
 
+    console.log('Archivo seleccionado correctamente:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
   }
 
 

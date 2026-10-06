@@ -916,8 +916,15 @@
       [disabled]="sending || loading" />
 
     <!-- Área de escritura -->
-    <textarea name="message" [(ngModel)]="messageText" (keydown)="onKeyDown($event)" placeholder="Escribe un mensaje..."
-      rows="2" [disabled]="sending || loading"></textarea>
+    <textarea
+      name="message"
+      [(ngModel)]="messageText"
+      (keydown)="onKeyDown($event)"
+      (paste)="onPaste($event)"
+      placeholder="Escribe un mensaje..."
+      rows="2"
+      [disabled]="sending || loading">
+    </textarea>
 
     <!-- Archivo seleccionado -->
     @if (selectedFile) {
