@@ -9,10 +9,11 @@ import { UserManagement } from './components/user-management/user-management';
 import { roleGuard } from './guards/role-guard';
 import { Unauthorized } from './components/unauthorized/unauthorized';
 import { Visit } from './components/visit/visit';
+import { loginRedirectGuard } from './guards/login-redirect-guard';
 
 export const routes: Routes = [
 
-    {path: '', redirectTo: 'login', pathMatch: 'full'},
+    {path: '', canActivate: [loginRedirectGuard], component: Login},
     {path: 'login', component: Login},
     {path: 'registro', component: Register},
     {path: 'home', component: Home, canActivate: [authGuardGuard]},

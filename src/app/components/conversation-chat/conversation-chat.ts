@@ -239,6 +239,7 @@ export class ConversationChat
     return this.tokenServices.hasRole(role);
   }
 
+
   onPaste(event: ClipboardEvent): void {
 
     const clipboardData = event.clipboardData;
@@ -247,11 +248,97 @@ export class ConversationChat
       return;
     }
 
+    console.log('========== PASTE ==========');
+
     /*
-    * ============================================
-    * 1. Revisar si el portapapeles contiene archivos
-    * ============================================
-    */
+     * ============================================
+     * 1. Revisar los ITEMS del portapapeles
+     * ============================================
+     *
+     * Esta es la parte más importante para capturas
+     * realizadas con la Herramienta de Recortes de Windows.
+     *
+     * Una captura puede no aparecer en clipboardData.files,
+     * pero sí aparecer como:
+     *
+     * item.kind === 'file'
+     * item.type === 'image/png'
+     */
+
+    for (let i = 0; i < clipboardData.items.length; i++) {
+
+      const item = clipboardData.items[i];
+
+      console.log(
+        'Clipboard item:',
+        i,
+        'kind:',
+        item.kind,
+        'type:',
+        item.type
+      );
+
+      /*
+       * ============================================
+       * IMAGEN
+       * ============================================
+       */
+
+      if (item.kind === 'file' && item.type.startsWith('image/')) {
+
+        const file = item.getAsFile();
+
+        if (!file) {
+          continue;
+        }
+
+        console.log('🖼️ Imagen encontrada en clipboard');
+        console.log('Tipo:', file.type);
+        console.log('Tamaño:', file.size);
+        console.log('Nombre:', file.name);
+
+        /*
+         * Evitamos que la imagen se intente pegar
+         * dentro del textarea.
+         */
+        event.preventDefault();
+
+        /*
+         * Algunas capturas de Windows pueden venir
+         * sin un nombre de archivo.
+         *
+         * Creamos uno para mantener un comportamiento
+         * uniforme en el backend.
+         */
+
+        const imageFile = new File(
+          [file],
+          file.name || `captura-${Date.now()}.png`,
+          {
+            type: file.type || 'image/png'
+          }
+        );
+
+        /*
+         * Procesamos el archivo.
+         */
+        this.processSelectedFile(imageFile);
+
+        console.log('✅ Imagen enviada a processSelectedFile');
+
+        return;
+      }
+    }
+
+
+    /*
+     * ============================================
+     * 2. Revisar archivos normales
+     * ============================================
+     *
+     * Esto cubre archivos copiados desde el explorador
+     * de Windows u otras aplicaciones.
+     */
 
     const files = clipboardData.files;
 
@@ -259,67 +346,32 @@ export class ConversationChat
 
       const file = files[0];
 
-      console.log('Archivo pegado:', file);
+      console.log('📁 Archivo encontrado en clipboard');
       console.log('Nombre:', file.name);
       console.log('Tipo:', file.type);
       console.log('Tamaño:', file.size);
 
-      /*
-      * Evitamos que el navegador intente
-      * pegar el archivo dentro del textarea.
-      */
       event.preventDefault();
 
-      /*
-      * En este punto ya tenemos un File,
-      * por lo que NO debemos llamar directamente
-      * a onFileSelected(), porque ese método
-      * espera un Event.
-      */
       this.processSelectedFile(file);
 
       return;
     }
 
-    /*
-    * ============================================
-    * 2. Revisar los items del clipboard
-    * ============================================
-    *
-    * Esto ayuda especialmente con imágenes
-    * copiadas desde navegador, capturas de pantalla,
-    * etc.
-    */
-
-    for (const item of clipboardData.items) {
-
-      if (item.kind === 'file') {
-
-        const file = item.getAsFile();
-
-        if (file) {
-
-          console.log('Archivo pegado desde clipboard:', file);
-
-          event.preventDefault();
-
-          this.processSelectedFile(file);
-
-          return;
-        }
-      }
-    }
 
     /*
-    * ============================================
-    * 3. Si es texto
-    * ============================================
-    *
-    * No hacemos nada.
-    *
-    * El textarea se encargará de pegar
-    * normalmente el texto.
-    */
+     * ============================================
+     * 3. Si llegamos aquí, probablemente es texto
+     * ============================================
+     *
+     * No hacemos event.preventDefault().
+     *
+     * Por lo tanto, el navegador permitirá que el
+     * textarea pegue el texto normalmente.
+     */
+
+    console.log('📝 Clipboard contiene texto o contenido no compatible');
+
   }
 
 

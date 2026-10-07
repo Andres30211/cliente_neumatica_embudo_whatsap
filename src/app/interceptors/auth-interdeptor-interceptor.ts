@@ -1,249 +1,302 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, filter, finalize, switchMap, take, throwError } from 'rxjs';
+
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  finalize,
+  switchMap,
+  take,
+  throwError
+} from 'rxjs';
 
 import { AuthServices } from '../services/auth-services';
 import { TokensServices } from '../services/tokens-services';
 
+
+/*
+ * Indica si actualmente hay una renovación
+ * del Access Token en progreso.
+ *
+ * Esto evita que varias peticiones hagan
+ * múltiples refresh simultáneamente.
+ */
 let isRefreshing = false;
 
-const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
-export const authInterdeptorInterceptor: HttpInterceptorFn = (req, next) => {
+/*
+ * Las peticiones que lleguen mientras se está
+ * renovando el token esperan aquí.
+ *
+ * Cuando tengamos el nuevo token:
+ *
+ * refreshTokenSubject.next(nuevoToken)
+ *
+ * y todas las peticiones pendientes continúan.
+ */
+const refreshTokenSubject =
+  new BehaviorSubject<string | null>(null);
 
-  const authService = inject(AuthServices);
-  const tokensService = inject(TokensServices);
-  const router = inject(Router);
 
-  const accessToken = tokensService.getAccesToken();
+export const authInterdeptorInterceptor: HttpInterceptorFn =
+  (req, next) => {
 
-  /*
-   * IMPORTANTE:
-   * La petición de refresh NO debe entrar nuevamente
-   * en el mecanismo de refresh.
-   */
-  if (req.url.includes('/refresh')) {
-    return next(req);
-  }
+    const authService = inject(AuthServices);
+    const tokensService = inject(TokensServices);
+    const router = inject(Router);
 
-  /*
-   * Si no tenemos Access Token,
-   * dejamos pasar la petición.
-   */
-  if (!accessToken) {
-    return next(req);
-  }
 
-  /*
-   * Agregamos Access Token.
-   */
-  const authReq = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${accessToken}`
+    /*
+     * Obtenemos el Access Token.
+     *
+     * TokensServices busca primero en localStorage
+     * y después en sessionStorage.
+     */
+    const accessToken =
+      tokensService.getAccesToken();
+
+
+    /*
+     * IMPORTANTE:
+     *
+     * La petición para renovar el token
+     * no debe pasar nuevamente por este
+     * mecanismo.
+     */
+    if (req.url.includes('/refresh')) {
+
+      return next(req);
     }
-  });
 
-  return next(authReq).pipe(
 
-    catchError(error => {
+    /*
+     * Algunas peticiones pueden hacerse
+     * sin autenticación.
+     *
+     * Si no existe Access Token,
+     * dejamos pasar la petición normalmente.
+     */
+    if (!accessToken) {
 
-      /*
-       * Si no es 401,
-       * simplemente propagamos el error.
-       */
-      if (error.status !== 401) {
-        return throwError(() => error);
+      return next(req);
+    }
+
+
+    /*
+     * Agregamos el Access Token a la petición.
+     */
+    const authReq = req.clone({
+
+      setHeaders: {
+        Authorization: `Bearer ${accessToken}`
       }
 
-      const refreshToken = tokensService.getRefreshToken();
+    });
 
-      /*
-       * Si no tenemos Refresh Token,
-       * cerramos sesión.
-       */
-      if (!refreshToken) {
 
-        tokensService.clearTokens();
+    /*
+     * Ejecutamos la petición.
+     */
+    return next(authReq).pipe(
 
-        router.navigate(['/login']);
+      catchError(error => {
 
-        return throwError(() => error);
-      }
+        /*
+         * Si el error NO es 401,
+         * no intentamos renovar el token.
+         */
+        if (error.status !== 401) {
 
-      /*
-       * Si YA hay un refresh en progreso,
-       * NO hacemos otro refresh.
-       *
-       * Esperamos a que termine el refresh actual.
-       */
-      if (isRefreshing) {
+          return throwError(() => error);
+        }
 
-        return refreshTokenSubject.pipe(
 
-          filter(token => token !== null),
+        /*
+         * La petición recibió 401.
+         *
+         * Esto normalmente significa que
+         * el Access Token expiró.
+         */
 
-          take(1),
+        const refreshToken =
+          tokensService.getRefreshToken();
 
-          switchMap(newAccessToken => {
 
-            const retryReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${newAccessToken}`
-              }
-            });
+        /*
+         * Si no tenemos Refresh Token,
+         * ya no podemos renovar la sesión.
+         */
+        if (!refreshToken) {
 
-            return next(retryReq);
-
-          })
-        );
-      }
-
-      /*
-       * Somos la primera petición que detectó
-       * que el Access Token expiró.
-       */
-      isRefreshing = true;
-
-      refreshTokenSubject.next(null);
-
-      return authService.refreshToken().pipe(
-
-        switchMap(response => {
-
-          /*
-           * Guardamos los nuevos tokens.
-           */
-          tokensService.saveTokens(
-            response.accessToken,
-            response.refreshToken
-          );
-
-          /*
-           * Avisamos a las demás peticiones
-           * que ya tenemos un nuevo Access Token.
-           */
-          refreshTokenSubject.next(response.accessToken);
-
-          /*
-           * Reintentamos la petición original.
-           */
-          const retryReq = req.clone({
-            setHeaders: {
-              Authorization: `Bearer ${response.accessToken}`
-            }
-          });
-
-          return next(retryReq);
-
-        }),
-
-        catchError(refreshError => {
-
-          /*
-           * El Refresh Token tampoco sirve.
-           */
           tokensService.clearTokens();
-
-          refreshTokenSubject.next(null);
 
           router.navigate(['/login']);
 
-          return throwError(() => refreshError);
+          return throwError(() => error);
+        }
 
-        }),
 
         /*
-         * Independientemente de si el refresh
-         * terminó correctamente o con error,
-         * liberamos el estado.
+         * ------------------------------------------------
+         * CASO 1:
+         * YA HAY OTRO REFRESH EN PROGRESO
+         * ------------------------------------------------
          */
-        finalize(() => {
-          isRefreshing = false;
-        })
 
-      );
+        if (isRefreshing) {
 
-    })
+          /*
+           * Esperamos hasta que la primera petición
+           * termine de renovar el token.
+           */
+          return refreshTokenSubject.pipe(
 
-  );
-};
+            /*
+             * Ignoramos el null inicial.
+             */
+            filter(token => token !== null),
+
+            /*
+             * Solo necesitamos el siguiente token.
+             */
+            take(1),
+
+            /*
+             * Cuando tengamos el nuevo token,
+             * repetimos la petición original.
+             */
+            switchMap(newAccessToken => {
+
+              const retryReq = req.clone({
+
+                setHeaders: {
+                  Authorization:
+                    `Bearer ${newAccessToken}`
+                }
+
+              });
+
+              return next(retryReq);
+            })
+
+          );
+        }
 
 
+        /*
+         * ------------------------------------------------
+         * CASO 2:
+         * SOMOS LA PRIMERA PETICIÓN QUE DETECTA 401
+         * ------------------------------------------------
+         */
 
-// import { HttpInterceptorFn } from '@angular/common/http';
-// import { AuthServices } from '../services/auth-services';
-// import { inject } from '@angular/core';
-// import { Router } from '@angular/router';
-// import { TokensServices } from '../services/tokens-services';
-// import { catchError, switchMap, throwError } from 'rxjs';
+        isRefreshing = true;
 
-// export const authInterdeptorInterceptor: HttpInterceptorFn = (req, next) => {
+        /*
+         * Ponemos null para indicar que todavía
+         * no tenemos un nuevo token.
+         */
+        refreshTokenSubject.next(null);
 
-//   const authService = inject(AuthServices);
-//   const tokensService = inject(TokensServices);
-//   const router = inject(Router);
 
-//   const accessToken = tokensService.getAccesToken();
+        /*
+         * Pedimos al backend un nuevo Access Token.
+         */
+        return authService.refreshToken().pipe(
 
-//   // Si no existe Access Token,
-//   // dejamos pasar la petición normalmente.
-//   if (!accessToken) {
-//     return next(req);
-//   }
+          /*
+           * Cuando el backend responde correctamente:
+           */
+          switchMap(response => {
 
-//   // Agregamos el Access Token a la petición.
-//   const authReq = req.clone({setHeaders: {Authorization: `Bearer ${accessToken}`}});
+            /*
+             * IMPORTANTE:
+             *
+             * NO pasamos false aquí.
+             *
+             * Dejamos que TokensServices detecte
+             * dónde estaba guardada la sesión:
+             *
+             * localStorage -> localStorage
+             * sessionStorage -> sessionStorage
+             */
+            tokensService.saveTokens(
+              response.accessToken,
+              response.refreshToken
+            );
 
-//   return next(authReq).pipe(
 
-//     catchError(error => {
+            /*
+             * Avisamos a todas las peticiones
+             * que estaban esperando.
+             */
+            refreshTokenSubject.next(
+              response.accessToken
+            );
 
-//       // Si no es 401, dejamos pasar el error.
-//       if (error.status !== 401) {
-//         return throwError(() => error);
-//       }
 
-//       // El Access Token probablemente expiró.
-//       const refreshToken = tokensService.getRefreshToken();
+            /*
+             * Repetimos la petición original
+             * con el nuevo Access Token.
+             */
+            const retryReq = req.clone({
 
-//       // Si tampoco tenemos Refresh Token,
-//       // ya no podemos renovar la sesión.
-//       if (!refreshToken) {
+              setHeaders: {
+                Authorization:
+                  `Bearer ${response.accessToken}`
+              }
 
-//         tokensService.clearTokens();
+            });
 
-//         router.navigate(['/login']);
 
-//         return throwError(() => error);
-//       }
+            return next(retryReq);
+          }),
 
-//       // Intentamos obtener un nuevo Access Token.
-//       return authService.refreshToken().pipe(
 
-//         switchMap(response => {
+          /*
+           * ------------------------------------------------
+           * EL REFRESH TOKEN TAMBIÉN FALLÓ
+           * ------------------------------------------------
+           */
+          catchError(refreshError => {
 
-//           // Guardamos los nuevos tokens.
-//           tokensService.saveTokens(response.accessToken,response.refreshToken);
+            /*
+             * La sesión completa deja de ser válida.
+             */
+            tokensService.clearTokens();
 
-//           // Repetimos la petición original
-//           // utilizando el nuevo Access Token.
-//           const retryReq = req.clone({setHeaders: {Authorization: `Bearer ${response.accessToken}`}});
 
-//           return next(retryReq);
-//         }),
+            /*
+             * Desbloqueamos las peticiones que
+             * estuvieran esperando.
+             */
+            refreshTokenSubject.next(null);
 
-//         catchError(refreshError => {
 
-//           // Si el Refresh Token también expiró
-//           // o fue rechazado por Spring.
-//           tokensService.clearTokens();
+            /*
+             * Mandamos al usuario al login.
+             */
+            router.navigate(['/login']);
 
-//           router.navigate(['/login']);
 
-//           return throwError(() => refreshError);
-//         })
-//       );
-//     })
-//   );
-// };
+            return throwError(() => refreshError);
+          }),
+
+
+          /*
+           * Independientemente de si el refresh
+           * tuvo éxito o falló, liberamos el estado.
+           */
+          finalize(() => {
+
+            isRefreshing = false;
+          })
+
+        );
+
+      })
+
+    );
+  };
