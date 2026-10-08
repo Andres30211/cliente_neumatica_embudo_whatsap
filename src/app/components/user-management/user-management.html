@@ -2,7 +2,7 @@
 
 <main>
 
-<app-sidebar></app-sidebar>
+  <app-sidebar></app-sidebar>
 
   <!-- =====================================================
        CONTENIDO - GESTIÓN DE USUARIOS
@@ -10,404 +10,380 @@
 
   <div class="users-card">
 
-<!-- =====================================================
+    <!-- =====================================================
      HEADER
-====================================================== -->
+    ====================================================== -->
 
-<div class="users-card-header">
+    <div class="users-card-header">
 
-  <div class="header-content">
+      <div class="header-content">
 
-    <div class="header-icon">
-      👥
+        <div class="header-icon">
+          👥
+        </div>
+
+        <div>
+
+          <h2>
+            Control de usuarios
+          </h2>
+
+          <p>
+            Administra los usuarios registrados en el sistema.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div>
+        <a class="btn-control-contacts"
+         [routerLink]="['/contact-management']"
+         title="Ir a página de control para contactos">Control de Contactos</a>
+      </div>
+
     </div>
 
-    <div>
 
-      <h2>
-        Gestión de usuarios
-      </h2>
-
-      <p>
-        Administra los usuarios registrados en el sistema.
-      </p>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- =====================================================
+    <!-- =====================================================
      MENSAJE DE ÉXITO
-====================================================== -->
+    ====================================================== -->
 
-<div
-  class="alert success-alert"
-  *ngIf="successMessage">
+    <div class="alert success-alert" *ngIf="successMessage">
 
-  <span class="alert-icon">
-    ✓
-  </span>
+      <span class="alert-icon">
+        ✓
+      </span>
 
-  <span>
-    {{ successMessage }}
-  </span>
+      <span>
+        {{ successMessage }}
+      </span>
 
-</div>
+    </div>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      MENSAJE DE ERROR
-====================================================== -->
+    ====================================================== -->
 
-<div
-  class="alert error-alert"
-  *ngIf="errorMessage">
+    <div class="alert error-alert" *ngIf="errorMessage">
 
-  <span class="alert-icon">
-    !
-  </span>
+      <span class="alert-icon">
+        !
+      </span>
 
-  <span>
-    {{ errorMessage }}
-  </span>
+      <span>
+        {{ errorMessage }}
+      </span>
 
-</div>
+    </div>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      FILTROS
-====================================================== -->
+    ====================================================== -->
 
-<div class="users-filters">
-
-
-  <!-- BUSCADOR -->
-
-  <div class="search-box">
-
-    <span class="search-icon">
-      🔍
-    </span>
-
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      (input)="onSearch()"
-      placeholder="Buscar por nombre, usuario o email..."
-    />
-
-  </div>
+    <div class="users-filters">
 
 
-  <!-- FILTRO POR ROL -->
+      <!-- BUSCADOR -->
 
-  <div class="role-filter">
+      <div class="search-box">
 
-    <select
-      [(ngModel)]="selectedRole"
-      (change)="onRoleFilter()">
+        <span class="search-icon">
+          🔍
+        </span>
 
-      <option value="">
-        Todos los roles
-      </option>
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+          placeholder="Buscar por nombre, usuario o email..." />
 
-      <option
-        *ngFor="let role of roles"
-        [value]="role">
-
-        {{ getRoleLabel(role) }}
-
-      </option>
-
-    </select>
-
-  </div>
-
-</div>
+      </div>
 
 
-<!-- =====================================================
+      <!-- FILTRO POR ROL -->
+
+      <div class="role-filter">
+
+        <select [(ngModel)]="selectedRole" (change)="onRoleFilter()">
+
+          <option value="">
+            Todos los roles
+          </option>
+
+          <option *ngFor="let role of roles" [value]="role">
+
+            {{ getRoleLabel(role) }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
      LOADING
-====================================================== -->
+    ====================================================== -->
 
-@if (users.length == 0) {
+    @if (users.length == 0) {
 
-  <div class="loading-container">
+    <div class="loading-container">
 
-    <div class="spinner"></div>
+      <div class="spinner"></div>
 
-    <span>
-      Cargando usuarios...
-    </span>
+      <span>
+        Cargando usuarios...
+      </span>
 
-  </div>
+    </div>
 
-}
+    }
 
 
-<!-- =====================================================
+    <!-- =====================================================
      TABLA DE USUARIOS
-====================================================== -->
+    ====================================================== -->
 
-<div
-  class="table-container"
-  *ngIf="users.length != 0">
+    <div class="table-container" *ngIf="users.length != 0">
 
-  <table class="users-table">
+      <table class="users-table">
 
 
-    <!-- =================================================
+        <!-- =================================================
          HEADER TABLA
-    ================================================== -->
+        ================================================== -->
 
-    <thead>
+        <thead>
 
-      <tr>
+          <tr>
 
-        <th>
-          Usuario
-        </th>
+            <th>
+              Usuario
+            </th>
 
-        <th>
-          Email
-        </th>
+            <th>
+              Email
+            </th>
 
-        <th>
-          Rol
-        </th>
+            <th>
+              Rol
+            </th>
 
-        <th>
-          Estado
-        </th>
+            <th>
+              Estado
+            </th>
 
-        <th class="actions-column">
-          Acciones
-        </th>
+            @if (this.meRol('ROLE_ADMIN')) {
 
-      </tr>
+              <th class="actions-column">
+                Acciones
+              </th>
+            }
 
-    </thead>
+          </tr>
+
+        </thead>
 
 
-    <!-- =================================================
+        <!-- =================================================
          CUERPO TABLA
-    ================================================== -->
+        ================================================== -->
 
-    <tbody>
+        <tbody>
 
 
-      <!-- =================================================
+          <!-- =================================================
            USUARIOS
-      ================================================== -->
+          ================================================== -->
 
-      <tr
-        *ngFor="let user of filteredUsers">
+          <tr *ngFor="let user of filteredUsers">
 
 
-        <!-- USUARIO -->
+            <!-- USUARIO -->
 
-        <td>
+            <td>
 
-          <div class="user-info">
+              <div class="user-info">
 
-            <div class="user-avatar">
+                <div class="user-avatar">
 
-              {{ getInitials(user.name) }}
+                  {{ getInitials(user.name) }}
 
-            </div>
+                </div>
 
-            <div class="user-username">
+                <div class="user-username">
 
-              <span>
-                {{ user.name }}
+                  <span>
+                    {{ user.name }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- EMAIL -->
+
+            <td>
+
+              <span class="user-email">
+                {{ user.email }}
               </span>
 
-            </div>
-
-          </div>
-
-        </td>
+            </td>
 
 
-        <!-- EMAIL -->
+            <!-- ROL -->
 
-        <td>
+            <td>
 
-          <span class="user-email">
-            {{ user.email }}
-          </span>
+              @if (user.roles != null && user.roles != undefined) {
 
-        </td>
+              @for (r of user.roles; track r) {
 
-
-        <!-- ROL -->
-
-        <td>
-
-          @if (user.roles != null && user.roles != undefined) {
-
-            @for (r of user.roles; track r) {
-
-              <span
-                class="role-badge"
-                [ngClass]="getRoleClass(r)">
+              <span class="role-badge" [ngClass]="getRoleClass(r)">
 
                 {{ getRoleLabel(r) }}
 
               </span>
 
+              }
+
+              } @else {
+
+              <span class="role-badge">
+                Sin rol
+              </span>
+
+              }
+
+            </td>
+
+
+            <!-- ESTADO -->
+
+            <td>
+
+              <span class="status" [class.active]="user.enabled" [class.inactive]="!user.enabled">
+
+                <span class="status-dot"></span>
+
+                {{ user.enabled ? 'Activo' : 'Inactivo' }}
+
+              </span>
+
+            </td>
+
+
+            <!-- ACCIONES -->
+
+            @if (this.meRol('ROLE_ADMIN')) {
+
+
+              <td class="actions-column">
+  
+                <div class="actions">
+  
+  
+                  <!-- EDITAR -->
+  
+                  <button type="button" class="action-button edit" title="Editar usuario" aria-label="Editar usuario"
+                    (click)="openEditModal(user)">
+  
+                    ✎
+  
+                  </button>
+  
+  
+                  <!-- CAMBIAR ROL -->
+  
+                  <button type="button" class="action-button role" title="Cambiar rol" aria-label="Cambiar rol"
+                    (click)="openRoleModal(user)">
+  
+                    ⇄
+  
+                  </button>
+  
+  
+                  <!-- ELIMINAR -->
+  
+                  <button type="button" class="action-button delete" title="Eliminar usuario"
+                    aria-label="Eliminar usuario" (click)="deleteUser(user)">
+  
+                    🗑
+  
+                  </button>
+  
+                </div>
+  
+              </td>
             }
 
-          } @else {
-
-            <span class="role-badge">
-              Sin rol
-            </span>
-
-          }
-
-        </td>
+          </tr>
 
 
-        <!-- ESTADO -->
-
-        <td>
-
-          <span
-            class="status"
-            [class.active]="user.enabled"
-            [class.inactive]="!user.enabled">
-
-            <span class="status-dot"></span>
-
-            {{ user.enabled ? 'Activo' : 'Inactivo' }}
-
-          </span>
-
-        </td>
-
-
-        <!-- ACCIONES -->
-
-        <td class="actions-column">
-
-          <div class="actions">
-
-
-            <!-- EDITAR -->
-
-            <button
-              type="button"
-              class="action-button edit"
-              title="Editar usuario"
-              aria-label="Editar usuario"
-              (click)="openEditModal(user)">
-
-              ✎
-
-            </button>
-
-
-            <!-- CAMBIAR ROL -->
-
-            <button
-              type="button"
-              class="action-button role"
-              title="Cambiar rol"
-              aria-label="Cambiar rol"
-              (click)="openRoleModal(user)">
-
-              ⇄
-
-            </button>
-
-
-            <!-- ELIMINAR -->
-
-            <button
-              type="button"
-              class="action-button delete"
-              title="Eliminar usuario"
-              aria-label="Eliminar usuario"
-              (click)="deleteUser(user)">
-
-              🗑
-
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-
-      <!-- =================================================
+          <!-- =================================================
            SIN RESULTADOS
       ================================================== -->
 
-      <tr
-        *ngIf="filteredUsers.length === 0">
+          <tr *ngIf="filteredUsers.length === 0">
 
-        <td
-          colspan="5"
-          class="empty-state">
+            <td colspan="5" class="empty-state">
 
-          <div class="empty-icon">
-            👥
-          </div>
+              <div class="empty-icon">
+                👥
+              </div>
 
-          <h3>
-            No se encontraron usuarios
-          </h3>
+              <h3>
+                No se encontraron usuarios
+              </h3>
 
-          <p>
-            Intenta modificar los filtros de búsqueda.
-          </p>
+              <p>
+                Intenta modificar los filtros de búsqueda.
+              </p>
 
-        </td>
+            </td>
 
-      </tr>
+          </tr>
 
-    </tbody>
+        </tbody>
 
-  </table>
+      </table>
 
-</div>
+    </div>
 
 
-<!-- =====================================================
+    <!-- =====================================================
      FOOTER - SIN PAGINACIÓN
-====================================================== -->
+    ====================================================== -->
 
-<div
-  class="users-card-footer"
-  *ngIf="!loading && users.length != 0">
+    <div class="users-card-footer" *ngIf="!loading && users.length != 0">
 
-  <div class="users-summary">
+      <div class="users-summary">
 
-    <span class="summary-icon">
-      👥
-    </span>
+        <span class="summary-icon">
+          👥
+        </span>
 
-    <span>
+        <span>
 
-      Mostrando
+          Mostrando
 
-      <strong>
-        {{ filteredUsers.length }}
-      </strong>
+          <strong>
+            {{ filteredUsers.length }}
+          </strong>
 
-      {{ filteredUsers.length === 1 ? 'usuario' : 'usuarios' }}
+          {{ filteredUsers.length === 1 ? 'usuario' : 'usuarios' }}
 
-    </span>
+        </span>
 
-  </div>
+      </div>
 
-</div>
+    </div>
 
   </div>
 
@@ -415,118 +391,90 @@
        MODAL EDITAR USUARIO
   ====================================================== -->
 
-  <div
-    class="modal-overlay"
-    *ngIf="showEditModal"
-    (click)="closeEditModal()">
+  <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
 
-<div
-  class="modal"
-  (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
 
 
-  <!-- HEADER -->
+      <!-- HEADER -->
 
-  <div class="modal-header">
+      <div class="modal-header">
 
-    <div>
+        <div>
 
-      <h3>
-        Editar usuario
-      </h3>
+          <h3>
+            Editar usuario
+          </h3>
 
-      <p>
-        Actualiza los datos básicos del usuario.
-      </p>
+          <p>
+            Actualiza los datos básicos del usuario.
+          </p>
+
+        </div>
+
+        <button type="button" class="modal-close" [disabled]="saving" (click)="closeEditModal()" aria-label="Cerrar">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+      <!-- BODY -->
+
+      <div class="modal-body">
+
+
+        <!-- NOMBRE -->
+
+        <div class="form-group">
+
+          <label for="edit-name">
+            Nombre completo
+          </label>
+
+          <input id="edit-name" type="text" [(ngModel)]="editForm.name" placeholder="Nombre completo"
+            autocomplete="name" />
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+          <label for="edit-email">
+            Email
+          </label>
+
+          <input id="edit-email" type="email" [(ngModel)]="editForm.email" placeholder="correo@empresa.com"
+            autocomplete="email" />
+
+        </div>
+
+      </div>
+
+
+      <!-- FOOTER -->
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn-secondary" [disabled]="saving" (click)="closeEditModal()">
+
+          Cancelar
+
+        </button>
+
+        <button type="button" class="btn-primary" [disabled]="saving" (click)="updateUser()">
+
+          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+
+        </button>
+
+      </div>
 
     </div>
-
-    <button
-      type="button"
-      class="modal-close"
-      [disabled]="saving"
-      (click)="closeEditModal()"
-      aria-label="Cerrar">
-
-      ×
-
-    </button>
-
-  </div>
-
-
-  <!-- BODY -->
-
-  <div class="modal-body">
-
-
-    <!-- NOMBRE -->
-
-    <div class="form-group">
-
-      <label for="edit-name">
-        Nombre completo
-      </label>
-
-      <input
-        id="edit-name"
-        type="text"
-        [(ngModel)]="editForm.name"
-        placeholder="Nombre completo"
-        autocomplete="name"
-      />
-
-    </div>
-
-
-    <!-- EMAIL -->
-
-    <div class="form-group">
-
-      <label for="edit-email">
-        Email
-      </label>
-
-      <input
-        id="edit-email"
-        type="email"
-        [(ngModel)]="editForm.email"
-        placeholder="correo@empresa.com"
-        autocomplete="email"
-      />
-
-    </div>
-
-  </div>
-
-
-  <!-- FOOTER -->
-
-  <div class="modal-footer">
-
-    <button
-      type="button"
-      class="btn-secondary"
-      [disabled]="saving"
-      (click)="closeEditModal()">
-
-      Cancelar
-
-    </button>
-
-    <button
-      type="button"
-      class="btn-primary"
-      [disabled]="saving"
-      (click)="updateUser()">
-
-      {{ saving ? 'Guardando...' : 'Guardar cambios' }}
-
-    </button>
-
-  </div>
-
-</div>
 
   </div>
 
@@ -534,125 +482,103 @@
        MODAL CAMBIAR ROL
   ====================================================== -->
 
-  <div
-    class="modal-overlay"
-    *ngIf="showRoleModal"
-    (click)="closeRoleModal()">
+  <div class="modal-overlay" *ngIf="showRoleModal" (click)="closeRoleModal()">
 
-<div
-  class="modal modal-small"
-  (click)="$event.stopPropagation()">
+    <div class="modal modal-small" (click)="$event.stopPropagation()">
 
 
-  <!-- HEADER -->
+      <!-- HEADER -->
 
-  <div class="modal-header">
+      <div class="modal-header">
 
-    <div>
+        <div>
 
-      <h3>
-        Cambiar rol
-      </h3>
+          <h3>
+            Cambiar rol
+          </h3>
 
-      <p>
-        {{ selectedUser?.name }}
-      </p>
+          <p>
+            {{ selectedUser?.name }}
+          </p>
 
-    </div>
+        </div>
 
-    <button
-      type="button"
-      class="modal-close"
-      [disabled]="saving"
-      (click)="closeRoleModal()"
-      aria-label="Cerrar">
+        <button type="button" class="modal-close" [disabled]="saving" (click)="closeRoleModal()" aria-label="Cerrar">
 
-      ×
+          ×
 
-    </button>
-
-  </div>
-
-
-  <!-- BODY -->
-
-  <div class="modal-body">
-
-    <div class="selected-user">
-
-      <div class="selected-user-avatar">
-
-        {{ getInitials(selectedUser?.name || '') }}
+        </button>
 
       </div>
 
-      <div>
 
-        <strong>
-          {{ selectedUser?.name }}
-        </strong>
+      <!-- BODY -->
 
-        <span>
-          {{ selectedUser?.email }}
-        </span>
+      <div class="modal-body">
+
+        <div class="selected-user">
+
+          <div class="selected-user-avatar">
+
+            {{ getInitials(selectedUser?.name || '') }}
+
+          </div>
+
+          <div>
+
+            <strong>
+              {{ selectedUser?.name }}
+            </strong>
+
+            <span>
+              {{ selectedUser?.email }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="new-role">
+            Nuevo rol
+          </label>
+
+          <select id="new-role" [(ngModel)]="selectedNewRole">
+
+            <option *ngFor="let role of roles" [value]="role">
+
+              {{ getRoleLabel(role) }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- FOOTER -->
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn-secondary" [disabled]="saving" (click)="closeRoleModal()">
+
+          Cancelar
+
+        </button>
+
+        <button type="button" class="btn-primary" [disabled]="saving" (click)="changeRole()">
+
+          {{ saving ? 'Actualizando...' : 'Cambiar rol' }}
+
+        </button>
 
       </div>
 
     </div>
-
-
-    <div class="form-group">
-
-      <label for="new-role">
-        Nuevo rol
-      </label>
-
-      <select
-        id="new-role"
-        [(ngModel)]="selectedNewRole">
-
-        <option
-          *ngFor="let role of roles"
-          [value]="role">
-
-          {{ getRoleLabel(role) }}
-
-        </option>
-
-      </select>
-
-    </div>
-
-  </div>
-
-
-  <!-- FOOTER -->
-
-  <div class="modal-footer">
-
-    <button
-      type="button"
-      class="btn-secondary"
-      [disabled]="saving"
-      (click)="closeRoleModal()">
-
-      Cancelar
-
-    </button>
-
-    <button
-      type="button"
-      class="btn-primary"
-      [disabled]="saving"
-      (click)="changeRole()">
-
-      {{ saving ? 'Actualizando...' : 'Cambiar rol' }}
-
-    </button>
-
-  </div>
-
-</div>
 
   </div>
 

@@ -7,10 +7,11 @@ import { Topbar } from "../topbar/topbar";
 import { Sidebar } from "../sidebar/sidebar";
 import { TokensServices } from '../../services/tokens-services';
 import { NotificationServices } from '../../services/notification-services';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-management',
-  imports: [CommonModule, FormsModule, Topbar, Sidebar],
+  imports: [CommonModule, FormsModule, Topbar, Sidebar, RouterLink],
   templateUrl: './user-management.html',
   styleUrl: './user-management.css',
 })
@@ -111,7 +112,8 @@ export class UserManagement implements OnInit{
 
   constructor(private userService: UserService, 
     private dc: ChangeDetectorRef,
-    private notificationService: NotificationServices) {}
+    private notificationService: NotificationServices,
+    private tokensServices: TokensServices) {}
 
 
   // =====================================================
@@ -122,6 +124,17 @@ export class UserManagement implements OnInit{
     this.loadUsers();
     
   }  
+
+  // =====================================================
+  // VERIFICAR ROL
+  // =====================================================
+
+  public meRol(rol: string): boolean{
+
+    const roles = this.tokensServices.getRoles();
+
+    return roles.includes(rol);
+  }
   
   // =====================================================
   // CARGAR USUARIOS

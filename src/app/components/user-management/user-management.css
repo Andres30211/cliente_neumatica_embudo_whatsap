@@ -184,6 +184,15 @@ box-shadow:
 0 8px 18px rgba(37, 99, 235, 0.16);
 }
 
+.btn-control-contacts{
+
+  text-decoration: none;
+  padding: 1rem;
+  background-color: rgb(248, 208, 5);
+  border-radius: 0.8rem;
+  color: black;
+}
+
 /* ============================================================
 TÍTULO
 ============================================================ */
