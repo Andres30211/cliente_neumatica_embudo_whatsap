@@ -160,7 +160,7 @@
 }
 
 
-.chat-header__status > span {
+.chat-header__status>span {
   width: 5px;
   height: 5px;
 
@@ -179,7 +179,7 @@
 }
 
 
-.chat-header__status--human > span {
+.chat-header__status--human>span {
   background: #65c78e;
 }
 
@@ -193,7 +193,7 @@
 }
 
 
-.chat-header__status--bot > span {
+.chat-header__status--bot>span {
   background: #6ca1d0;
 }
 
@@ -207,7 +207,7 @@
 }
 
 
-.chat-header__status--closed > span {
+.chat-header__status--closed>span {
   background: #89939a;
 }
 
@@ -788,7 +788,7 @@
 }
 
 
-.chat-message__media + p {
+.chat-message__media+p {
   margin-top: 7px;
 }
 
@@ -993,7 +993,7 @@
 }
 
 
-.chat-attention__info > div {
+.chat-attention__info>div {
   min-width: 0;
 }
 
@@ -1009,7 +1009,7 @@
 }
 
 
-.chat-attention__info div > span {
+.chat-attention__info div>span {
   display: block;
 
   color: #849098;
@@ -1061,6 +1061,132 @@
 
   cursor: not-allowed;
 }
+
+
+/* Botón del micrófono */
+.microphone-button {
+  width: 50px;
+  height: 46px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e1e5eb;
+  border-radius: 50%;
+  font-size: 50px;
+  cursor: pointer;
+  transition: background .2s, color .2s, box-shadow .2s;
+}
+
+.microphone-button:hover:not(:disabled) {
+  background: #eef2f7;
+  box-shadow: 0 3px 10px rgb(16 24 40 / 10%);
+}
+
+.microphone-button.recording {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 5px rgb(220 38 38 / 12%);
+}
+
+.microphone-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.recording-dot,
+.recording-indicator {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+.microphone-button.recording .recording-dot {
+  width: 13px;
+  height: 13px;
+  background: white;
+  border-radius: 3px;
+}
+
+.audio-recording-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #344054;
+  font-size: 13px;
+}
+
+.audio-recording-status .recording-indicator {
+  animation: audio-pulse 1.2s infinite;
+}
+
+.audio-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid #eaecf0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.audio-preview audio {
+  width: min(100%, 320px);
+}
+
+.audio-send-button,
+.audio-cancel-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.audio-send-button {
+  color: white;
+  background: #dc2626;
+}
+
+.audio-send-button:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.audio-cancel-button {
+  color: #344054;
+  background: #f2f4f7;
+}
+
+.audio-send-button:disabled,
+.audio-cancel-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.audio-error {
+  width: 100%;
+  color: #b42318;
+  font-size: 13px;
+  text-align: center;
+}
+
+@keyframes audio-pulse {
+  50% {
+    opacity: .35;
+    transform: scale(.85);
+  }
+}
+
 
 
 /* =========================================================
@@ -1117,7 +1243,7 @@
 }
 
 
-.chat-closed div > span {
+.chat-closed div>span {
   display: block;
 
   color: #7e8a92;
@@ -1171,7 +1297,7 @@
     chat-spin .7s linear infinite;
 }
 
-.file-button{
+.file-button {
 
   cursor: pointer;
 }
@@ -1336,7 +1462,7 @@
 
 
 
-.chat-header__seller{
+.chat-header__seller {
 
   color: white;
 }

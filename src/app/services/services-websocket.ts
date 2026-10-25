@@ -153,7 +153,7 @@ export class ServicesWebsocket {
   constructor(
     private notificationService:
       NotificationServices
-  ) {}
+  ) { }
 
 
   // =========================================================
@@ -197,7 +197,7 @@ export class ServicesWebsocket {
       new Client({
 
         brokerURL: 'wss://neumatica-embudo-whatsap.onrender.com/wss',
-          // 'ws://localhost:8080/wss',
+        // 'ws://localhost:8080/wss',
 
         /*
          * STOMP intentará reconectar automáticamente
@@ -433,9 +433,9 @@ export class ServicesWebsocket {
 
           const notification:
             Notification =
-              JSON.parse(
-                message.body
-              );
+            JSON.parse(
+              message.body
+            );
 
 
           /*
@@ -528,9 +528,9 @@ export class ServicesWebsocket {
 
             const summary:
               ConversationSummaryResponse =
-                JSON.parse(
-                  message.body
-                );
+              JSON.parse(
+                message.body
+              );
 
 
             console.log(

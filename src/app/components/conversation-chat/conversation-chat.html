@@ -145,7 +145,8 @@
       <div class="actions-menu">
 
         <!-- Opción: Devolver al BOT -->
-        @if (conversation?.status === 'HUMAN' && (conversation.assignedUserName === getName() || hasRole('ROLE_ADMIN'))) {
+        @if (conversation?.status === 'HUMAN' && (conversation.assignedUserName === getName() || hasRole('ROLE_ADMIN')))
+        {
 
         <button type="button" class="action-menu-item return-bot-item" (click)="returnConversationToBot()"
           [disabled]="returningToBot || sending || loading">
@@ -916,14 +917,8 @@
       [disabled]="sending || loading" />
 
     <!-- Área de escritura -->
-    <textarea
-      name="message"
-      [(ngModel)]="messageText"
-      (keydown)="onKeyDown($event)"
-      (paste)="onPaste($event)"
-      placeholder="Escribe un mensaje..."
-      rows="2"
-      [disabled]="sending || loading">
+    <textarea name="message" [(ngModel)]="messageText" (keydown)="onKeyDown($event)" (paste)="onPaste($event)"
+      placeholder="Escribe un mensaje..." rows="2" [disabled]="sending || loading">
     </textarea>
 
     <!-- Archivo seleccionado -->
@@ -956,6 +951,54 @@
     </div>
 
     }
+
+    <!-- BOTÓN DE MICRÓFONO -->
+    <button type="button" class="microphone-button" [class.recording]="isRecording"
+      (click)="isRecording ? stopRecording() : startRecording()"
+      [disabled]="sending || loading || conversation?.status !== 'HUMAN'"
+      [attr.aria-label]="isRecording ? 'Detener grabación' : 'Grabar audio'"
+      [title]="isRecording ? 'Detener grabación' : 'Grabar audio'">
+
+      @if (isRecording) {
+      <span class="recording-dot"></span>
+      } @else {
+      🎙️
+      }
+    </button>
+
+    <!-- ESTADO DE GRABACIÓN -->
+    @if (isRecording) {
+    <div class="audio-recording-status">
+      <span class="recording-indicator"></span>
+      <span>Grabando {{ getRecordingTime() }}</span>
+
+      <button type="button" class="audio-cancel-button" (click)="cancelRecording()">
+        Cancelar
+      </button>
+    </div>
+    }
+
+    <!-- VISTA PREVIA DEL AUDIO -->
+    @if (recordedAudio && audioPreviewUrl && !isRecording) {
+    <div class="audio-preview">
+      <audio [src]="audioPreviewUrl" controls preload="metadata">
+      </audio>
+
+      <button type="button" class="audio-cancel-button" (click)="cancelRecording()" [disabled]="sending">
+        Descartar
+      </button>
+
+      <button type="button" class="audio-send-button" (click)="sendRecordedAudio()" [disabled]="sending || loading">
+
+        {{ sending ? 'ENVIANDO...' : 'ENVIAR AUDIO' }}
+      </button>
+    </div>
+    }
+
+    @if (audioError) {
+    <p class="audio-error">{{ audioError }}</p>
+    }
+
 
     <!-- Botón enviar -->
     <button type="submit" [disabled]="

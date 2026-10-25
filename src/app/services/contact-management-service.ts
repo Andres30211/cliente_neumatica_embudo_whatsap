@@ -18,19 +18,11 @@ export class ContactManagementService {
   /**
    * Obtener contactos paginados
    */
-  getContacts(
-    page: number = 0,
-    size: number = 20
-  ): Observable<ContactPage> {
+  getContacts(page: number = 0, size: number = 20): Observable<ContactPage> {
 
-    const params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
+    const params = new HttpParams().set('page', page).set('size', size);
 
-    return this.http.get<ContactPage>(
-      `${this.apiUrl}/getContacts`,
-      { params }
-    );
+    return this.http.get<ContactPage>(`${this.apiUrl}/getContacts`,{ params });
   }
 
   /**
@@ -38,9 +30,12 @@ export class ContactManagementService {
    */
   getContactById(id: string): Observable<Contact> {
 
-    return this.http.get<Contact>(
-      `${this.apiUrl}/getContactById/${id}`
-    );
+    return this.http.get<Contact>(`${this.apiUrl}/getContactById/${id}`);
+  }
+
+  deleteContactById(id: string): Observable<Contact> {
+
+    return this.http.delete<Contact>(`${this.apiUrl}/delete/${id}`);
   }
 
   /**

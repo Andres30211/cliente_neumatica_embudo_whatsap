@@ -43,6 +43,24 @@ export interface VisitResponse {
 
   createdAt: string;
 
+  departureLatitude: number;
+
+  departureLongitude: number;
+
+  precisionGpsOutput: number;
+
+  departureDateTime: string;
+
+  state: string;
+}
+
+export interface RecordOutRequest{
+
+  departureLatitude: number;
+
+  departureLongitude: number;
+
+  precisionGpsOutput: number;
 }
 
 
@@ -52,20 +70,31 @@ export interface VisitResponse {
  * =========================================================
  */
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class VisitService {
 
 
-  private readonly apiUrl =
-    'https://service-location-neumatica.onrender.com/api/visits';
+  // private readonly apiUrlImage = 'http://localhost:8080';
+  // private readonly apiUrl = 'http://localhost:8080/api/visits';
+  private readonly apiUrlImage = 'https://service-location-neumatica.onrender.com';
+  private readonly apiUrl = 'https://service-location-neumatica.onrender.com/api/visits';
 
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) { }
 
+  /*
+   * =========================================================
+   * OBTENER LOS DATOS DE LA VISITA PARA BORRARLA
+   * =========================================================
+   */
+
+  getVisitDeleteInfo(id: string): Observable<VisitResponse> {
+    return this.http.get<VisitResponse>(`${this.apiUrl}/${id}/delete-info`);
+  }
+
+  deleteVisit(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 
   /*
    * =========================================================
@@ -85,9 +114,7 @@ export class VisitService {
    * =========================================================
    */
 
-  createVisit(
-    formData: FormData
-  ): Observable<VisitResponse> {
+  createVisit(formData: FormData): Observable<VisitResponse> {
 
     /*
      * =========================================================
@@ -95,9 +122,7 @@ export class VisitService {
      * =========================================================
      */
 
-    const image =
-      formData.get('image');
-
+    const image = formData.get('image');
 
     /*
      * La imagen es obligatoria.
@@ -105,12 +130,9 @@ export class VisitService {
 
     if (!(image instanceof File)) {
 
-      throw new Error(
-        'La imagen es obligatoria.'
-      );
+      throw new Error('La imagen es obligatoria.');
 
     }
-
 
     /*
      * =========================================================
@@ -123,13 +145,10 @@ export class VisitService {
      * construimos el multipart/form-data.
      */
 
-    return from(
-      this.compressImage(image)
-    ).pipe(
+    return from(this.compressImage(image)).pipe(
 
       switchMap(
         compressedImage => {
-
 
           /*
            * =====================================================
@@ -139,33 +158,17 @@ export class VisitService {
 
           const data = {
 
-            companyName:
-              formData
-                .get('companyName')
-                ?.toString() || '',
+            companyName: formData.get('companyName')?.toString() || '',
 
-            comment:
-              formData
-                .get('comment')
-                ?.toString() || '',
+            comment: formData.get('comment')?.toString() || '',
 
-            latitude:
-              Number(
-                formData.get('latitude')
-              ),
+            latitude: Number(formData.get('latitude')),
 
-            longitude:
-              Number(
-                formData.get('longitude')
-              ),
+            longitude: Number(formData.get('longitude')),
 
-            accuracy:
-              Number(
-                formData.get('accuracy')
-              )
+            accuracy: Number(formData.get('accuracy'))
 
           };
-
 
           /*
            * =====================================================
@@ -173,9 +176,7 @@ export class VisitService {
            * =====================================================
            */
 
-          const requestData =
-            new FormData();
-
+          const requestData = new FormData();
 
           /*
            * =====================================================
@@ -189,22 +190,9 @@ export class VisitService {
            *
            */
 
-          const jsonBlob =
-            new Blob(
-              [
-                JSON.stringify(data)
-              ],
-              {
-                type: 'application/json'
-              }
-            );
+          const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
 
-
-          requestData.append(
-            'data',
-            jsonBlob
-          );
-
+          requestData.append('data', jsonBlob);
 
           /*
            * =====================================================
@@ -214,12 +202,7 @@ export class VisitService {
            * Aquí enviamos la imagen YA COMPRIMIDA.
            */
 
-          requestData.append(
-            'image',
-            compressedImage,
-            'visit-image.jpg'
-          );
-
+          requestData.append('image', compressedImage, 'visit-image.jpg');
 
           /*
            * =====================================================
@@ -227,10 +210,7 @@ export class VisitService {
            * =====================================================
            */
 
-          return this.http.post<VisitResponse>(
-            this.apiUrl,
-            requestData
-          );
+          return this.http.post<VisitResponse>(this.apiUrl, requestData);
 
         }
       )
@@ -239,258 +219,168 @@ export class VisitService {
 
   }
 
-
   /*
    * =========================================================
    * COMPRIMIR IMAGEN
    * =========================================================
    */
 
-  private compressImage(
-    file: File
-  ): Promise<Blob> {
+  private compressImage(file: File): Promise<Blob> {
 
-    return new Promise(
-      (
-        resolve,
-        reject
-      ) => {
+    return new Promise((resolve, reject) => {
 
+      const reader = new FileReader();
 
-        const reader =
-          new FileReader();
+      /*
+       * Error leyendo archivo.
+       */
 
+      reader.onerror = () => {
+
+        reject(new Error('No fue posible leer la imagen.'));
+
+      };
+
+      /*
+       * Archivo cargado.
+       */
+
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+
+        const result = event.target?.result;
+
+        if (typeof result !== 'string') {
+
+          reject(new Error('No fue posible procesar la imagen.'));
+
+          return;
+
+        }
+
+        const image = new Image();
 
         /*
-         * Error leyendo archivo.
+         * Error cargando imagen.
          */
 
-        reader.onerror =
-          () => {
+        image.onerror = () => {
 
-            reject(
-              new Error(
-                'No fue posible leer la imagen.'
-              )
-            );
+          reject(new Error('No fue posible cargar la imagen.'));
 
-          };
-
+        };
 
         /*
-         * Archivo cargado.
+         * Imagen cargada.
          */
 
-        reader.onload =
-          (event: ProgressEvent<FileReader>) => {
+        image.onload = () => {
 
+          /*
+           * Tamaño máximo.
+           */
 
-            const result =
-              event.target?.result;
+          const maxWidth = 1280;
 
+          const maxHeight = 1280;
 
-            if (
-              typeof result !== 'string'
-            ) {
+          let width = image.width;
 
-              reject(
-                new Error(
-                  'No fue posible procesar la imagen.'
-                )
-              );
+          let height = image.height;
+
+          /*
+           * Mantener proporción.
+           */
+
+          if (width > maxWidth || height > maxHeight) {
+
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+
+            width = Math.round(width * ratio);
+
+            height = Math.round(height * ratio);
+
+          }
+
+          /*
+           * Crear canvas.
+           */
+
+          const canvas = document.createElement('canvas');
+
+          canvas.width = width;
+
+          canvas.height = height;
+
+          const context = canvas.getContext('2d');
+
+          if (!context) {
+
+            reject(new Error('No fue posible procesar la imagen.'));
+
+            return;
+
+          }
+
+          /*
+           * Dibujar imagen.
+           */
+
+          context.drawImage(image, 0, 0, width, height);
+
+          /*
+           * Convertir a JPEG.
+           *
+           * 0.70 = 70% calidad.
+           *
+           * Esto ayuda a reducir considerablemente
+           * el tamaño de la petición.
+           */
+
+          canvas.toBlob(blob => {
+
+            if (!blob) {
+
+              reject(new Error('No fue posible comprimir la imagen.'));
 
               return;
 
             }
 
 
-            const image =
-              new Image();
+            resolve(blob);
+          },
 
+            'image/jpeg',
 
-            /*
-             * Error cargando imagen.
-             */
+            0.70
+          );
 
-            image.onerror =
-              () => {
-
-                reject(
-                  new Error(
-                    'No fue posible cargar la imagen.'
-                  )
-                );
-
-              };
-
-
-            /*
-             * Imagen cargada.
-             */
-
-            image.onload =
-              () => {
-
-
-                /*
-                 * Tamaño máximo.
-                 */
-
-                const maxWidth =
-                  1280;
-
-                const maxHeight =
-                  1280;
-
-
-                let width =
-                  image.width;
-
-                let height =
-                  image.height;
-
-
-                /*
-                 * Mantener proporción.
-                 */
-
-                if (
-                  width > maxWidth ||
-                  height > maxHeight
-                ) {
-
-                  const ratio =
-                    Math.min(
-                      maxWidth / width,
-                      maxHeight / height
-                    );
-
-
-                  width =
-                    Math.round(
-                      width * ratio
-                    );
-
-
-                  height =
-                    Math.round(
-                      height * ratio
-                    );
-
-                }
-
-
-                /*
-                 * Crear canvas.
-                 */
-
-                const canvas =
-                  document.createElement(
-                    'canvas'
-                  );
-
-
-                canvas.width =
-                  width;
-
-                canvas.height =
-                  height;
-
-
-                const context =
-                  canvas.getContext(
-                    '2d'
-                  );
-
-
-                if (!context) {
-
-                  reject(
-                    new Error(
-                      'No fue posible procesar la imagen.'
-                    )
-                  );
-
-                  return;
-
-                }
-
-
-                /*
-                 * Dibujar imagen.
-                 */
-
-                context.drawImage(
-                  image,
-                  0,
-                  0,
-                  width,
-                  height
-                );
-
-
-                /*
-                 * Convertir a JPEG.
-                 *
-                 * 0.70 = 70% calidad.
-                 *
-                 * Esto ayuda a reducir considerablemente
-                 * el tamaño de la petición.
-                 */
-
-                canvas.toBlob(
-                  blob => {
-
-                    if (!blob) {
-
-                      reject(
-                        new Error(
-                          'No fue posible comprimir la imagen.'
-                        )
-                      );
-
-                      return;
-
-                    }
-
-
-                    resolve(
-                      blob
-                    );
-
-                  },
-
-                  'image/jpeg',
-
-                  0.70
-                );
-
-              };
-
-
-            /*
-             * Cargar imagen.
-             */
-
-            image.src =
-              result;
-
-          };
+        };
 
 
         /*
-         * Leer archivo.
+         * Cargar imagen.
          */
 
-        reader.readAsDataURL(
-          file
-        );
+        image.src = result;
 
-      }
+      };
+
+      /*
+       * Leer archivo.
+       */
+
+      reader.readAsDataURL(file);
+
+    }
     );
 
   }
 
+  recordOut(visitaId: string, ubicacion: RecordOutRequest): Observable<VisitResponse> {
+
+    return this.http.patch<VisitResponse>(`${this.apiUrl}/${visitaId}/salida`, ubicacion);
+  }
 
   /*
    * =========================================================
@@ -498,15 +388,11 @@ export class VisitService {
    * =========================================================
    */
 
-  getMyVisits():
-    Observable<VisitResponse[]> {
+  getMyVisits(): Observable<VisitResponse[]> {
 
-    return this.http.get<VisitResponse[]>(
-      `${this.apiUrl}/me`
-    );
+    return this.http.get<VisitResponse[]>(`${this.apiUrl}/me`);
 
   }
-
 
   /*
    * =========================================================
@@ -514,27 +400,16 @@ export class VisitService {
    * =========================================================
    */
 
-  getAllVisits():
-    Observable<VisitResponse[]> {
+  getAllVisits(): Observable<VisitResponse[]> {
 
-    return this.http.get<VisitResponse[]>(
-      `${this.apiUrl}`
-    );
+    return this.http.get<VisitResponse[]>(`${this.apiUrl}`);
 
   }
 
-  getImageUrl(imageUrl: string): string {
+  getImageUrl(imageUrl: string): Observable<Blob> {
 
-    if (!imageUrl) {
-      return '';
-    }
+    return this.http.get(`${this.apiUrlImage + imageUrl}`, { responseType: 'blob' });
 
-    if (imageUrl.startsWith('http://') ||
-      imageUrl.startsWith('https://')) {
-      return imageUrl;
-    }
-
-    return `https://service-location-neumatica.onrender.com${imageUrl}`;
   }
 
 
@@ -544,13 +419,9 @@ export class VisitService {
    * =========================================================
    */
 
-  getById(
-    id: string
-  ): Observable<VisitResponse> {
+  getById(id: string): Observable<VisitResponse> {
 
-    return this.http.get<VisitResponse>(
-      `${this.apiUrl}/${id}`
-    );
+    return this.http.get<VisitResponse>(`${this.apiUrl}/${id}`);
 
   }
 

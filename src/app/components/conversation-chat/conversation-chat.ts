@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  HostListener,
   ElementRef,
   Input,
   OnChanges,
@@ -52,17 +53,14 @@ import { TokensServices } from '../../services/tokens-services';
 
   styleUrl: './conversation-chat.css'
 })
-export class ConversationChat
-  implements OnChanges, OnDestroy {
+export class ConversationChat implements OnChanges, OnDestroy {
 
 
   // =========================================================
   // CONVERSACIÓN
   // =========================================================
 
-  @Input({ required: true })
-  conversation!:
-    ConversationSummaryResponse | any;
+  @Input({ required: true }) conversation!: ConversationSummaryResponse | any;
 
 
   // =========================================================
@@ -82,8 +80,7 @@ export class ConversationChat
 
   public takingConversation = false;
 
-  public errorMessage:
-    string | null = null;
+  public errorMessage: string | null = null;
 
   selectedFile: File | null = null;
 
@@ -98,12 +95,12 @@ export class ConversationChat
   public websocketConnected = false;
 
 
-  private conversationSubscription:
-    Subscription | null = null;
+  private conversationSubscription: Subscription | null = null;
 
 
-  private subscribedConversationId:
-    string | null = null;
+  private subscribedConversationId: string | null = null;
+
+  private presenceConversationId: string | null = null;
 
 
   // =========================================================
@@ -126,22 +123,36 @@ export class ConversationChat
    *
    * wamid.xxx -> blob:http://localhost...
    */
-  private readonly mediaUrls =
-    new Map<string, string>();
+  private readonly mediaUrls = new Map<string, string>();
 
 
   /**
    * Mensajes cuyo multimedia se está descargando.
    */
-  private readonly loadingMedia =
-    new Set<string>();
+  private readonly loadingMedia = new Set<string>();
 
 
   /**
    * Mensajes cuyo multimedia no pudo cargarse.
    */
-  private readonly mediaErrors =
-    new Set<string>();
+  private readonly mediaErrors = new Set<string>();
+
+
+  // =========================================================
+  // GRABACIÓN DE AUDIO
+  // =========================================================
+
+  public isRecording = false;
+  public recordedAudio: Blob | null = null;
+  public audioPreviewUrl: string | null = null;
+  public recordingSeconds = 0;
+  public audioError: string | null = null;
+
+  private mediaRecorder: MediaRecorder | null = null;
+  private audioStream: MediaStream | null = null;
+  private audioChunks: BlobPart[] = [];
+  private recordingInterval: ReturnType<typeof setInterval> | null = null;
+
 
 
   constructor(
@@ -222,6 +233,8 @@ export class ConversationChat
       conversationId,
       this.loadRequestVersion
     );
+
+    this.unsubscribeFromConversation();
 
   }
 
@@ -510,8 +523,8 @@ export class ConversationChat
 
           this.scrollToBottom();
 
+          this.updateConversationPresence();
         },
-
 
         error: (error) => {
 
@@ -545,6 +558,30 @@ export class ConversationChat
         }
 
       });
+
+  }
+
+  private updateConversationPresence(): void {
+
+    const conversationId =
+      this.getConversationId(this.conversation);
+
+    const shouldBeActive =
+      !!conversationId &&
+      !this.loading &&
+      typeof document !== 'undefined' &&
+      document.visibilityState === 'visible';
+
+    if (shouldBeActive) {
+
+      if (this.presenceConversationId === conversationId) {
+        return;
+      }
+
+      this.presenceConversationId = conversationId!;
+
+      return;
+    }
 
   }
 
@@ -1789,6 +1826,256 @@ export class ConversationChat
   }
 
 
+  public sendRecordedAudio(): void {
+    const conversationId =
+      this.getConversationId(this.conversation);
+
+    if (
+      !conversationId ||
+      !this.recordedAudio ||
+      this.sending ||
+      this.loading ||
+      this.isRecording
+    ) {
+      return;
+    }
+
+    if (this.conversation?.status !== 'HUMAN') {
+      this.audioError =
+        'Debes atender la conversación antes de enviar audios.';
+      return;
+    }
+
+    const audio = this.recordedAudio;
+
+    const extension = audio.type.includes('ogg')
+      ? 'ogg'
+      : audio.type.includes('mp4')
+        ? 'm4a'
+        : 'webm';
+
+    const file = new File(
+      [audio],
+      `audio-${Date.now()}.${extension}`,
+      { type: audio.type }
+    );
+
+    this.sending = true;
+    this.audioError = null;
+    this.errorMessage = null;
+
+    this.conversationService
+      .sendAudio(conversationId, file)
+      .subscribe({
+        next: message => {
+          this.addMessageToConversation(message);
+
+          this.recordedAudio = null;
+          this.clearAudioPreview();
+          this.audioChunks = [];
+          this.recordingSeconds = 0;
+
+          this.sending = false;
+          this.cd.detectChanges();
+          this.scrollToBottom();
+        },
+
+        error: error => {
+          console.error('Error enviando audio:', error);
+
+          this.audioError =
+            error?.error?.message ||
+            'No fue posible enviar el audio.';
+
+          this.sending = false;
+          this.cd.detectChanges();
+        }
+      });
+  }
+
+
+
+  // =========================================================
+  // INICIAR GRABACIÓN
+  // =========================================================
+
+  public async startRecording(): Promise<void> {
+    if (
+      this.sending ||
+      this.loading ||
+      this.isRecording ||
+      this.conversation?.status !== 'HUMAN'
+    ) {
+      return;
+    }
+
+    this.clearAudioPreview();
+    this.audioError = null;
+
+    try {
+      this.audioStream =
+        await navigator.mediaDevices.getUserMedia({
+          audio: true
+        });
+
+      const supportedTypes = [
+        'audio/ogg;codecs=opus',
+        'audio/webm;codecs=opus',
+        'audio/mp4'
+      ];
+
+      const mimeType = supportedTypes.find(type =>
+        MediaRecorder.isTypeSupported(type)
+      );
+
+      this.mediaRecorder = new MediaRecorder(
+        this.audioStream,
+        mimeType ? { mimeType } : undefined
+      );
+
+      this.audioChunks = [];
+      this.recordingSeconds = 0;
+
+      this.mediaRecorder.ondataavailable = event => {
+        if (event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.onstop = () => {
+        const mime = this.mediaRecorder?.mimeType
+          || 'application/octet-stream';
+
+        const audio = new Blob(this.audioChunks, {
+          type: mime
+        });
+
+        if (audio.size > 0) {
+          this.recordedAudio = audio;
+          this.audioPreviewUrl =
+            URL.createObjectURL(audio);
+        }
+
+        this.releaseAudioStream();
+        this.cd.detectChanges();
+      };
+
+      this.mediaRecorder.start();
+      this.isRecording = true;
+
+      this.recordingInterval = setInterval(() => {
+        this.recordingSeconds++;
+        this.cd.detectChanges();
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error iniciando grabación:', error);
+
+      this.audioError =
+        'No se pudo acceder al micrófono. Revisa los permisos del navegador.';
+
+      this.releaseAudioStream();
+      this.isRecording = false;
+      this.cd.detectChanges();
+    }
+  }
+
+
+  // =========================================================
+  // DETENER GRABACIÓN
+  // =========================================================
+
+  public stopRecording(): void {
+    if (
+      this.mediaRecorder &&
+      this.mediaRecorder.state !== 'inactive'
+    ) {
+      this.mediaRecorder.stop();
+    }
+
+    this.isRecording = false;
+    this.clearRecordingInterval();
+  }
+
+
+  // =========================================================
+  // CANCELAR Y DESCARTAR AUDIO
+  // =========================================================
+
+  public cancelRecording(): void {
+    this.isRecording = false;
+    this.clearRecordingInterval();
+
+    if (
+      this.mediaRecorder &&
+      this.mediaRecorder.state !== 'inactive'
+    ) {
+      this.mediaRecorder.onstop = null;
+      this.mediaRecorder.stop();
+    }
+
+    this.audioChunks = [];
+    this.recordedAudio = null;
+
+    this.clearAudioPreview();
+    this.releaseAudioStream();
+
+    this.mediaRecorder = null;
+    this.audioError = null;
+  }
+
+
+  // =========================================================
+  // LIBERAR MICRÓFONO
+  // =========================================================
+
+  private releaseAudioStream(): void {
+    this.audioStream?.getTracks().forEach(track => {
+      track.stop();
+    });
+
+    this.audioStream = null;
+  }
+
+
+  // =========================================================
+  // LIMPIAR TEMPORIZADOR
+  // =========================================================
+
+  private clearRecordingInterval(): void {
+    if (this.recordingInterval !== null) {
+      clearInterval(this.recordingInterval);
+      this.recordingInterval = null;
+    }
+  }
+
+
+  // =========================================================
+  // LIBERAR URL DEL REPRODUCTOR
+  // =========================================================
+
+  private clearAudioPreview(): void {
+    if (this.audioPreviewUrl) {
+      URL.revokeObjectURL(this.audioPreviewUrl);
+    }
+
+    this.audioPreviewUrl = null;
+  }
+
+
+  // =========================================================
+  // FORMATEAR DURACIÓN
+  // =========================================================
+
+  public getRecordingTime(): string {
+    const minutes = Math.floor(this.recordingSeconds / 60);
+    const seconds = this.recordingSeconds % 60;
+
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+
+
   /**
    * =====================================================
    * ENVIAR TEXTO
@@ -2418,6 +2705,10 @@ export class ConversationChat
      * durante la vida del componente.
      */
     this.clearMedia();
+
+    this.cancelRecording();
+    this.clearRecordingInterval();
+    this.clearAudioPreview();
 
   }
 

@@ -545,6 +545,13 @@
               Creado
             </th>
 
+            @if (this.meRol('ROLE_ADMIN')) {
+
+              <th>
+                Acciones
+              </th>
+            }
+
           </tr>
 
         </thead>
@@ -640,6 +647,17 @@
               </span>
 
             </td>
+
+            @if (this.meRol('ROLE_ADMIN')) {
+
+              <td>
+                <button class="btn-delete"
+                  type="button"
+                  (click)="getContactById(contact.id)">
+                  Eliminar
+                </button>
+              </td>
+            }
 
           </tr>
 

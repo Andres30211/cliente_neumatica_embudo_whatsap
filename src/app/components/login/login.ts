@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthServices } from '../../services/auth-services';
 import { Router, RouterLink } from '@angular/router';
+import { NotificationServices } from '../../services/notification-services';
 
 @Component({
   selector: 'app-login',
@@ -18,12 +19,10 @@ export class Login implements OnInit {
 
   private readonly fb = inject(FormBuilder);
 
-  public loading: boolean = false;
-  public errorMessage: string = '';
-
-  public cargandoServidor: boolean = true;
-
-  constructor(private authService: AuthServices, private router: Router, private cdr: ChangeDetectorRef) { }
+  constructor(private authService: AuthServices,
+    private router: Router,
+    private cd: ChangeDetectorRef,
+    private notificationService: NotificationServices) { }
 
   ngOnInit(): void {
 
@@ -35,7 +34,7 @@ export class Login implements OnInit {
     remember: [false]
   });
 
-  public onSubmit(): void {
+  public login(): void {
 
     if (this.loginForm.invalid) {
 
@@ -44,40 +43,27 @@ export class Login implements OnInit {
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = '';
-
     const email = this.loginForm.value.email!;
     const password = this.loginForm.value.password!;
-    const rememberMe =
-      this.loginForm.value.remember ?? false;
+    const rememberMe = this.loginForm.value.remember ?? false;
 
     const request = {
       email,
       password
     };
 
-    this.authService
-      .login(request, rememberMe)
-      .subscribe({
+    this.authService.login(request, rememberMe).subscribe({
 
-        next: () => {
+      next: () => {
 
-          this.loading = false;
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
 
-          this.router.navigate(['/home']);
-        },
-
-        error: (error) => {
-
-          this.loading = false;
-
-          this.errorMessage =
-            error?.error?.message ||
-            'Correo o contraseña incorrectos.';
-        }
-
-      });
+        this.notificationService.error('Inicio Sesión', error?.error?.message);
+        console.log(error.message);
+      }
+    });
   }
 
   public togglePassword(): void {

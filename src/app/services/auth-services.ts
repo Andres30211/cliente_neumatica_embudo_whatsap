@@ -28,25 +28,13 @@ export class AuthServices {
     );
   }
 
-  public login(
-    request: LoginRequest,
-    rememberMe: boolean
-  ): Observable<AuthResponse> {
+  public login(request: LoginRequest, rememberMe: boolean): Observable<AuthResponse> {
 
-    return this.http
-      .post<AuthResponse>(
-        `${this.apiUrl}/login`,
-        request
-      )
-      .pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
 
         tap(response => {
 
-          this.tokensServices.saveTokens(
-            response.accessToken,
-            response.refreshToken,
-            rememberMe
-          );
+          this.tokensServices.saveTokens(response.accessToken, response.refreshToken, rememberMe);
 
         })
 

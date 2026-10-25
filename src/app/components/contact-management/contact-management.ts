@@ -6,6 +6,7 @@ import { ContactManagementService } from '../../services/contact-management-serv
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TokensServices } from '../../services/tokens-services';
+import { NotificationServices } from '../../services/notification-services';
 
 @Component({
   selector: 'app-contact-management',
@@ -38,7 +39,8 @@ export class ContactManagement implements OnInit{
   constructor(
     private contactService: ContactManagementService,
     private dc: ChangeDetectorRef,
-    private tokensServices: TokensServices
+    private tokensServices: TokensServices,
+    private notificationService: NotificationServices
   ) {}
 
   ngOnInit(): void {
@@ -110,6 +112,38 @@ export class ContactManagement implements OnInit{
       (contact.email ?? '').toLowerCase().includes(search) ||
       (contact.company ?? '').toLowerCase().includes(search)
     );
+  }
+
+  getContactById(id: string){
+
+    this.contactService.getContactById(id).subscribe({
+      next: (response) =>{
+        
+        this.notificationService.confirm('Eliminar Contacto', `Desea eliminar a: ${response.name}`)
+        .then((result) =>{
+          if (result.isConfirmed) {
+            
+            this.contactService.deleteContactById(response.id).subscribe({
+              next: () => {
+
+                this.contacts = this.contacts.filter(item => item.id !== id);
+                this.dc.markForCheck();
+                this.notificationService.success('Eliminar Contacto',
+                  'El contacto se elimino correctamente');
+              },
+              error: (err) => {
+                
+                this.notificationService.error('Eliminar Contacto', err.err.message);
+              },
+            });
+          }
+        });
+      },
+      error: (err) => {
+        
+        this.notificationService.error('Consultar Contacto', err.err.message);
+      },
+    })
   }
 
   /**

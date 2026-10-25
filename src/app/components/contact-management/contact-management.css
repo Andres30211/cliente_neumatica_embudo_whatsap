@@ -651,6 +651,20 @@ tbody tr:hover {
   white-space: nowrap;
 }
 
+.btn-delete{
+
+  background-color: red;
+  color: white;
+  border-style: none;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+}
+
+.btn-delete:hover{
+
+  cursor: pointer;
+}
+
 
 /* ========================================================= */
 /* STATUS */

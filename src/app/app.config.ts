@@ -5,14 +5,14 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterdeptorInterceptor } from './interceptors/auth-interdeptor-interceptor';
-import { errorInterceptorInterceptor } from './interceptors/error-interceptor-interceptor';
+// import { errorInterceptorInterceptor } from './interceptors/error-interceptor-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes), provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authInterdeptorInterceptor, errorInterceptorInterceptor])),
+    provideHttpClient(withInterceptors([authInterdeptorInterceptor, /*errorInterceptorInterceptor*/])),
     provideCharts(withDefaultRegisterables())
   ]
 };

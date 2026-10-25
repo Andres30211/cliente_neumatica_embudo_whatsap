@@ -17,7 +17,7 @@
       <section class="page-header">
 
         <div>
-          
+
           <span class="eyebrow">
             GESTIÓN COMERCIAL
           </span>
@@ -36,49 +36,11 @@
 
       </section>
 
-
-      <!-- ========================================= -->
-      <!-- MENSAJES -->
-      <!-- ========================================= -->
-
-      <div
-        class="alert success"
-        *ngIf="message"
-      >
-
-        ✓
-
-        <span>
-          {{ message }}
-        </span>
-
-      </div>
-
-
-      <div
-        class="alert error"
-        *ngIf="errorMessage"
-      >
-
-        !
-
-        <span>
-          {{ errorMessage }}
-        </span>
-
-      </div>
-
-
       <!-- ========================================= -->
       <!-- FORMULARIO -->
       <!-- ========================================= -->
 
-      <form
-        class="visit-form-card"
-        [formGroup]="visitForm"
-        (ngSubmit)="registerVisit()"
-      >
-
+      <form class="visit-form-card" [formGroup]="visitForm" (ngSubmit)="registerVisit()">
 
         <!-- ========================================= -->
         <!-- EMPRESA -->
@@ -90,36 +52,23 @@
             Empresa visitada
           </label>
 
-          <input
-            id="companyName"
-            type="text"
-            formControlName="companyName"
-            placeholder="Ej. Industrias ABC"
-            maxlength="200"
-          >
+          <input id="companyName" type="text" formControlName="companyName" placeholder="Ej. Industrias ABC"
+            maxlength="200">
 
+          @if (companyName?.invalid && companyName?.touched) {
 
-          <small
-            class="field-error"
-            *ngIf="
-              companyName?.invalid &&
-              companyName?.touched
-            "
-          >
+          @if (companyName?.errors?.['required']) {
 
-            <span
-              *ngIf="companyName?.errors?.['required']"
-            >
-              El nombre de la empresa es obligatorio.
-            </span>
+          <span style="color: red;">
+            El nombre de la empresa es obligatorio.
+          </span>
+          }@else if (companyName?.errors?.['maxlength']) {
 
-            <span
-              *ngIf="companyName?.errors?.['maxlength']"
-            >
-              El nombre no puede superar 200 caracteres.
-            </span>
-
-          </small>
+          <span style="color: red;">
+            El nombre no puede superar 200 caracteres.
+          </span>
+          }
+          }
 
         </div>
 
@@ -134,36 +83,24 @@
             Comentario de la visita
           </label>
 
-          <textarea
-            id="comment"
-            formControlName="comment"
-            rows="5"
-            maxlength="5000"
-            placeholder="Describe brevemente el motivo de la visita, cliente contactado, oportunidad comercial, próximos pasos..."
-          ></textarea>
+          <textarea id="comment" formControlName="comment" rows="5" maxlength="5000"
+            placeholder="Describe brevemente el motivo de la visita, cliente contactado, oportunidad comercial, próximos pasos..."></textarea>
 
+          @if (comment?.invalid && comment?.touched) {
 
-          <small
-            class="field-error"
-            *ngIf="
-              comment?.invalid &&
-              comment?.touched
-            "
-          >
+          @if (comment?.errors?.['required']) {
 
-            <span
-              *ngIf="comment?.errors?.['required']"
-            >
-              El comentario es obligatorio.
-            </span>
+          <span style="color: red;">
+            El comentario es obligatorio.
+          </span>
+          }
+          @if (comment?.errors?.['maxlength']) {
 
-            <span
-              *ngIf="comment?.errors?.['maxlength']"
-            >
-              El comentario no puede superar 5000 caracteres.
-            </span>
-
-          </small>
+          <span style="color: red;">
+            El comentario no puede superar 5000 caracteres.
+          </span>
+          }
+          }
 
         </div>
 
@@ -181,15 +118,11 @@
 
           <!-- UPLOAD -->
 
-          <div
-            class="image-upload"
-            *ngIf="!imagePreview"
-          >
+          @if (!imagePreview) {
 
-            <label
-              for="imageInput"
-              class="upload-content"
-            >
+          <div class="image-upload">
+
+            <label for="imageInput" class="upload-content">
 
               <div class="upload-icon">
                 📷
@@ -206,44 +139,31 @@
             </label>
 
 
-            <input
-              id="imageInput"
-              type="file"
-              accept="image/*"
-              capture="environment"
-              (change)="onImageSelected($event)"
-              hidden
-            >
+            <input id="imageInput" type="file" accept="image/*" capture="environment" (change)="onImageSelected($event)"
+              hidden>
 
           </div>
+          }
 
 
           <!-- ========================================= -->
           <!-- PREVIEW -->
           <!-- ========================================= -->
 
-          <div
-            class="image-preview"
-            *ngIf="imagePreview"
-          >
+          @if (imagePreview) {
 
-            <img
-              [src]="imagePreview"
-              alt="Vista previa"
-            >
+          <div class="image-preview">
 
+            <img [src]="imagePreview" alt="Vista previa">
 
-            <button
-              type="button"
-              class="remove-image"
-              (click)="removeImage()"
-            >
+            <button type="button" class="remove-image" (click)="removeImage()">
 
               ×
 
             </button>
 
           </div>
+          }
 
         </div>
 
@@ -279,22 +199,72 @@
         <!-- BUTTON -->
         <!-- ========================================= -->
 
-        <button
-          type="submit"
-          class="register-button"
-          [disabled]="loading"
-        >
+        <button type="submit" class="register-button" [disabled]="loadingRecordVisit">
 
-          <span *ngIf="!loading">
+          @if (!loadingRecordVisit) {
+
+          <span>
             Registrar visita
           </span>
+          }@else {
 
-          <span *ngIf="loading">
+          <span>
             Registrando visita...
           </span>
+          }
 
         </button>
 
+        @if (loadingRecordVisit) {
+
+        <div class="visit-progress" role="status" aria-live="polite">
+
+          <div class="progress-heading">
+            <span class="spinner"></span>
+
+            <div>
+              <h3>Registrando visita</h3>
+              <p>{{ progressMessage }}</p>
+            </div>
+          </div>
+
+          <div class="progress-track" aria-label="Progreso del registro">
+
+            <div class="progress-indeterminate"></div>
+          </div>
+
+          <div class="progress-steps">
+            <div class="progress-step" [class.active]="visitRecordProgressStep === 'location'"
+              [class.completed]="visitRecordProgressStep === 'saving'">
+
+              <span class="step-icon">
+                @if (visitRecordProgressStep === 'saving') {
+
+                <ng-container>
+                  ✓
+                </ng-container>
+                }@else {
+
+                <ng-template>1</ng-template>
+                }
+
+              </span>
+
+              <span>Obteniendo ubicación GPS</span>
+            </div>
+
+            <div class="progress-step" [class.active]="visitRecordProgressStep === 'saving'">
+
+              <span class="step-icon">2</span>
+              <span>Guardando visita y fotografía</span>
+            </div>
+          </div>
+
+          <p class="progress-hint">
+            Esto puede tardar unos segundos. Por favor, espera.
+          </p>
+        </div>
+        }
 
       </form>
 
@@ -304,176 +274,423 @@
       <!-- ========================================= -->
       @if (this.meRol('ROLE_ADMIN')) {
 
-        <section class="visits-section">
-  
-  
-          <div class="section-header">
-  
-            <div>
-  
-              <span class="eyebrow">
-                HISTORIAL
+      <section class="visits-section">
+
+        <div class="section-header">
+
+          <div>
+
+            <span class="eyebrow">
+              HISTORIAL
+            </span>
+
+            <h2>
+              Visitas registradas
+            </h2>
+
+          </div>
+
+
+          <button type="button" class="refresh-button" (click)="refresh()">
+
+            ↻ Actualizar
+
+          </button>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- SEARCH -->
+        <!-- ========================================= -->
+
+        <div class="search-box" [formGroup]="visitForm">
+
+          <input type="text" formControlName="searchTerm" placeholder="Buscar empresa o vendedor...">
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- LOADING -->
+        <!-- ========================================= -->
+
+        @if (loadingVisits) {
+
+        <div class="loading">
+          Cargando visitas...
+        </div>
+        }
+
+        <!-- ========================================= -->
+        <!-- CARDS -->
+        <!-- ========================================= -->
+
+        @if (!loadingVisits) {
+
+        <div class="visits-grid">
+
+          @for (visit of filteredVisits; track visit.id) {
+
+          <article class="visit-card">
+
+            <!-- IMAGE -->
+            <div class="card-image">
+
+              <img [src]="imageUrls[visit.imageUrl]" [alt]="visit.companyName"
+                (error)="onImageError(visit.imageUrl, $event)" />
+              <span class="visit-date">
+                {{ formatDate(visit.visitedAt) }}
               </span>
-  
-              <h2>
-                Visitas registradas
-              </h2>
-  
-            </div>
-  
-  
-            <button
-              type="button"
-              class="refresh-button"
-              (click)="refresh()"
-            >
-  
-              ↻ Actualizar
-  
-            </button>
-  
-          </div>
-  
-  
-          <!-- ========================================= -->
-          <!-- SEARCH -->
-          <!-- ========================================= -->
-  
-          <div
-            class="search-box"
-            [formGroup]="visitForm"
-          >
-  
-            <input
-              type="text"
-              formControlName="searchTerm"
-              placeholder="Buscar empresa o vendedor..."
-            >
-  
-          </div>
-  
-  
-          <!-- ========================================= -->
-          <!-- LOADING -->
-          <!-- ========================================= -->
-  
-          <div
-            class="loading"
-            *ngIf="loadingVisits"
-          >
-  
-            Cargando visitas...
-          </div>
-  
-  
-          <!-- ========================================= -->
-          <!-- CARDS -->
-          <!-- ========================================= -->
-  
-          <div
-            class="visits-grid"
-            *ngIf="!loadingVisits"
-          >
-  
-  
-            <article
-              class="visit-card"
-              *ngFor="
-                let visit of filteredVisits
-              "
-            >
-  
-  
-              <!-- IMAGE -->
-  
-              <div class="card-image">
-                <img
-                  [src]="getImageUrl(visit.imageUrl)"
-                  [alt]="visit.companyName"
-                >
-  
-                <span class="visit-date">
-                  {{ formatDate(visit.visitedAt) }}
-                </span>
-  
-              </div>
-  
-  
-              <!-- CONTENT -->
-  
-              <div class="card-content">
-  
-  
-                <span class="seller">
-                  {{ visit.userName }}
-                </span>
-  
-  
-                <h3>
-                  {{ visit.companyName }}
-                </h3>
-  
-  
-                <p>
-                  {{ visit.comment }}
-                </p>
-  
-  
-                <div class="card-footer">
-  
-                  <button
-                    type="button"
-                    class="map-button"
-                    (click)="openGoogleMaps(visit)"
-                  >
-  
-                    📍 Ubicación
-  
+
+              <!-- MENU DE OPCIONES -->
+              <div class="card-options">
+
+                <button type="button" class="options-button" [class.active]="openMenuVisitId === visit.id"
+                  [attr.aria-expanded]="openMenuVisitId === visit.id"
+                  [attr.aria-label]="'Opciones de la visita a ' + visit.companyName" aria-haspopup="true"
+                  (click)="toggleVisitMenu(visit.id, $event)">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+                    <circle cx="12" cy="5" r="2" />
+                    <circle cx="12" cy="12" r="2" />
+                    <circle cx="12" cy="19" r="2" />
+                  </svg>
+                </button>
+
+                @if (openMenuVisitId === visit.id) {
+                <div class="options-menu" role="menu">
+
+                  <button type="button" class="menu-item delete-item" role="menuitem"
+                    (click)="deleteVisitFromMenu(visit.id)">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="m19 6-1 14H6L5 6" />
+                      <path d="M10 11v5M14 11v5" />
+                    </svg>
+
+                    <span>Eliminar visita</span>
                   </button>
-  
+
+                  <!-- Agrega aquí futuras opciones del menú -->
+
+                  <button type="button" class="menu-item delete-item" role="menuitem" (click)="recordOut(visit.id)">
+
+                    <span>Salir de la visita</span>
+                  </button>
+
                 </div>
-  
-  
+                }
+
               </div>
-  
-            </article>
-  
-  
-          </div>
-  
-  
-          <!-- ========================================= -->
-          <!-- EMPTY -->
-          <!-- ========================================= -->
-  
-          <div
-            class="empty"
-            *ngIf="
-              !loadingVisits &&
-              filteredVisits.length === 0
-            "
-          >
-  
-            <div>
-              📋
             </div>
-  
-            <h3>
-              No hay visitas registradas
-            </h3>
-  
-            <p>
-              Las visitas realizadas por los vendedores
-              aparecerán aquí.
-            </p>
-  
+
+            <!-- CONTENT -->
+            <div class="card-content">
+
+              <!-- Indicador de proceso -->
+               @if (processOutId === visit.id) {
+
+                 <div class="departure-progress" role="status" aria-live="polite">
+   
+                   <span class="departure-spinner"></span>
+   
+                   <span> {{ stateOut === 'gps' ? 'Obteniendo ubicación GPS...' : 'Registrando salida...' }}
+                   </span>
+                 </div>
+               }
+
+              <span class="seller">
+                {{ visit.userName }}
+              </span>
+
+              <h3>
+                {{ visit.companyName }}
+              </h3>
+
+              <p>
+                {{ visit.comment }}
+              </p>
+
+              <br>
+
+              @if (visit.state != null) {
+
+              <h5>
+                {{ visit.state == 'ON_GOING' ? 'Visita en curso' : 'Finalizada'}}
+              </h5>
+              }@else {
+
+              <h5>No cuentas con estado de la visita.</h5>
+              }
+
+              <h5> {{ `Llegada: ${formatDate(visit.visitedAt)}` }} </h5>
+
+              <h5> {{ `Salida: ${visitOutHour(visit)}` }} </h5>
+
+              <h5> {{ `Duración: ${visitDuration(visit)}` }} </h5>
+
+              <div class="card-footer">
+
+                <button type="button" class="map-button" (click)="openGoogleMapsArrival(visit)">
+                  📍 Ubicación llegada
+                </button>
+
+                @if (visit.state == 'FINALIZED') {
+
+                <button type="button" class="map-button" (click)="openGoogleMapsExit(visit)">
+                  📍 Ubicación Salida
+                </button>
+                }
+
+              </div>
+
+            </div>
+          </article>
+
+          }
+
+        </div>
+        }
+
+        <!-- ========================================= -->
+        <!-- EMPTY -->
+        <!-- ========================================= -->
+
+        @if (!loadingVisits && filteredVisits.length === 0) {
+
+        <div class="empty">
+
+          <div>
+            📋
           </div>
-  
-  
-        </section>
-        
+
+          <h3>
+            No hay visitas registradas
+          </h3>
+
+          <p>
+            Las visitas realizadas por los vendedores
+            aparecerán aquí.
+          </p>
+
+        </div>
+        }
+
+      </section>
+
       }
 
+      @if (this.meRol('ROLE_VENDEDOR')) {
+
+      <section class="visits-section">
+
+        <div class="section-header">
+
+          <div>
+
+            <span class="eyebrow">
+              HISTORIAL
+            </span>
+
+            <h2>
+              Visitas registradas
+            </h2>
+
+          </div>
+
+
+          <button type="button" class="refresh-button" (click)="refresh()">
+
+            ↻ Actualizar
+
+          </button>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- SEARCH -->
+        <!-- ========================================= -->
+
+        <div class="search-box" [formGroup]="visitForm">
+
+          <input type="text" formControlName="searchTerm" placeholder="Buscar empresa o vendedor...">
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- LOADING -->
+        <!-- ========================================= -->
+
+        @if (loadingMyVisits) {
+
+        <div class="loading">
+          Cargando visitas...
+        </div>
+        }
+
+        <!-- ========================================= -->
+        <!-- CARDS -->
+        <!-- ========================================= -->
+
+        @if (!loadingMyVisits) {
+
+        <div class="visits-grid">
+
+          @for (visit of MyfilteredVisits; track visit.id) {
+
+          <article class="visit-card">
+
+            <!-- IMAGE -->
+            <div class="card-image">
+
+              <img [src]="imageUrls[visit.imageUrl]" [alt]="visit.companyName"
+                (error)="onImageError(visit.imageUrl, $event)" />
+
+              <span class="visit-date">
+                {{ formatDate(visit.visitedAt) }}
+              </span>
+
+              <!-- MENU DE OPCIONES -->
+              <div class="card-options">
+
+                <button type="button" class="options-button" [class.active]="openMenuVisitId === visit.id"
+                  [attr.aria-expanded]="openMenuVisitId === visit.id"
+                  [attr.aria-label]="'Opciones de la visita a ' + visit.companyName" aria-haspopup="true"
+                  (click)="toggleVisitMenu(visit.id, $event)">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+                    <circle cx="12" cy="5" r="2" />
+                    <circle cx="12" cy="12" r="2" />
+                    <circle cx="12" cy="19" r="2" />
+                  </svg>
+                </button>
+
+                @if (openMenuVisitId === visit.id) {
+                <div class="options-menu" role="menu">
+
+                  @if (this.meRol('ROLE_ADMIN')) {
+
+                  <button type="button" class="menu-item delete-item" role="menuitem"
+                    (click)="deleteVisitFromMenu(visit.id)">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="m19 6-1 14H6L5 6" />
+                      <path d="M10 11v5M14 11v5" />
+                    </svg>
+
+                    <span>Eliminar visita</span>
+                  </button>
+                  }
+
+                  <!-- Agrega aquí futuras opciones del menú -->
+
+                  <button type="button" class="menu-item delete-item" role="menuitem" (click)="recordOut(visit.id)">
+
+                    <span>Salida de visita</span>
+                  </button>
+
+                </div>
+
+                }
+              </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="card-content">
+
+              <!-- Indicador de proceso -->
+               @if (processOutId === visit.id) {
+
+                 <div class="departure-progress" role="status" aria-live="polite">
+   
+                   <span class="departure-spinner"></span>
+   
+                   <span> {{ stateOut === 'gps' ? 'Obteniendo ubicación GPS...' : 'Registrando salida...' }}
+                   </span>
+                 </div>
+               }
+
+              <span class="seller">
+                {{ visit.userName }}
+              </span>
+
+              <h3>
+                {{ visit.companyName }}
+              </h3>
+
+              <p>
+                {{ visit.comment }}
+              </p>
+
+              <br>
+
+              @if (visit.state != null) {
+
+              <p>
+                {{ visit.state == 'ON_GOING' ? 'Visita en curso' : 'Finalizada'}}
+              </p>
+              }@else {
+
+              <p>No cuentas con estado de la visita.</p>
+              }
+
+              <p> {{ `Llegada: ${formatDate(visit.visitedAt)}` }} </p>
+
+              <p> {{ `Salida: ${visitOutHour(visit)}` }} </p>
+
+              <p> {{ `Duración: ${visitDuration(visit)}` }} </p>
+
+              <div class="card-footer">
+
+                <button type="button" class="map-button" (click)="openGoogleMapsArrival(visit)">
+                  📍 Ubicación llegada
+                </button>
+
+                @if (visit.state == 'FINALIZED') {
+
+                <button type="button" class="map-button" (click)="openGoogleMapsExit(visit)">
+                  📍 Ubicación Salida
+                </button>
+                }
+
+              </div>
+
+            </div>
+          </article>
+
+          }
+
+        </div>
+        }
+
+        <!-- ========================================= -->
+        <!-- EMPTY -->
+        <!-- ========================================= -->
+
+        @if (!loadingMyVisits && MyfilteredVisits.length === 0) {
+
+        <div class="empty">
+
+          <div>
+            📋
+          </div>
+
+          <h3>
+            No hay visitas registradas
+          </h3>
+
+          <p>
+            Las visitas realizadas por los vendedores
+            aparecerán aquí.
+          </p>
+
+        </div>
+        }
+
+      </section>
+
+      }
 
     </main>
 

@@ -37,4 +37,6 @@ export interface ConversationSummaryResponse {
 
   assignedUserName: string | null;
 
+  unreadCount: number;
+
 }

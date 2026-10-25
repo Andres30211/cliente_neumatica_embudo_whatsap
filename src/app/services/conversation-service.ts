@@ -113,6 +113,26 @@ export class ConversationService {
 
   }
 
+  
+  /**
+   * Envía un audio grabado a una conversación.
+   */
+  public sendAudio(
+    conversationId: string,
+    file: File
+  ): Observable<any> {
+
+    const formData = new FormData();
+
+    formData.append('file', file, file.name);
+
+    return this.http.post<any>(
+      `${this.urlApi}/${conversationId}/media`,
+      formData
+    );
+  }
+
+
 
   /**
    * Cierra conversación.

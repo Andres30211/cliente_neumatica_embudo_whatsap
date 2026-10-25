@@ -489,3 +489,200 @@
   }
 
 }
+
+
+/* =========================================================
+   NAVEGACIÓN INFERIOR FLOTANTE PARA CELULARES
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  /* El componente deja de ocupar espacio lateral */
+  :host {
+    position: fixed;
+
+    left: 12px;
+    right: 12px;
+
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+
+    width: auto;
+    height: auto;
+
+    flex-shrink: initial;
+
+    z-index: 1000;
+  }
+
+  /* Contenedor flotante */
+  .sidebar {
+    position: static;
+
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+    border-radius: 22px;
+
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+
+    overflow: hidden;
+  }
+
+  /* Ocultar el logo en la navegación móvil */
+  .sidebar__brand {
+    display: none;
+  }
+
+  /* Navegación horizontal */
+  .sidebar__nav {
+    display: flex;
+    flex-direction: row;
+
+    align-items: stretch;
+    justify-content: space-around;
+
+    gap: 4px;
+
+    width: 100%;
+    padding: 7px;
+
+    box-sizing: border-box;
+
+    flex: initial;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+  }
+
+  .sidebar__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Cada opción: icono arriba y texto abajo */
+  .sidebar__item {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+
+    min-height: 58px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 2px;
+
+    border-radius: 15px;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* Iconos */
+  .sidebar__icon {
+    width: 23px;
+    min-width: 23px;
+    height: 23px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar__icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  /* En móviles los textos vuelven a mostrarse */
+  .sidebar__text {
+    display: block;
+
+    width: 100%;
+
+    line-height: 1.15;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Opción activa */
+  .sidebar__item--active {
+    background: #ffc900;
+    color: #111111;
+  }
+
+  .sidebar__item:hover,
+  .sidebar__item--active:hover {
+    background: #ffc900;
+    color: #111111;
+  }
+
+  /* Ocultar el bloque corporativo inferior */
+  .sidebar__footer {
+    display: none;
+  }
+
+  /* Evitar que el último contenido quede debajo de la barra.
+     Este padding se aplicará al contenedor principal
+     en el CSS global del layout, si es necesario. */
+}
+
+
+/* =========================================================
+   CELULARES ESTRECHOS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  :host {
+    left: 8px;
+    right: 8px;
+
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .sidebar {
+    border-radius: 19px;
+  }
+
+  .sidebar__nav {
+    padding: 6px;
+    gap: 2px;
+  }
+
+  .sidebar__item {
+    min-height: 54px;
+    padding: 5px 1px;
+    gap: 4px;
+
+    font-size: 9px;
+    border-radius: 13px;
+  }
+
+  .sidebar__icon {
+    width: 21px;
+    min-width: 21px;
+    height: 21px;
+  }
+
+  .sidebar__icon svg {
+    width: 19px;
+    height: 19px;
+  }
+}
