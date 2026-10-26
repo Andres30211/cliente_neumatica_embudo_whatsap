@@ -53,8 +53,7 @@ export class ContactsPage implements OnInit {
   // CONVERSACIONES
   // =========================================================
 
-  public contacts =
-    signal<ConversationSummaryResponse[]>([]);
+  public contacts = signal<ConversationSummaryResponse[]>([]);
 
 
   // =========================================================
@@ -70,43 +69,27 @@ export class ContactsPage implements OnInit {
    * Seleccionar una conversación NO significa
    * tomarla ni cambiar BOT -> HUMAN.
    */
-  public selectedConversation =
-    signal<ConversationSummaryResponse | null>(null);
+  public selectedConversation = signal<ConversationSummaryResponse | null>(null);
 
 
   // =========================================================
   // PAGINACIÓN
   // =========================================================
 
-  public currentPage =
-    signal(0);
+  public currentPage = signal(0);
 
-  public totalPages =
-    signal(0);
+  public totalPages = signal(0);
 
-  public totalElements =
-    signal(0);
+  public totalElements = signal(0);
 
   public readonly pageSize = 5;
 
 
-  // =========================================================
-  // CAMPAÑA
-  // =========================================================
+  constructor(private servicesWhat: ServicesWhatsapp,
 
-  public enviado = false;
+    private serviceWebs: ServicesWebsocket,
 
-
-  constructor(
-
-    private servicesWhat:
-      ServicesWhatsapp,
-
-    private serviceWebs:
-      ServicesWebsocket,
-
-    private tokensServices:
-      TokensServices
+    private tokensServices: TokensServices
 
   ) { }
 
@@ -129,20 +112,13 @@ export class ContactsPage implements OnInit {
      *
      * Actualiza los resúmenes de la columna izquierda.
      */
-    this.serviceWebs
-      .conversationSummaries$
-      .subscribe({
+    this.serviceWebs.conversationSummaries$.subscribe({
 
         next: (conversation) => {
 
-          console.log(
-            '🔥 RESUMEN RECIBIDO EN CONTACTS PAGE:',
-            conversation
-          );
+          console.log('🔥 RESUMEN RECIBIDO EN CONTACTS PAGE:',conversation);
 
-          this.updateConversationFromWebSocket(
-            conversation
-          );
+          this.updateConversationFromWebSocket(conversation);
 
         },
 
@@ -172,9 +148,7 @@ export class ContactsPage implements OnInit {
    * NO cambia BOT -> HUMAN.
    * NO asigna vendedor.
    */
-  public selectConversation(
-    conversation: ConversationSummaryResponse
-  ): void {
+  public selectConversation(conversation: ConversationSummaryResponse): void {
 
     if (!conversation?.conversationId) {
 
@@ -186,10 +160,7 @@ export class ContactsPage implements OnInit {
 
     }
 
-
-    this.selectedConversation.set(
-      conversation
-    );
+    this.selectedConversation.set(conversation);
 
   }
 
@@ -198,15 +169,9 @@ export class ContactsPage implements OnInit {
   // VALIDAR SI UNA CONVERSACIÓN ESTÁ SELECCIONADA
   // =========================================================
 
-  public isConversationSelected(
-    conversation: ConversationSummaryResponse
-  ): boolean {
+  public isConversationSelected(conversation: ConversationSummaryResponse): boolean {
 
-    return (
-      this.selectedConversation()
-        ?.conversationId ===
-      conversation.conversationId
-    );
+    return (this.selectedConversation() ?.conversationId === conversation.conversationId);
 
   }
 
@@ -215,77 +180,34 @@ export class ContactsPage implements OnInit {
   // ACTUALIZACIÓN WEBSOCKET
   // =========================================================
 
-  public updateConversationFromWebSocket(
-    conversation: ConversationSummaryResponse
-  ): void {
+  public updateConversationFromWebSocket(conversation: ConversationSummaryResponse): void {
 
     this.contacts.update((contacts) => {
 
-      const exists =
-        contacts.some(
-          item =>
-            item.conversationId ===
-            conversation.conversationId
-        );
+      const exists = contacts.some(item => item.conversationId === conversation.conversationId);
 
-
-      let updated:
-        ConversationSummaryResponse[];
-
+      let updated: ConversationSummaryResponse[];
 
       if (exists) {
 
-        updated =
-          contacts.map(item =>
+        updated = contacts.map(item => item.conversationId === conversation.conversationId ? {
+          ...item, ...conversation,
 
-            item.conversationId ===
-              conversation.conversationId
+          assignedUserId: conversation.assignedUserId ?? item.assignedUserId,
 
-              ? {
-                ...item,
-                ...conversation,
-
-                assignedUserId:
-                  conversation.assignedUserId ??
-                  item.assignedUserId,
-
-                assignedUserName:
-                  conversation.assignedUserName ??
-                  item.assignedUserName
-              }
-
-              : item
-
-          );
+          assignedUserName: conversation.assignedUserName ?? item.assignedUserName } : item);
 
       } else {
 
-        updated = [
-          conversation,
-          ...contacts
-        ];
+        updated = [conversation, ...contacts];
 
       }
 
+      return updated.sort( (a, b) => {
 
-      return updated.sort(
-        (a, b) => {
+          const dateA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
 
-          const dateA =
-            a.lastMessageAt
-              ? new Date(
-                a.lastMessageAt
-              ).getTime()
-              : 0;
-
-
-          const dateB =
-            b.lastMessageAt
-              ? new Date(
-                b.lastMessageAt
-              ).getTime()
-              : 0;
-
+          const dateB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
 
           return dateB - dateA;
 
@@ -308,27 +230,17 @@ export class ContactsPage implements OnInit {
      *
      * se refleje en la columna derecha.
      */
-    const selected =
-      this.selectedConversation();
+    const selected = this.selectedConversation();
 
-
-    if (
-      selected?.conversationId ===
-      conversation.conversationId
-    ) {
+    if (selected?.conversationId === conversation.conversationId) {
 
       this.selectedConversation.set({
 
-        ...selected,
-        ...conversation,
+        ...selected, ...conversation,
 
-        assignedUserId:
-          conversation.assignedUserId ??
-          selected.assignedUserId,
+        assignedUserId: conversation.assignedUserId ?? selected.assignedUserId,
 
-        assignedUserName:
-          conversation.assignedUserName ??
-          selected.assignedUserName
+        assignedUserName: conversation.assignedUserName ?? selected.assignedUserName
 
       });
 
@@ -341,94 +253,11 @@ export class ContactsPage implements OnInit {
   // ROL
   // =========================================================
 
-  public meRol(
-    rol: string
-  ): boolean {
+  public meRol(rol: string): boolean {
 
-    const roles =
-      this.tokensServices.getRoles();
+    const roles = this.tokensServices.getRoles();
 
     return roles.includes(rol);
-
-  }
-
-
-  // =========================================================
-  // CAMPAÑA
-  // =========================================================
-
-  public sendCampaing(): void {
-
-    this.enviado = true;
-
-
-    this.servicesWhat
-      .sendCampaing()
-      .subscribe({
-
-        next: (message) => {
-
-          alert(message);
-
-          this.enviado = false;
-
-        },
-
-        error: () => {
-
-          alert(
-            'Error al enviar emails...'
-          );
-
-          this.enviado = false;
-
-        }
-
-      });
-
-  }
-
-
-  // =========================================================
-  // EXCEL
-  // =========================================================
-
-  public descargarExcel(): void {
-
-    this.servicesWhat
-      .downloadExcel()
-      .subscribe(
-
-        blob => {
-
-          const url =
-            window.URL.createObjectURL(
-              blob
-            );
-
-
-          const a =
-            document.createElement(
-              'a'
-            );
-
-
-          a.href = url;
-
-          a.download =
-            'contactos.xlsx';
-
-
-          a.click();
-
-
-          window.URL.revokeObjectURL(
-            url
-          );
-
-        }
-
-      );
 
   }
 
@@ -437,43 +266,24 @@ export class ContactsPage implements OnInit {
   // CARGAR CONVERSACIONES
   // =========================================================
 
-  public loadContacts(
-    page: number
-  ): void {
+  public loadContacts(page: number): void {
 
-    this.servicesWhat
-      .getContacts(page)
-      .subscribe({
+    this.servicesWhat.getContacts(page).subscribe({
 
         next: (response) => {
 
-          this.contacts.set(
-            response.content
-          );
+          this.contacts.set(response.content);
 
+          this.currentPage.set(response.number);
 
-          this.currentPage.set(
-            response.number
-          );
+          this.totalPages.set(response.totalPages);
 
-
-          this.totalPages.set(
-            response.totalPages
-          );
-
-
-          this.totalElements.set(
-            response.totalElements
-          );
+          this.totalElements.set(response.totalElements);
 
         },
-
         error: (error) => {
 
-          console.error(
-            'Error cargando conversaciones:',
-            error
-          );
+          console.error('Error cargando conversaciones:',error);
 
         }
 
@@ -488,14 +298,9 @@ export class ContactsPage implements OnInit {
 
   public nextPage(): void {
 
-    if (
-      this.currentPage() <
-      this.totalPages() - 1
-    ) {
+    if (this.currentPage() < this.totalPages() - 1) {
 
-      this.loadContacts(
-        this.currentPage() + 1
-      );
+      this.loadContacts(this.currentPage() + 1);
 
     }
 
@@ -508,13 +313,9 @@ export class ContactsPage implements OnInit {
 
   public previousPage(): void {
 
-    if (
-      this.currentPage() > 0
-    ) {
+    if (this.currentPage() > 0) {
 
-      this.loadContacts(
-        this.currentPage() - 1
-      );
+      this.loadContacts(this.currentPage() - 1);
 
     }
 
@@ -525,18 +326,11 @@ export class ContactsPage implements OnInit {
   // IR A PÁGINA
   // =========================================================
 
-  public goToPage(
-    page: number
-  ): void {
+  public goToPage(page: number): void {
 
-    if (
-      page >= 0 &&
-      page < this.totalPages()
-    ) {
+    if (page >= 0 && page < this.totalPages()) {
 
-      this.loadContacts(
-        page
-      );
+      this.loadContacts(page);
 
     }
 
@@ -547,15 +341,11 @@ export class ContactsPage implements OnInit {
   // PAGINACIÓN VISUAL
   // =========================================================
 
-  public get paginationItems():
-    (number | string)[] {
+  public get paginationItems(): (number | string)[] {
 
-    const total =
-      this.totalPages();
+    const total = this.totalPages();
 
-    const current =
-      this.currentPage();
-
+    const current = this.currentPage();
 
     if (total <= 0) {
 
@@ -563,23 +353,13 @@ export class ContactsPage implements OnInit {
 
     }
 
-
     if (total <= 8) {
 
-      return Array.from(
-        {
-          length: total
-        },
-        (_, index) =>
-          index
-      );
+      return Array.from({length: total}, (_, index) => index);
 
     }
 
-
-    const pages:
-      (number | string)[] = [];
-
+    const pages: (number | string)[] = [];
 
     pages.push(0);
 
@@ -590,23 +370,15 @@ export class ContactsPage implements OnInit {
 
     if (current <= 4) {
 
-      for (
-        let page = 1;
-        page <= 7;
-        page++
-      ) {
+      for (let page = 1; page <= 7; page++) {
 
         pages.push(page);
 
       }
 
-
       pages.push('...');
 
-      pages.push(
-        total - 1
-      );
-
+      pages.push(total - 1);
 
       return pages;
 
@@ -617,29 +389,17 @@ export class ContactsPage implements OnInit {
     // CERCA DEL FINAL
     // ---------------------------------------------------------
 
-    if (
-      current >=
-      total - 5
-    ) {
+    if (current >= total - 5) {
 
       pages.push('...');
 
-
-      for (
-        let page = total - 8;
-        page < total - 1;
-        page++
-      ) {
+      for (let page = total - 8; page < total - 1; page++) {
 
         pages.push(page);
 
       }
 
-
-      pages.push(
-        total - 1
-      );
-
+      pages.push(total - 1);
 
       return pages;
 
@@ -652,24 +412,15 @@ export class ContactsPage implements OnInit {
 
     pages.push('...');
 
-
-    for (
-      let page = current - 2;
-      page <= current + 2;
-      page++
-    ) {
+    for (let page = current - 2; page <= current + 2; page++) {
 
       pages.push(page);
 
     }
 
-
     pages.push('...');
 
-    pages.push(
-      total - 1
-    );
-
+    pages.push(total - 1);
 
     return pages;
 
@@ -680,9 +431,7 @@ export class ContactsPage implements OnInit {
   // VALIDAR NÚMERO DE PÁGINA
   // =========================================================
 
-  public isPageNumber(
-    page: number | string
-  ): page is number {
+  public isPageNumber(page: number | string): page is number {
 
     return typeof page === 'number';
 

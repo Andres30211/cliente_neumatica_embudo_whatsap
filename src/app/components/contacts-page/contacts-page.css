@@ -115,96 +115,6 @@
 
 
 /* =========================================================
-   MARKETING
-   ========================================================= */
-
-.buttons-marketing {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 15px;
-
-  padding: 12px 15px;
-
-  border-bottom: 1px solid var(--border);
-
-  background: #f7f9fb;
-
-}
-
-
-.buttons-marketing .email-marketing {
-
-  padding: .6rem;
-
-  border: none;
-
-  border-radius: .4rem;
-
-  cursor: pointer;
-
-  background-color: rgb(255, 196, 0);
-
-  transition:
-    transform .15s ease,
-    box-shadow .15s ease;
-
-}
-
-
-.buttons-marketing .email-marketing:hover:not(:disabled) {
-
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 3px 8px rgba(0, 0, 0, .12);
-
-}
-
-
-.buttons-marketing .excel-contacts {
-
-  padding: .6rem;
-
-  border: none;
-
-  border-radius: .4rem;
-
-  cursor: pointer;
-
-  background-color: rgb(25, 136, 6);
-
-  color: #fff;
-
-  transition:
-    transform .15s ease,
-    box-shadow .15s ease;
-
-}
-
-
-.buttons-marketing .excel-contacts:hover {
-
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 3px 8px rgba(0, 0, 0, .12);
-
-}
-
-
-.buttons-marketing button:disabled {
-
-  opacity: .6;
-
-  cursor: not-allowed;
-
-}
-
-
-/* =========================================================
    WORKSPACE
    ========================================================= */
 
@@ -818,22 +728,6 @@
   .page__header h1 {
 
     font-size: 20px;
-
-  }
-
-
-  .buttons-marketing {
-
-    flex-direction: column;
-
-    align-items: stretch;
-
-  }
-
-
-  .buttons-marketing button {
-
-    width: 100%;
 
   }
 

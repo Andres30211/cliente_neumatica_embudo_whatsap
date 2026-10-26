@@ -7,6 +7,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TokensServices } from '../../services/tokens-services';
 import { NotificationServices } from '../../services/notification-services';
+import { ServicesWhatsapp } from '../../services/services-whatsapp';
+
+type OperationType = 'email' | 'excel';
+type OperationStatus = 'idle' | 'processing' | 'success' | 'error';
 
 @Component({
   selector: 'app-contact-management',
@@ -14,7 +18,7 @@ import { NotificationServices } from '../../services/notification-services';
   templateUrl: './contact-management.html',
   styleUrl: './contact-management.css',
 })
-export class ContactManagement implements OnInit{
+export class ContactManagement implements OnInit {
 
   contacts: Contact[] = [];
 
@@ -36,21 +40,47 @@ export class ContactManagement implements OnInit{
   errorMessage = '';
   successMessage = '';
 
-  constructor(
+  // Dentro de la clase ContactManagement:
+  operationType: OperationType | null = null;
+  operationStatus: OperationStatus = 'idle';
+  operationMessage = '';
+  operationDetail = '';
+
+  constructor(private servicesWhat: ServicesWhatsapp,
     private contactService: ContactManagementService,
     private dc: ChangeDetectorRef,
     private tokensServices: TokensServices,
     private notificationService: NotificationServices
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadContacts();
   }
 
+  private startOperation(type: OperationType, message: string, detail: string): void {
+
+    this.operationType = type;
+    this.operationStatus = 'processing';
+    this.operationMessage = message;
+    this.operationDetail = detail;
+  }
+
+  private finishOperation(status: 'success' | 'error', message: string, detail: string): void {
+
+    this.operationStatus = status;
+    this.operationMessage = message;
+    this.operationDetail = detail;
+  }
+
+  get operationInProgress(): boolean {
+    return this.operationStatus === 'processing';
+  }
+
+
   /**
    * Verificar ROL
    */
-  public meRol(rol: string): boolean{
+  public meRol(rol: string): boolean {
 
     const roles = this.tokensServices.getRoles();
 
@@ -114,33 +144,33 @@ export class ContactManagement implements OnInit{
     );
   }
 
-  getContactById(id: string){
+  getContactById(id: string) {
 
     this.contactService.getContactById(id).subscribe({
-      next: (response) =>{
-        
-        this.notificationService.confirm('Eliminar Contacto', `Desea eliminar a: ${response.name}`)
-        .then((result) =>{
-          if (result.isConfirmed) {
-            
-            this.contactService.deleteContactById(response.id).subscribe({
-              next: () => {
+      next: (response) => {
 
-                this.contacts = this.contacts.filter(item => item.id !== id);
-                this.dc.markForCheck();
-                this.notificationService.success('Eliminar Contacto',
-                  'El contacto se elimino correctamente');
-              },
-              error: (err) => {
-                
-                this.notificationService.error('Eliminar Contacto', err.err.message);
-              },
-            });
-          }
-        });
+        this.notificationService.confirm('Eliminar Contacto', `Desea eliminar a: ${response.name}`)
+          .then((result) => {
+            if (result.isConfirmed) {
+
+              this.contactService.deleteContactById(response.id).subscribe({
+                next: () => {
+
+                  this.contacts = this.contacts.filter(item => item.id !== id);
+                  this.dc.markForCheck();
+                  this.notificationService.success('Eliminar Contacto',
+                    'El contacto se elimino correctamente');
+                },
+                error: (err) => {
+
+                  this.notificationService.error('Eliminar Contacto', err.err.message);
+                },
+              });
+            }
+          });
       },
       error: (err) => {
-        
+
         this.notificationService.error('Consultar Contacto', err.err.message);
       },
     })
@@ -398,4 +428,102 @@ export class ContactManagement implements OnInit{
     return contact.name?.trim()
       || 'Sin nombre';
   }
+
+  // =========================================================
+  // CAMPAÑA
+  // =========================================================
+
+
+  public sendCampaing(): void {
+    if (this.operationInProgress) {
+      return;
+    }
+
+    this.startOperation(
+      'email',
+      'Enviando campaña de email marketing...',
+      'Estamos procesando la solicitud. Esto puede tardar unos momentos.'
+    );
+
+    this.servicesWhat.sendCampaing().subscribe({
+      next: (message) => {
+        this.finishOperation(
+          'success',
+          'Solicitud de campaña completada',
+          typeof message === 'string'
+            ? message
+            : 'El servidor respondió correctamente a la solicitud.'
+        );
+        this.dc.markForCheck();
+      },
+      error: (error) => {
+        this.finishOperation(
+          'error',
+          'No fue posible completar la campaña',
+          error.error?.message ||
+          'Ocurrió un error al procesar el envío. Inténtalo nuevamente.'
+        );
+        this.dc.markForCheck();
+      }
+    });
+  }
+
+  public descargarExcel(): void {
+    if (this.operationInProgress) {
+      return;
+    }
+
+    this.startOperation(
+      'excel',
+      'Preparando archivo Excel...',
+      'Consultando los contactos y preparando la descarga.'
+    );
+
+    this.servicesWhat.downloadExcel().subscribe({
+      next: (blob) => {
+        try {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+
+          a.href = url;
+          a.download = 'contactos.xlsx';
+          a.style.display = 'none';
+
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+
+          window.URL.revokeObjectURL(url);
+
+          this.finishOperation(
+            'success',
+            'Archivo Excel preparado',
+            'La descarga se ha solicitado correctamente.'
+          );
+          this.dc.markForCheck();
+        } catch (error) {
+          console.error('Error al preparar la descarga:', error);
+          
+          this.finishOperation(
+            'error',
+            'No fue posible descargar el archivo',
+            'Ocurrió un problema al preparar la descarga.'
+          );
+          this.dc.markForCheck();
+        }
+      },
+      error: (error) => {
+        console.error('Error descargando Excel:', error);
+        
+        this.finishOperation(
+          'error',
+          'Error al generar el archivo Excel',
+          error.error?.message ||
+          'No se pudo obtener el archivo. Inténtalo nuevamente.'
+        );
+        this.dc.markForCheck();
+      }
+    });
+  }
+
 }

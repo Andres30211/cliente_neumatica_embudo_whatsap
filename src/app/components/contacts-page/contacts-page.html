@@ -49,52 +49,54 @@
       <section class="contacts-panel">
 
 
-        <!-- =================================================== -->
-        <!-- MARKETING -->
-        <!-- =================================================== -->
+        <div role="status" style="
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 12px 16px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    color: #1e3a8a;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  ">
+          <span aria-hidden="true" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 17px;
+      font-weight: bold;
+    ">
+            i
+          </span>
 
-        @if (
-          meRol('ROLE_ADMIN') ||
-          meRol('ROLE_PUBLICISTA')
-        ) {
+          <div style="min-width: 0;">
+            <strong style="
+        display: block;
+        margin-bottom: 2px;
+        font-size: 13px;
+        color: #1e40af;
+      ">
+              Información importante
+            </strong>
 
-          <div class="buttons-marketing">
-
-
-            <button
-              class="email-marketing"
-              type="button"
-              (click)="sendCampaing()"
-              [disabled]="enviado"
-            >
-
-              @if (enviado) {
-
-                Enviando...
-
-              } @else {
-
-                Enviar Email Marketing
-
-              }
-
-            </button>
-
-
-            <button
-              class="excel-contacts"
-              type="button"
-              (click)="descargarExcel()"
-            >
-
-              Descargar Contactos en Excel
-
-            </button>
-
-
+            <span style="display: block; color: #334155;">
+              Las opciones de <strong>Enviar campaña de marketing</strong> y
+              <strong>Descargar contactos en Excel</strong> ahora están disponibles
+              en el módulo <strong>Gestión de contactos</strong> del Centro de Control.
+            </span>
           </div>
-
-        }
+        </div>
 
 
         <!-- =================================================== -->
@@ -145,54 +147,46 @@
               @if (contacts().length > 0) {
 
 
-                @for (
-                  conversation of contacts();
-                  track conversation.conversationId
-                ) {
+              @for (
+              conversation of contacts();
+              track conversation.conversationId
+              ) {
 
 
-                  <whatsapp-embudo
-
-                    [conversation]="conversation"
-
-                    [selected]="
+              <whatsapp-embudo [conversation]="conversation" [selected]="
                       isConversationSelected(
                         conversation
                       )
-                    "
-
-                    (conversationSelected)="
+                    " (conversationSelected)="
                       selectConversation(
                         $event
                       )
-                    "
-
-                  >
-                  </whatsapp-embudo>
+                    ">
+              </whatsapp-embudo>
 
 
-                }
+              }
 
 
               } @else {
 
 
-                <div class="empty-conversations">
+              <div class="empty-conversations">
 
-                  <div class="empty-conversations__icon">
-                    💬
-                  </div>
-
-                  <h3>
-                    No hay conversaciones
-                  </h3>
-
-                  <p>
-                    Todavía no existen conversaciones
-                    para mostrar.
-                  </p>
-
+                <div class="empty-conversations__icon">
+                  💬
                 </div>
+
+                <h3>
+                  No hay conversaciones
+                </h3>
+
+                <p>
+                  Todavía no existen conversaciones
+                  para mostrar.
+                </p>
+
+              </div>
 
 
               }
@@ -207,136 +201,103 @@
 
             @if (totalPages() > 0) {
 
-              <div class="pagination">
+            <div class="pagination">
 
 
-                <div class="pagination__info">
+              <div class="pagination__info">
 
-                  <span>
-                    Página
-                  </span>
+                <span>
+                  Página
+                </span>
 
-                  <strong>
-                    {{ currentPage() + 1 }}
-                  </strong>
+                <strong>
+                  {{ currentPage() + 1 }}
+                </strong>
 
-                  <span>
-                    de {{ totalPages() }}
-                  </span>
+                <span>
+                  de {{ totalPages() }}
+                </span>
 
-                </div>
-
-
-                <div class="pagination__controls">
+              </div>
 
 
-                  <button
-                    class="pagination__arrow"
-                    type="button"
-                    (click)="previousPage()"
-                    [disabled]="
+              <div class="pagination__controls">
+
+
+                <button class="pagination__arrow" type="button" (click)="previousPage()" [disabled]="
                       currentPage() === 0
-                    "
-                    aria-label="Página anterior"
-                    title="Página anterior"
-                  >
+                    " aria-label="Página anterior" title="Página anterior">
 
-                    ‹
+                  ‹
 
-                  </button>
+                </button>
 
 
-                  @for (
-                    page of paginationItems;
-                    track $index
-                  ) {
+                @for (
+                page of paginationItems;
+                track $index
+                ) {
 
 
-                    @if (
-                      isPageNumber(page)
-                    ) {
+                @if (
+                isPageNumber(page)
+                ) {
 
 
-                      <button
-                        type="button"
-                        class="pagination__number"
-
-                        [class.pagination__number--active]="
+                <button type="button" class="pagination__number" [class.pagination__number--active]="
                           currentPage() === page
-                        "
-
-                        (click)="
+                        " (click)="
                           goToPage(page)
-                        "
-
-                        [attr.aria-label]="
+                        " [attr.aria-label]="
                           'Ir a página ' +
                           (page + 1)
-                        "
-
-                        [attr.aria-current]="
+                        " [attr.aria-current]="
                           currentPage() === page
                             ? 'page'
                             : null
-                        "
-                      >
+                        ">
 
-                        {{ page + 1 }}
+                  {{ page + 1 }}
 
-                      </button>
-
-
-                    } @else {
+                </button>
 
 
-                      <span
-                        class="pagination__ellipsis"
-                        aria-hidden="true"
-                      >
-
-                        …
-
-                      </span>
+                } @else {
 
 
-                    }
+                <span class="pagination__ellipsis" aria-hidden="true">
+
+                  …
+
+                </span>
 
 
-                  }
+                }
 
 
-                  <button
-                    class="pagination__next"
-                    type="button"
+                }
 
-                    (click)="nextPage()"
 
-                    [disabled]="
+                <button class="pagination__next" type="button" (click)="nextPage()" [disabled]="
                       currentPage() >=
                       totalPages() - 1
-                    "
+                    " aria-label="Página siguiente" title="Página siguiente">
 
-                    aria-label="Página siguiente"
-                    title="Página siguiente"
-                  >
+                  <span>
+                    Siguiente
+                  </span>
 
-                    <span>
-                      Siguiente
-                    </span>
+                  <span class="pagination__next-icon">
+                    ›
+                  </span>
 
-                    <span
-                      class="pagination__next-icon"
-                    >
-                      ›
-                    </span>
-
-                  </button>
-
-
-                </div>
+                </button>
 
 
               </div>
+
+
+            </div>
 
             }
 
@@ -352,50 +313,48 @@
 
 
             @if (
-              selectedConversation();
-              as conversation
+            selectedConversation();
+            as conversation
             ) {
 
 
-              <conversation-chat
-                [conversation]="conversation"
-              >
-              </conversation-chat>
+            <conversation-chat [conversation]="conversation">
+            </conversation-chat>
 
 
             } @else {
 
 
-              <!-- ============================================= -->
-              <!-- SIN CONVERSACIÓN SELECCIONADA -->
-              <!-- ============================================= -->
+            <!-- ============================================= -->
+            <!-- SIN CONVERSACIÓN SELECCIONADA -->
+            <!-- ============================================= -->
 
-              <div class="conversation-empty-state">
-
-
-                <div class="conversation-empty-state__icon">
-                  💬
-                </div>
+            <div class="conversation-empty-state">
 
 
-                <h2>
-                  WhatsApp
-                </h2>
-
-
-                <p>
-                  Selecciona una conversación para
-                  visualizar los mensajes.
-                </p>
-
-
-                <span>
-                  Seleccionar una conversación no cambia
-                  su estado de atención.
-                </span>
-
-
+              <div class="conversation-empty-state__icon">
+                💬
               </div>
+
+
+              <h2>
+                WhatsApp
+              </h2>
+
+
+              <p>
+                Selecciona una conversación para
+                visualizar los mensajes.
+              </p>
+
+
+              <span>
+                Seleccionar una conversación no cambia
+                su estado de atención.
+              </span>
+
+
+            </div>
 
 
             }

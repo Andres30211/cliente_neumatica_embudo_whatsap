@@ -184,14 +184,43 @@ box-shadow:
 0 8px 18px rgba(37, 99, 235, 0.16);
 }
 
-.btn-control-contacts{
 
-  text-decoration: none;
-  padding: 1rem;
+.btn-control-contacts {
+  /* El botón se adapta al contenido */
+  width: auto;
+  max-width: 100%;
+
+  /* Espaciado interno */
+  padding: 1rem 1.5rem;
+
+  /* Apariencia */
   background-color: rgb(248, 208, 5);
+  color: #000;
+  text-decoration: none;
+  border: none;
   border-radius: 0.8rem;
-  color: black;
+
+  /* Texto */
+  font-size: 1rem;
+  text-align: center;
+  white-space: nowrap;
+
+  /* Evita problemas de dimensiones */
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  /* Interacción */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
 }
+
+.btn-control-contacts:hover {
+  background-color: #e8c000;
+}
+
 
 /* ============================================================
 TÍTULO
@@ -1997,11 +2026,11 @@ padding:
 border-radius: 13px;
 }
 
-.users-card
-.users-card-header {
-padding:
-19px
-17px;
+.users-card .users-card-header {
+
+padding: 19px 17px;
+display: flex;
+flex-direction: column;
 }
 
 .users-card
