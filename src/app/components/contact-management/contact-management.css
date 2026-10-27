@@ -1184,3 +1184,134 @@ tbody tr:hover {
     transform: none;
   }
 }
+
+/* ============================================================
+   REDISEÑO RESPONSIVE PROFESIONAL — CONTACTOS
+   Mantiene los nombres de clases y la lógica Angular existente.
+============================================================ */
+:host { display:block; min-width:0; color:#172033; }
+:host *, :host *::before, :host *::after { box-sizing:border-box; }
+main { display:flex; align-items:flex-start; min-width:0; width:100%; }
+.contacts-page { flex:1 1 auto; min-width:0; width:100%; max-width:1600px; margin:0 auto; padding:clamp(16px,2.3vw,32px); }
+.page-header { margin-bottom:22px; }
+.page-title-row { min-width:0; gap:14px; }
+.page-icon { flex:0 0 50px; width:50px; height:50px; border:1px solid #dbeafe; box-shadow:0 5px 14px rgba(37,99,235,.08); }
+.page-header h1 { font-size:clamp(21px,2vw,28px); line-height:1.25; letter-spacing:-.035em; }
+.page-header p { margin-top:6px; font-size:14px; line-height:1.55; }
+.summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.summary-card, .import-card, .import-result, .contacts-card { min-width:0; border:1px solid #e6ebf2; border-radius:16px; background:#fff; box-shadow:0 5px 20px rgba(15,23,42,.035); }
+.summary-card { padding:18px; gap:13px; }
+.summary-card__value { color:#172033; font-size:25px; letter-spacing:-.03em; }
+.summary-card__label { color:#718096; font-size:12px; }
+.import-card, .import-result { margin-bottom:20px; padding:clamp(16px,2vw,24px); }
+.import-card__header { gap:14px; }
+.import-card h2, .contacts-card__header h2 { color:#172033; font-size:19px; letter-spacing:-.025em; }
+.import-card p, .contacts-card__header p { color:#718096; font-size:13px; line-height:1.5; }
+.import-area { border:1px dashed #cbd5e1; border-radius:12px; background:#f8fafc; padding:18px; }
+.file-selector { min-height:46px; border-radius:10px; font-weight:600; }
+.import-help { display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:#718096; font-size:12px; }
+.import-help code { max-width:100%; overflow-wrap:anywhere; padding:4px 7px; border-radius:6px; background:#f1f5f9; color:#475569; }
+.contacts-card { overflow:hidden; margin-bottom:22px; }
+.contacts-card__header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; padding:22px 24px; border-bottom:1px solid #edf1f5; }
+.contacts-card__header > div:first-child { min-width:0; }
+.buttons-marketing { display:flex; flex-wrap:wrap; gap:9px; margin:0 0 20px; }
+.buttons-marketing>button { min-height:40px; padding:10px 14px; border:1px solid transparent; border-radius:9px; font-size:12px; font-weight:650; line-height:1.3; white-space:normal; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease, filter .15s ease; }
+.buttons-marketing>button:hover { transform:translateY(-1px); box-shadow:0 5px 12px rgba(15,23,42,.1); filter:saturate(1.05); }
+.buttons-marketing .email-marketing { background:#fef08a; color:#713f12; border-color:#fde047; }
+.buttons-marketing .excel-contacts { background:#dcfce7; color:#166534; border-color:#86efac; }
+.contacts-actions { display:flex; align-items:center; gap:10px; width:min(100%,620px); }
+.search-box { flex:1 1 260px; min-width:0; }
+.search-box input { min-height:43px; width:100%; border:1px solid #dbe3ec; border-radius:10px; font-size:14px; }
+.search-box input:focus { border-color:#93b4ff; box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+.contacts-actions .btn { min-height:43px; flex:0 0 auto; border-radius:10px; }
+.btn--secondary { border:1px solid #dbe3ec; background:#f8fafc; color:#334155; }
+.table-container { width:100%; min-width:0; overflow-x:auto; overscroll-behavior-x:contain; }
+.table-container table { width:100%; min-width:850px; border-collapse:separate; border-spacing:0; }
+.table-container thead { background:#f8fafc; }
+.table-container th { padding:13px 15px; color:#64748b; font-size:10px; font-weight:750; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; border-bottom:1px solid #e7edf4; }
+.table-container td { padding:15px; color:#475569; font-size:13px; border-bottom:1px solid #eef2f6; vertical-align:middle; }
+.table-container tbody tr:hover { background:#f8fbff; }
+.contact-cell { display:flex; align-items:center; gap:11px; min-width:0; }
+.avatar { flex:0 0 38px; width:38px; height:38px; display:grid; place-items:center; border-radius:11px; background:#eff6ff; color:#2563eb; font-weight:750; font-size:13px; }
+.contact-info { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.contact-info strong { color:#1e293b; font-size:13px; font-weight:650; overflow-wrap:anywhere; }
+.contact-info span { max-width:190px; color:#94a3b8; font-size:10px; overflow-wrap:anywhere; }
+.phone, .table-text, .date { overflow-wrap:anywhere; word-break:normal; }
+.status { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border-radius:999px; font-size:11px; font-weight:650; white-space:nowrap; }
+.btn-delete { display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding:8px 12px; border:1px solid #fecaca; border-radius:8px; background:#fff1f2; color:#be123c; font-size:12px; font-weight:650; cursor:pointer; transition:background .15s ease,color .15s ease; }
+.btn-delete:hover { background:#e11d48; border-color:#e11d48; color:#fff; }
+.mobile-contacts-list { display:none; }
+.pagination { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 22px; border-top:1px solid #edf1f5; }
+.pagination__info { color:#64748b; font-size:12px; }
+.pagination__buttons { display:flex; flex-wrap:wrap; gap:5px; }
+.pagination__button { min-width:35px; min-height:35px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; color:#475569; }
+.pagination__button--active { background:#2563eb; color:#fff; border-color:#2563eb; }
+.loading-container { display:flex; align-items:center; justify-content:center; gap:12px; min-height:180px; color:#64748b; }
+.empty-state { padding:36px 16px!important; text-align:center; color:#64748b!important; }
+.mobile-contacts-empty { padding:30px 16px; text-align:center; color:#64748b; }
+.mobile-contacts-empty strong, .mobile-contacts-empty span { display:block; }
+.mobile-contacts-empty span { margin-top:6px; font-size:13px; }
+
+@media (max-width: 1050px) {
+  .contacts-page { padding:20px; }
+  .contacts-card__header { align-items:stretch; flex-direction:column; gap:14px; }
+  .contacts-actions { width:100%; }
+}
+@media (max-width: 760px) {
+  .contacts-page { padding:14px; }
+  .summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+  .summary-card { padding:12px 10px; gap:8px; border-radius:12px; }
+  .summary-card__icon { width:34px; height:34px; }
+  .summary-card__label { display:block; font-size:10px; line-height:1.35; }
+  .summary-card__value { display:block; margin-top:4px; font-size:20px; }
+  .import-card, .import-result { padding:15px; border-radius:13px; }
+  .contacts-card__header { padding:17px 15px; }
+  .buttons-marketing { margin-bottom:17px; }
+  .buttons-marketing>button { flex:1 1 170px; }
+  .desktop-contacts-table { display:none; }
+  .mobile-contacts-list { display:flex; flex-direction:column; gap:11px; padding:14px; }
+  .mobile-contact-card { min-width:0; padding:15px; border:1px solid #e5eaf1; border-radius:13px; background:#fff; box-shadow:0 3px 12px rgba(15,23,42,.035); }
+  .mobile-contact-header { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding-bottom:13px; border-bottom:1px solid #edf1f5; }
+  .mobile-contact-header .contact-cell { flex:1 1 auto; min-width:0; }
+  .mobile-contact-header .contact-info strong { font-size:14px; }
+  .mobile-contact-header .contact-info span { font-size:10px; }
+  .mobile-contact-header .status { flex:0 0 auto; max-width:45%; white-space:normal; text-align:center; }
+  .mobile-contact-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px 12px; padding:15px 0; }
+  .mobile-contact-field { display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .mobile-contact-field>span { color:#8490a2; font-size:10px; font-weight:750; letter-spacing:.045em; text-transform:uppercase; }
+  .mobile-contact-field>strong { color:#334155; font-size:12px; font-weight:550; line-height:1.45; overflow-wrap:anywhere; }
+  .mobile-contact-email { word-break:break-word; }
+  .mobile-contact-actions { padding-top:12px; border-top:1px solid #edf1f5; }
+  .mobile-contact-actions .btn-delete { width:100%; min-height:40px; }
+  .pagination { padding:14px; flex-direction:column; align-items:stretch; }
+  .pagination__info { text-align:center; }
+  .pagination__buttons { justify-content:center; }
+}
+@media (max-width: 420px) {
+  .contacts-page { padding:10px; }
+  .page-title-row { align-items:flex-start; gap:10px; }
+  .page-icon { flex-basis:40px; width:40px; height:40px; border-radius:11px; }
+  .page-icon svg { width:22px; height:22px; }
+  .page-header h1 { font-size:20px; }
+  .page-header p { font-size:12px; }
+  .summary-grid { gap:6px; }
+  .summary-card { padding:10px 7px; }
+  .summary-card__icon { width:29px; height:29px; }
+  .summary-card__value { font-size:18px; }
+  .summary-card__value small { font-size:10px; }
+  .contacts-card__header { padding:14px 11px; }
+  .contacts-actions { align-items:stretch; flex-direction:column; }
+  .contacts-actions .btn { width:100%; justify-content:center; }
+  .mobile-contacts-list { padding:10px; }
+  .mobile-contact-card { padding:12px; }
+  .mobile-contact-header { flex-direction:column; }
+  .mobile-contact-header .status { max-width:100%; margin-left:47px; }
+  .mobile-contact-details { grid-template-columns:minmax(0,1fr); gap:12px; }
+  .buttons-marketing>button { flex-basis:100%; width:100%; }
+  .import-area { padding:12px; }
+  .selected-file { min-width:0; }
+  .selected-file__info { min-width:0; overflow-wrap:anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :host *, :host *::before, :host *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+}

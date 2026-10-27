@@ -531,7 +531,7 @@
       <!-- TABLA -->
       <!-- ======================================================= -->
 
-      <div class="table-container" *ngIf="!loading">
+      <div class="table-container desktop-contacts-table" *ngIf="!loading">
 
         <table>
 
@@ -707,6 +707,47 @@
 
       </div>
 
+
+      <!-- TARJETAS PARA MÓVIL Y TABLETAS ESTRECHAS -->
+      <div class="mobile-contacts-list" *ngIf="!loading">
+        <article class="mobile-contact-card" *ngFor="let contact of filteredContacts">
+          <div class="mobile-contact-header">
+            <div class="contact-cell">
+              <div class="avatar">{{ getContactName(contact).charAt(0).toUpperCase() }}</div>
+              <div class="contact-info">
+                <strong>{{ getContactName(contact) }}</strong>
+                <span>ID: {{ contact.id }}</span>
+              </div>
+            </div>
+            <span [class]="getStatusClass(contact)">
+              <span class="status__dot"></span>{{ getStatusLabel(contact) }}
+            </span>
+          </div>
+          <div class="mobile-contact-details">
+            <div class="mobile-contact-field">
+              <span>Teléfono</span><strong>{{ contact.phone || '—' }}</strong>
+            </div>
+            <div class="mobile-contact-field">
+              <span>Correo electrónico</span><strong class="mobile-contact-email">{{ contact.email || '—' }}</strong>
+            </div>
+            <div class="mobile-contact-field">
+              <span>Empresa</span><strong>{{ contact.company || '—' }}</strong>
+            </div>
+            <div class="mobile-contact-field">
+              <span>Fecha de creación</span><strong>{{ formatDate(contact.createdAt) }}</strong>
+            </div>
+          </div>
+          @if (meRol('ROLE_ADMIN')) {
+            <div class="mobile-contact-actions">
+              <button type="button" class="btn-delete" (click)="getContactById(contact.id)">Eliminar contacto</button>
+            </div>
+          }
+        </article>
+        <div class="mobile-contacts-empty" *ngIf="filteredContacts.length === 0">
+          <strong>No se encontraron contactos</strong>
+          <span>Intenta cambiar los criterios de búsqueda.</span>
+        </div>
+      </div>
 
       <!-- ======================================================= -->
       <!-- PAGINACIÓN -->

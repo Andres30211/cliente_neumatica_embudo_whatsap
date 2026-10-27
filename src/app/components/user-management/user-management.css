@@ -1972,7 +1972,7 @@ padding:
 /* MODAL */
 
 .modal-overlay {
-align-items: flex-end;
+align-items: center;
 
 padding: 0;
 
@@ -2134,3 +2134,323 @@ transition-duration:
 }
 
 }
+
+
+/* =========================================================
+   RESPONSIVE: TARJETAS DE USUARIOS PARA MÓVILES
+   Compatible con los estilos actuales del módulo
+========================================================= */
+
+/* Ocultar las tarjetas en escritorio */
+.users-card .mobile-users-list {
+  display: none;
+}
+
+/* Evitar que el contenido desborde la tarjeta principal */
+.users-card {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.users-card .table-container {
+  min-width: 0;
+}
+
+.users-card .users-table {
+  min-width: 850px;
+}
+
+/* =========================================================
+   ESTADO SIN RESULTADOS
+========================================================= */
+
+.users-card .users-empty-state {
+  padding: 48px 20px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.users-card .users-empty-state h3 {
+  margin: 0 0 8px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.users-card .users-empty-state p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* =========================================================
+   TABLETAS Y CELULARES
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* Desactivar completamente la tabla en móvil */
+  .users-card .desktop-users-table {
+    display: none !important;
+  }
+
+  /* Mostrar listado de tarjetas */
+  .users-card .mobile-users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    background: #f8fafc;
+  }
+
+  /* Tarjeta individual */
+  .users-card .mobile-user-card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 17px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.045);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .users-card .mobile-user-card:hover {
+    border-color: #bfdbfe;
+    box-shadow: 0 5px 16px rgba(37, 99, 235, 0.08);
+  }
+
+  /* Encabezado: avatar, nombre y estado */
+  .users-card .mobile-user-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .users-card .mobile-user-header .user-info {
+    flex: 1;
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .users-card .mobile-user-header .user-username {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .users-card .mobile-user-header .user-username span {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .users-card .mobile-user-header .user-avatar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+
+  .users-card .mobile-user-header .status {
+    flex-shrink: 0;
+    padding: 5px 8px;
+    font-size: 10.5px;
+  }
+
+  /* Información del usuario */
+  .users-card .mobile-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 16px 0;
+  }
+
+  .users-card .mobile-user-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .users-card .mobile-field-label {
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .users-card .mobile-field-value {
+    color: #334155;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .users-card .mobile-field-value.email-value {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .users-card .mobile-user-roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .users-card .mobile-user-roles .role-badge {
+    margin: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Acciones: tres botones siempre visibles */
+  .users-card .mobile-user-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 13px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .users-card .mobile-action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 65px;
+    padding: 9px 3px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.3;
+    text-align: center;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .users-card .mobile-action-button:active {
+    transform: scale(0.97);
+  }
+
+  .users-card .mobile-action-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  /* Editar */
+  .users-card .mobile-action-button.mobile-edit {
+    color: #2563eb;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+
+  .users-card .mobile-action-button.mobile-edit:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+  }
+
+  /* Cambiar rol */
+  .users-card .mobile-action-button.mobile-role {
+    color: #b45309;
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+
+  .users-card .mobile-action-button.mobile-role:hover {
+    background: #fef3c7;
+    border-color: #fcd34d;
+  }
+
+  /* Eliminar */
+  .users-card .mobile-action-button.mobile-delete {
+    color: #dc2626;
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+
+  .users-card .mobile-action-button.mobile-delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
+
+  /* Mensaje sin resultados */
+  .users-card .users-empty-state {
+    padding: 35px 18px;
+  }
+}
+
+/* =========================================================
+   CELULARES ESTRECHOS
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .users-card .mobile-users-list {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .users-card .mobile-user-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .users-card .mobile-user-header {
+    gap: 6px;
+  }
+
+  .users-card .mobile-user-header .user-info {
+    gap: 7px;
+  }
+
+  .users-card .mobile-user-header .user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 9px;
+  }
+
+  .users-card .mobile-user-header .user-username span {
+    font-size: 12px;
+  }
+
+  .users-card .mobile-user-header .status {
+    gap: 5px;
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .users-card .mobile-user-actions {
+    gap: 5px;
+  }
+
+  .users-card .mobile-action-button {
+    font-size: 10px;
+    padding: 8px 2px;
+  }
+}
+
