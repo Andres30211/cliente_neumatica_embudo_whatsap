@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ServicesWebsocket } from '../../services/services-websocket';
 import { NotificationServices } from '../../services/notification-services';
 import { Notification } from '../../interfaces/Notification';
+import { PushNotificationService } from '../../services/push-notification.service';
 
 @Component({
   selector: 'app-topbar',
@@ -29,23 +30,13 @@ export class Topbar implements OnInit{
     private authService: AuthServices,
     private router: Router,
     private websocket: ServicesWebsocket,
-    private notificationService: NotificationServices) {}
+    private notificationService: NotificationServices,
+    private pushService: PushNotificationService ) {}
   
   ngOnInit(): void {
     
     this.nombre = this.tokenService.getName() ?? '';
 
-    this.notificationService.notifications$
-      .subscribe(notifications => {
-
-        this.notifications = notifications;
-
-        this.unreadCount = this.notifications
-        .filter(notification => !notification.read)
-        .length;
-
-      });
-    
   }
 
   public cerrarSesion(){
@@ -58,27 +49,6 @@ export class Topbar implements OnInit{
   public toggleMenu(): void {
 
     this.menuAbierto = this.menuAbierto === false ? true : false;
-
-  }
-
-   toggleNotifications(): void {
-
-    this.isOpen = !this.isOpen;
-
-  }
-
-
-  deleteNotification(id: string): void {
-
-    this.notificationService
-      .deleteNotification(id);
-
-  }
-
-
-  deleteAll(): void {
-
-    this.notificationService.deleteAll();
 
   }
 
@@ -101,6 +71,18 @@ export class Topbar implements OnInit{
       palabras[0].charAt(0) +
       palabras[1].charAt(0)
     ).toUpperCase();
+  }
+
+  async activarNotificaciones(): Promise<void> {
+    try {
+      await this.pushService.subscribeToNotifications();
+
+      alert('¡Notificaciones activadas correctamente!');
+    } catch (error) {
+      console.error('Error activando notificaciones:', error);
+
+      alert('No fue posible activar las notificaciones.');
+    }
   }
 
 }

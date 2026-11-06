@@ -24,144 +24,6 @@
   <div class="topbar__actions">
 
     <!-- ===================================================
-         NOTIFICACIONES
-         =================================================== -->
-
-    <div class="notification-container">
-
-
-      <button type="button" class="notification-button" (click)="toggleNotifications()"
-        aria-label="Abrir notificaciones">
-
-        <svg class="notification-bell" viewBox="0 0 24 24" aria-hidden="true">
-
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-
-          <path d="M10 21h4"></path>
-
-        </svg>
-
-
-        @if (unreadCount > 0) {
-
-        <span class="notification-badge">
-          {{ unreadCount }}
-        </span>
-
-        }
-
-      </button>
-
-
-      <!-- =================================================
-           PANEL DE NOTIFICACIONES
-           ================================================= -->
-
-      @if (isOpen) {
-
-      <div class="notification-panel">
-
-
-        <div class="notification-header">
-
-          <div>
-
-            <h3>
-              Notificaciones
-            </h3>
-
-            <span>
-              {{ notifications.length }} notificaciones
-            </span>
-
-          </div>
-
-
-          @if (notifications.length > 0) {
-
-          <button type="button" class="delete-all" (click)="deleteAll()">
-            Eliminar todas
-          </button>
-
-          }
-
-        </div>
-
-
-        <!-- SIN NOTIFICACIONES -->
-
-        @if (notifications.length === 0) {
-
-        <div class="empty-notifications">
-
-          <div class="empty-icon">
-            🔔
-          </div>
-
-          <p>
-            No tienes notificaciones
-          </p>
-
-          <span>
-            Las nuevas conversaciones aparecerán aquí.
-          </span>
-
-        </div>
-
-        }
-
-
-        <!-- LISTA DE NOTIFICACIONES -->
-
-        @for (
-        notification of notifications;
-        track notification.id
-        ) {
-
-        <div class="notification-item">
-
-
-          <div class="notification-icon">
-            💬
-          </div>
-
-
-          <div class="notification-content">
-
-            <strong>
-              {{ notification.title }}
-            </strong>
-
-            <p>
-              {{ notification.message }}
-            </p>
-
-            <small>
-              {{ notification.createdAt | date:'short' }}
-            </small>
-
-          </div>
-
-
-          <button type="button" class="delete-button" title="Eliminar notificación"
-            (click)="deleteNotification(notification.id)">
-
-            🗑️
-
-          </button>
-
-        </div>
-
-        }
-
-      </div>
-
-      }
-
-    </div>
-
-
-    <!-- ===================================================
         USUARIO
     =================================================== -->
 
@@ -258,6 +120,12 @@
               Cerrar sesión
             </span>
 
+          </button>
+
+          <button type="button"
+          class="topbar__notification"
+          (click)="activarNotificaciones()">
+            activar
           </button>
 
         </div>

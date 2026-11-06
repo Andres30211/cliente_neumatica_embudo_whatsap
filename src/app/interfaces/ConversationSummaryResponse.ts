@@ -30,13 +30,13 @@ export interface ConversationSummaryResponse {
 
   lastMessageAt: string | null;
 
+  unreadCount: number;
+
   status: ConversationStatus;
 
   // Vendedor asignado
   assignedUserId: string | null;
 
   assignedUserName: string | null;
-
-  unreadCount: number;
 
 }

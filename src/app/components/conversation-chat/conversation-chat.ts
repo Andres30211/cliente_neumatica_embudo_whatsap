@@ -55,20 +55,17 @@ import { TokensServices } from '../../services/tokens-services';
 })
 export class ConversationChat implements OnChanges, OnDestroy {
 
-
   // =========================================================
   // CONVERSACIÓN
   // =========================================================
 
   @Input({ required: true }) conversation!: ConversationSummaryResponse | any;
 
-
   // =========================================================
   // MENSAJE
   // =========================================================
 
   public messageText = '';
-
 
   // =========================================================
   // ESTADOS
@@ -94,21 +91,17 @@ export class ConversationChat implements OnChanges, OnDestroy {
 
   public websocketConnected = false;
 
-
   private conversationSubscription: Subscription | null = null;
-
 
   private subscribedConversationId: string | null = null;
 
   private presenceConversationId: string | null = null;
-
 
   // =========================================================
   // CONTROL DE CARGA
   // =========================================================
 
   private loadRequestVersion = 0;
-
 
   // =========================================================
   // MULTIMEDIA
@@ -124,7 +117,6 @@ export class ConversationChat implements OnChanges, OnDestroy {
    * wamid.xxx -> blob:http://localhost...
    */
   private readonly mediaUrls = new Map<string, string>();
-
 
   /**
    * Mensajes cuyo multimedia se está descargando.
@@ -153,53 +145,26 @@ export class ConversationChat implements OnChanges, OnDestroy {
   private audioChunks: BlobPart[] = [];
   private recordingInterval: ReturnType<typeof setInterval> | null = null;
 
-
-
-  constructor(
-
-    private conversationService:
-      ConversationService,
-
-    private servicesWebsocket:
-      ServicesWebsocket,
-
-    private servicesWhatsapp:
-      ServicesWhatsapp,
-
-    private elementRef:
-      ElementRef,
-
-    private cd:
-      ChangeDetectorRef,
-
-    private tokenServices:
-      TokensServices
-
-  ) { }
-
+  constructor(private conversationService: ConversationService,
+    private servicesWebsocket: ServicesWebsocket,
+    private servicesWhatsapp: ServicesWhatsapp,
+    private elementRef: ElementRef,
+    private cd: ChangeDetectorRef,
+    private tokenServices: TokensServices) { }
 
   // =========================================================
   // CAMBIO DE CONVERSACIÓN
   // =========================================================
 
-  ngOnChanges(
-    changes: SimpleChanges
-  ): void {
+  ngOnChanges(changes: SimpleChanges): void {
 
-    if (
-      !changes['conversation']
-    ) {
+    if (!changes['conversation']) {
 
       return;
 
     }
 
-
-    const conversationId =
-      this.getConversationId(
-        this.conversation
-      );
-
+    const conversationId = this.getConversationId(this.conversation);
 
     if (!conversationId) {
 
@@ -207,18 +172,14 @@ export class ConversationChat implements OnChanges, OnDestroy {
 
     }
 
-
     // Invalida peticiones anteriores.
     this.loadRequestVersion++;
-
 
     // Cancela WS anterior.
     this.unsubscribeFromConversation();
 
-
     // Libera multimedia anterior.
     this.clearMedia();
-
 
     this.messageText = '';
 
@@ -228,11 +189,7 @@ export class ConversationChat implements OnChanges, OnDestroy {
 
     this.takingConversation = false;
 
-
-    this.loadConversation(
-      conversationId,
-      this.loadRequestVersion
-    );
+    this.loadConversation(conversationId,this.loadRequestVersion);
 
     this.unsubscribeFromConversation();
 
@@ -282,14 +239,7 @@ export class ConversationChat implements OnChanges, OnDestroy {
 
       const item = clipboardData.items[i];
 
-      console.log(
-        'Clipboard item:',
-        i,
-        'kind:',
-        item.kind,
-        'type:',
-        item.type
-      );
+      console.log('Clipboard item:',i,'kind:',item.kind,'type:',item.type);
 
       /*
        * ============================================
@@ -324,10 +274,7 @@ export class ConversationChat implements OnChanges, OnDestroy {
          * uniforme en el backend.
          */
 
-        const imageFile = new File(
-          [file],
-          file.name || `captura-${Date.now()}.png`,
-          {
+        const imageFile = new File([file], file.name || `captura-${Date.now()}.png`,{
             type: file.type || 'image/png'
           }
         );
@@ -392,15 +339,9 @@ export class ConversationChat implements OnChanges, OnDestroy {
   // ID CONVERSACIÓN
   // =========================================================
 
-  private getConversationId(
-    conversation: any
-  ): string | null {
+  private getConversationId(conversation: any): string | null {
 
-    return (
-      conversation?.conversationId ||
-      conversation?.id ||
-      null
-    );
+    return (conversation?.conversationId || conversation?.id || null);
 
   }
 
@@ -409,51 +350,27 @@ export class ConversationChat implements OnChanges, OnDestroy {
   // CARGAR CONVERSACIÓN
   // =========================================================
 
-  private loadConversation(
-    conversationId: string,
-    requestVersion: number
-  ): void {
+  private loadConversation(conversationId: string, requestVersion: number): void {
 
     this.loading = true;
 
     this.errorMessage = null;
 
+    const summary = this.conversation;
 
-    const summary =
-      this.conversation;
-
-
-    this.conversationService
-      .getConversation(
-        conversationId
-      )
-      .subscribe({
+    this.conversationService.getConversation(conversationId).subscribe({
 
         next: (response) => {
 
-
-          if (
-            requestVersion !==
-            this.loadRequestVersion
-          ) {
+          if (requestVersion !== this.loadRequestVersion) {
 
             return;
 
           }
 
+          const responseId = this.getConversationId(response) || conversationId;
 
-          const responseId =
-            this.getConversationId(
-              response
-            ) ||
-            conversationId;
-
-
-          const contact = {
-
-            ...(response?.contact || {}),
-
-            id:
+          const contact = {...(response?.contact || {}), id:
               response?.contact?.id ||
               summary?.contactId ||
               summary?.contact?.id ||

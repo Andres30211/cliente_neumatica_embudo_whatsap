@@ -1,13 +1,7 @@
-<article class="conversation-item" [class.conversation-item--human]="
-    conversation.status === 'HUMAN'
-  " [class.conversation-item--bot]="
-    conversation.status === 'BOT'
-  " [class.conversation-item--closed]="
-    conversation.status === 'CLOSED'
-  " [class.conversation-item--selected]="
-    selected
-  " (click)="selectConversation()">
-
+<article class="conversation-item" [class.conversation-item--human]="conversation.status === 'HUMAN'"
+  [class.conversation-item--bot]="conversation.status === 'BOT'"
+  [class.conversation-item--closed]="conversation.status === 'CLOSED'" [class.conversation-item--selected]="selected"
+  (click)="selectConversation()">
 
   <!-- ===================================================== -->
   <!-- AVATAR -->
@@ -15,21 +9,15 @@
 
   <div class="conversation-item__avatar">
 
-    {{
-    conversation.contactName
-    ? conversation.contactName.charAt(0).toUpperCase()
-    : '?'
-    }}
+    {{conversation.contactName ? conversation.contactName.charAt(0).toUpperCase() : '?' }}
 
   </div>
-
 
   <!-- ===================================================== -->
   <!-- CONTENIDO -->
   <!-- ===================================================== -->
 
   <div class="conversation-item__content">
-
 
     <!-- =================================================== -->
     <!-- NOMBRE + HORA -->
@@ -39,26 +27,24 @@
 
       <h3 class="conversation-item__name">
 
-        {{
-        conversation.contactName ||
-        'Contacto sin nombre'
-        }}
+        {{conversation.contactName || 'Contacto sin nombre'}}
 
       </h3>
 
-
       <time class="conversation-item__time" [title]="conversation.lastMessageAt || ''">
 
-        {{
-        conversation.lastMessageAt
-        | date:'HH:mm'
-        }}
+        {{ conversation.lastMessageAt | date:'HH:mm' }}
+
+        @if (conversation.unreadCount > 0) {
+        <span class="unread-badge">
+          {{ conversation.unreadCount > 99 ? '99+' : conversation.unreadCount }}
+        </span>
+        }
 
       </time>
 
 
     </div>
-
 
     <!-- =================================================== -->
     <!-- ÚLTIMO MENSAJE -->

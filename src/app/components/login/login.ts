@@ -4,6 +4,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { AuthServices } from '../../services/auth-services';
 import { Router, RouterLink } from '@angular/router';
 import { NotificationServices } from '../../services/notification-services';
+import { PushNotificationService } from '../../services/push-notification.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class Login implements OnInit {
   constructor(private authService: AuthServices,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private notificationService: NotificationServices) { }
+    private notificationService: NotificationServices,
+    private pushNotificationService: PushNotificationService) { }
 
   ngOnInit(): void {
 
@@ -54,7 +56,14 @@ export class Login implements OnInit {
 
     this.authService.login(request, rememberMe).subscribe({
 
-      next: () => {
+      next: async () => {
+
+        // Sincronizar suscripción Push existente
+      try {
+        await this.pushNotificationService.syncSubscription();
+      } catch (error) {
+        console.error('Error sincronizando Push:', error);
+      }
 
         this.router.navigate(['/home']);
       },

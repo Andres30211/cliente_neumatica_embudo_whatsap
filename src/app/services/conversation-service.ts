@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class ConversationService {
 
-  private readonly urlApi = 'https://neumatica-embudo-whatsap.onrender.com/api/conversations';
-  // private readonly urlApi = 'http://localhost:8080/api/conversations';
+  // private readonly urlApi = 'https://neumatica-embudo-whatsap.onrender.com/api/conversations';
+  private readonly urlApi = 'http://localhost:8080/api/conversations';
 
 
   constructor(
@@ -31,6 +31,12 @@ export class ConversationService {
       `${this.urlApi}/${conversationId}/take`,
       {}
     );
+  }
+
+  public markConversationAsRead(conversationId: string): Observable<void> {
+
+    return this.http.patch<void>(`${this.urlApi}/${conversationId}/read`,{});
+
   }
 
 

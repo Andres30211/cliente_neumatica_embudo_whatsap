@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -7,12 +7,16 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterdeptorInterceptor } from './interceptors/auth-interdeptor-interceptor';
 // import { errorInterceptorInterceptor } from './interceptors/error-interceptor-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes), provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([authInterdeptorInterceptor, /*errorInterceptorInterceptor*/])),
-    provideCharts(withDefaultRegisterables())
+    provideCharts(withDefaultRegisterables()), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
   ]
 };

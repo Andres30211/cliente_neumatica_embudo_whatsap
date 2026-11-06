@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 
 import { ConversationSummaryResponse }
   from '../../interfaces/ConversationSummaryResponse';
+import { ConversationService } from '../../services/conversation-service';
 
 
 @Component({
@@ -77,6 +78,8 @@ export class WhatsappEmbudo {
   conversationSelected =
     new EventEmitter<ConversationSummaryResponse>();
 
+  constructor(private conversationService: ConversationService) { }
+
 
   // =========================================================
   // SELECCIONAR
@@ -84,22 +87,27 @@ export class WhatsappEmbudo {
 
   public selectConversation(): void {
 
-    if (
-      !this.conversation?.conversationId
-    ) {
+    if (!this.conversation?.conversationId) {
 
-      console.error(
-        'No se puede seleccionar una conversación sin ID.'
-      );
+      console.error('No se puede seleccionar una conversación sin ID.');
 
       return;
 
     }
 
+    // Marcar como leída en el backend
+    this.conversationService.markConversationAsRead(this.conversation.conversationId).subscribe({
+      next: () => {
 
-    this.conversationSelected.emit(
-      this.conversation
-    );
+        console.log('sin contador');
+
+      },
+      error: (error) => {
+        console.error('Error marcando la conversación como leída:', error);
+      }
+    });
+
+    this.conversationSelected.emit(this.conversation);
 
   }
 
