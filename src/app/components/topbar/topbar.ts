@@ -75,9 +75,14 @@ export class Topbar implements OnInit{
 
   async activarNotificaciones(): Promise<void> {
     try {
-      await this.pushService.subscribeToNotifications();
-
-      alert('¡Notificaciones activadas correctamente!');
+      
+      const result = await this.notificationService.confirm('Activar Notificaciones', 'Deséa activar las notificaciones');
+      
+      if (result.isConfirmed) {
+        
+        await this.pushService.subscribeToNotifications();
+        this.notificationService.success('Activar Notificaciones', 'Notificaciones Activadas');
+      }
     } catch (error) {
       console.error('Error activando notificaciones:', error);
 
