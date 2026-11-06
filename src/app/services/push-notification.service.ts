@@ -11,7 +11,8 @@ export class PushNotificationService {
   private readonly swPush = inject(SwPush);
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:8080/api/push/subscriptions';
+  // private readonly apiUrl = 'http://localhost:8080/api/push/subscriptions';
+  private readonly apiUrl = 'https://neumatica-crm.netlify.app/api/push/subscriptions';
 
   // Aquí debes colocar la CLAVE PÚBLICA VAPID
   private readonly vapidPublicKey = 'BHQeAHPtUccBCSTJ9dYmSccc9B9RqCAfE1ggFNxGw576EBxcwe0RZq-Tbxgqs-UcmjoHw-HBonuxvrYbAoqZ5EE';
