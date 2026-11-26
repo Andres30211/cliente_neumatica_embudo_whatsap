@@ -1651,17 +1651,6 @@ export class ConversationChat implements OnChanges, OnDestroy {
 
     const file = input.files[0];
 
-    this.notificationService.info(
-    'Datos del archivo desde iPhone',
-    `
-      Nombre: ${file.name}
-      Tipo MIME: ${file.type || 'No identificado'}
-      Tamaño: ${file.size} bytes
-      Última modificación: ${file.lastModified}
-      ¿Es File?: ${file instanceof File}
-      ¿Es Blob?: ${file instanceof Blob}
-    `);
-
     /*
     * Enviamos el archivo al método común
     * de procesamiento.
@@ -1703,11 +1692,6 @@ export class ConversationChat implements OnChanges, OnDestroy {
 
     this.selectedFile = file;
 
-    console.log('Archivo seleccionado correctamente:', {
-      name: file.name,
-      type: file.type,
-      size: file.size
-    });
   }
 
 
@@ -2079,7 +2063,7 @@ export class ConversationChat implements OnChanges, OnDestroy {
     this.errorMessage = null;
 
     this.conversationService
-      .sendMediaXHR(
+      .sendMedia(
         conversationId,
         file,
         caption
@@ -2114,8 +2098,6 @@ export class ConversationChat implements OnChanges, OnDestroy {
             'Error enviando archivo:',
             error
           );
-
-          //this.notificationService.info("error", error?.error?.message);
 
           this.errorMessage =
             error?.error?.message ||

@@ -97,35 +97,6 @@ export const authInterdeptorInterceptor: HttpInterceptorFn =
 
     });
 
-    if (authReq.body instanceof FormData) {
-  const archivo = authReq.body.get('file') as File | null;
-
-  nService.info(
-    'DIAGNÓSTICO PETICIÓN FINAL iOS',
-    `
-    URL: ${authReq.url}
-    Método: ${authReq.method}
-
-    FormData: ${authReq.body instanceof FormData}
-    Tiene archivo: ${authReq.body.has('file')}
-
-    Archivo: ${archivo?.name || 'No existe'}
-    MIME: ${archivo?.type || 'No identificado'}
-    Tamaño: ${archivo?.size ?? 0} bytes
-    Objeto: ${archivo?.constructor?.name || 'Ninguno'}
-
-    Content-Type:
-    ${authReq.headers.get('Content-Type') || 'Automático del navegador'}
-
-    Authorization:
-    ${authReq.headers.has('Authorization') ? 'PRESENTE' : 'AUSENTE'}
-
-    Claves:
-    ${Array.from(authReq.body.keys()).join(', ')}
-    `
-  );
-}
-
 
     /*
      * Ejecutamos la petición.
