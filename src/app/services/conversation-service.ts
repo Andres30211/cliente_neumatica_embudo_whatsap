@@ -76,16 +76,7 @@ export class ConversationService {
    * ENVIAR IMAGEN / DOCUMENTO
    * =====================================================
    */
-  public sendMedia(conversationId: string, file: File, caption?: string | null): Observable<any> {
-
-    /*this.notificationService.info("ARCHIVO ANTES DE ENVIAR",
-      `
-       'Nombre:', ${file.name}
-       'Tipo:', ${file.type || 'No identificado'}
-       'Tamaño:', ${file.size}
-       'Última modificación:', ${file.lastModified}
-      `
-    );*/
+  /*public sendMedia(conversationId: string, file: File, caption?: string | null): Observable<any> {
 
     const formData = new FormData();
 
@@ -105,12 +96,12 @@ export class ConversationService {
      * Este nombre debe coincidir exactamente
      * con @RequestParam("file") de Spring.
      */
-    formData.append('file', file, file.name);
+    /*formData.append('file', file, file.name);*/
 
     /*
      * Caption opcional.
      */
-    if (caption && caption.trim()) {
+    /*if (caption && caption.trim()) {
 
       formData.append('caption', caption.trim());
 
@@ -118,6 +109,51 @@ export class ConversationService {
 
     return this.http.post<any>(`${this.urlApi}/${conversationId}/media`, formData);
 
+  }*/
+
+  public sendMedia(
+    conversationId: string,
+    file: File,
+    caption?: string | null
+  ): Observable<any> {
+
+    const formData = new FormData();
+
+    // Agregamos el archivo
+    formData.append('file', file, file.name);
+
+    if (caption && caption.trim()) {
+      formData.append('caption', caption.trim());
+    }
+
+    // Diagnóstico: comprobar el FormData inmediatamente después del append
+    const archivoFormData = formData.get('file');
+
+    this.notificationService.info(
+      'DIAGNÓSTICO FORM DATA iPhone',
+      `
+      Nombre original: ${file.name}
+      Tipo MIME: ${file.type}
+      Tamaño: ${file.size}
+
+      ¿Es instancia de File?: ${file instanceof File}
+      ¿Es instancia de Blob?: ${file instanceof Blob}
+
+      FormData tiene archivo: ${formData.has('file')}
+      FormData.get('file'): ${archivoFormData ? 'SÍ EXISTE' : 'NULL'}
+
+      Tipo del objeto agregado: ${archivoFormData?.constructor?.name || 'Ninguno'}
+      Nombre del objeto agregado: ${(archivoFormData as File)?.name || 'Sin nombre'}
+
+      Claves del FormData: ${Array.from(formData.keys()).join(', ') || 'NINGUNA'}
+      `
+    );
+
+    // No establecer Content-Type manualmente.
+    return this.http.post<any>(
+      `${this.urlApi}/${conversationId}/media`,
+      formData
+    );
   }
 
   
