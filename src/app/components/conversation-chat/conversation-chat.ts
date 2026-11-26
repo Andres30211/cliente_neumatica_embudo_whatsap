@@ -2115,7 +2115,7 @@ export class ConversationChat implements OnChanges, OnDestroy {
             error
           );
 
-          this.notificationService.info("error", error?.error?.message);
+          //this.notificationService.info("error", error?.error?.message);
 
           this.errorMessage =
             error?.error?.message ||
