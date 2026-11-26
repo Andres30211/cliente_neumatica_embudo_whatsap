@@ -78,16 +78,26 @@ export class ConversationService {
    */
   public sendMedia(conversationId: string, file: File, caption?: string | null): Observable<any> {
 
-    this.notificationService.info("ARCHIVO ANTES DE ENVIAR",
+    /*this.notificationService.info("ARCHIVO ANTES DE ENVIAR",
       `
        'Nombre:', ${file.name}
        'Tipo:', ${file.type || 'No identificado'}
        'Tamaño:', ${file.size}
        'Última modificación:', ${file.lastModified}
       `
-    );
+    );*/
 
     const formData = new FormData();
+
+    this.notificationService.info("FORM DATA",
+      `
+       'Existe archivo:', ${formData.has('file')}
+       'Archivo en FormData:', ${formData.get('file')}
+       'Nombre:', ${file.name}
+       'Tipo:', ${file.type}
+       'Tamaño:', ${file.size}
+      `
+    );
 
     /*
      * IMPORTANTE:
