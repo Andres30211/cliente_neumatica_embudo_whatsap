@@ -266,43 +266,61 @@ export class ConversationService {
       });
     };
 
-    xhr.upload.onloadstart = () => {
-  this.notificationService.info(
-    'XHR - INICIO DE ENVÍO',
-    `
-    El navegador comenzó a transmitir el archivo.
-
-    Archivo: ${file.name}
-    Tamaño esperado: ${file.size} bytes
-    `
-  );
-};
+    let bytesEnviados = 0;
+let totalBytes = 0;
+let huboProgreso = false;
+let uploadFinalizado = false;
 
 xhr.upload.onprogress = (event) => {
+  huboProgreso = true;
+  bytesEnviados = event.loaded;
+  totalBytes = event.total;
+};
+
+xhr.upload.onloadend = () => {
+  uploadFinalizado = true;
+};
+
+xhr.timeout = 60000;
+
+xhr.onloadend = () => {
   this.notificationService.info(
-    'XHR - PROGRESO',
+    'RESULTADO TRANSMISIÓN iOS',
     `
     Archivo: ${file.name}
+    Tamaño original: ${file.size} bytes
 
-    Bytes enviados: ${event.loaded}
+    ¿Hubo progreso?: ${huboProgreso}
+    Bytes transmitidos reportados: ${bytesEnviados}
+    Total reportado: ${totalBytes}
 
-    Total reportado: ${event.total}
+    ¿Terminó el envío?: ${uploadFinalizado}
 
-    Longitud computable: ${event.lengthComputable}
+    Estado HTTP: ${xhr.status}
+    ReadyState: ${xhr.readyState}
+
+    Respuesta servidor:
+    ${xhr.responseText || 'Sin respuesta'}
+
+    Content-Type respuesta:
+    ${xhr.getResponseHeader('Content-Type') || 'No disponible'}
     `
   );
 };
 
-xhr.upload.onload = () => {
-  this.notificationService.info(
-    'XHR - ENVÍO FINALIZADO',
-    `
-    El navegador terminó de transmitir el cuerpo de la petición.
-    Archivo: ${file.name}
-    Tamaño: ${file.size} bytes
-    `
-  );
+xhr.ontimeout = () => {
+  console.error('Tiempo de espera agotado al enviar multimedia');
 };
+
+xhr.onerror = () => {
+  console.error('Error de red durante el envío multimedia');
+};
+
+xhr.onabort = () => {
+  console.error('Petición cancelada');
+};
+
+xhr.send(formData);
 
     // Enviar FormData sin configurar Content-Type
     xhr.send(formData);
