@@ -266,6 +266,44 @@ export class ConversationService {
       });
     };
 
+    xhr.upload.onloadstart = () => {
+  this.notificationService.info(
+    'XHR - INICIO DE ENVÍO',
+    `
+    El navegador comenzó a transmitir el archivo.
+
+    Archivo: ${file.name}
+    Tamaño esperado: ${file.size} bytes
+    `
+  );
+};
+
+xhr.upload.onprogress = (event) => {
+  this.notificationService.info(
+    'XHR - PROGRESO',
+    `
+    Archivo: ${file.name}
+
+    Bytes enviados: ${event.loaded}
+
+    Total reportado: ${event.total}
+
+    Longitud computable: ${event.lengthComputable}
+    `
+  );
+};
+
+xhr.upload.onload = () => {
+  this.notificationService.info(
+    'XHR - ENVÍO FINALIZADO',
+    `
+    El navegador terminó de transmitir el cuerpo de la petición.
+    Archivo: ${file.name}
+    Tamaño: ${file.size} bytes
+    `
+  );
+};
+
     // Enviar FormData sin configurar Content-Type
     xhr.send(formData);
 
