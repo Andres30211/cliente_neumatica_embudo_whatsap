@@ -114,7 +114,9 @@ export class ConversationService {
 
     formData.append('file', file, file.name);
 
-    return this.http.post<any>(`${this.urlApi}/${conversationId}/media`, formData);
+    const headers = new HttpHeaders({'ngsw-bypass': 'true'});
+
+    return this.http.post<any>(`${this.urlApi}/${conversationId}/media`, formData, {headers});
   }
 
 
