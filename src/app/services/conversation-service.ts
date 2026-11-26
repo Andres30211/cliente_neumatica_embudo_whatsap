@@ -212,6 +212,8 @@ formData.append(
       `Bearer ${token}`
     );
 
+    xhr.setRequestHeader('ngsw-bypass', 'true');
+
     // Diagnóstico temporal para iOS
     this.notificationService.info(
       'DIAGNÓSTICO XHR iOS',
