@@ -97,41 +97,34 @@ export const authInterdeptorInterceptor: HttpInterceptorFn =
 
     });
 
-    if (req.body instanceof FormData) {
-      const archivo = req.body.get('file') as File | null;
+    if (authReq.body instanceof FormData) {
+  const archivo = authReq.body.get('file') as File | null;
 
-      nService.info(
-        'DIAGNÓSTICO INTERCEPTOR iOS',
-        `
-        URL: ${req.url}
+  nService.info(
+    'DIAGNÓSTICO PETICIÓN FINAL iOS',
+    `
+    URL: ${authReq.url}
+    Método: ${authReq.method}
 
-        Método: ${req.method}
+    FormData: ${authReq.body instanceof FormData}
+    Tiene archivo: ${authReq.body.has('file')}
 
-        ¿Es FormData?: ${req.body instanceof FormData}
+    Archivo: ${archivo?.name || 'No existe'}
+    MIME: ${archivo?.type || 'No identificado'}
+    Tamaño: ${archivo?.size ?? 0} bytes
+    Objeto: ${archivo?.constructor?.name || 'Ninguno'}
 
-        ¿Tiene archivo?: ${req.body.has('file')}
+    Content-Type:
+    ${authReq.headers.get('Content-Type') || 'Automático del navegador'}
 
-        ¿Existe archivo?: ${archivo !== null}
+    Authorization:
+    ${authReq.headers.has('Authorization') ? 'PRESENTE' : 'AUSENTE'}
 
-        Nombre: ${archivo?.name || 'No disponible'}
-
-        Tipo MIME: ${archivo?.type || 'No disponible'}
-
-        Tamaño: ${archivo?.size ?? 'No disponible'} bytes
-
-        Tipo de objeto: ${archivo?.constructor?.name || 'Ninguno'}
-
-        Claves FormData:
-        ${Array.from(req.body.keys()).join(', ') || 'NINGUNA'}
-
-        Content-Type configurado:
-        ${req.headers.get('Content-Type') || 'No configurado (correcto para FormData)'}
-
-        Authorization:
-        ${req.headers.has('Authorization') ? 'Presente' : 'Ausente'}
-        `
-      );
-    }
+    Claves:
+    ${Array.from(authReq.body.keys()).join(', ')}
+    `
+  );
+}
 
 
     /*
