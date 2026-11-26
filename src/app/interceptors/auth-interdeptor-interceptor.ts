@@ -14,6 +14,7 @@ import {
 
 import { AuthServices } from '../services/auth-services';
 import { TokensServices } from '../services/tokens-services';
+import { NotificationServices } from '../services/notification-services';
 
 
 /*
@@ -46,6 +47,7 @@ export const authInterdeptorInterceptor: HttpInterceptorFn =
     const authService = inject(AuthServices);
     const tokensService = inject(TokensServices);
     const router = inject(Router);
+    const nService = inject(NotificationServices);
 
 
     /*
@@ -94,6 +96,42 @@ export const authInterdeptorInterceptor: HttpInterceptorFn =
       }
 
     });
+
+    if (req.body instanceof FormData) {
+      const archivo = req.body.get('file') as File | null;
+
+      nService.info(
+        'DIAGNÓSTICO INTERCEPTOR iOS',
+        `
+        URL: ${req.url}
+
+        Método: ${req.method}
+
+        ¿Es FormData?: ${req.body instanceof FormData}
+
+        ¿Tiene archivo?: ${req.body.has('file')}
+
+        ¿Existe archivo?: ${archivo !== null}
+
+        Nombre: ${archivo?.name || 'No disponible'}
+
+        Tipo MIME: ${archivo?.type || 'No disponible'}
+
+        Tamaño: ${archivo?.size ?? 'No disponible'} bytes
+
+        Tipo de objeto: ${archivo?.constructor?.name || 'Ninguno'}
+
+        Claves FormData:
+        ${Array.from(req.body.keys()).join(', ') || 'NINGUNA'}
+
+        Content-Type configurado:
+        ${req.headers.get('Content-Type') || 'No configurado (correcto para FormData)'}
+
+        Authorization:
+        ${req.headers.has('Authorization') ? 'Presente' : 'Ausente'}
+        `
+      );
+    }
 
 
     /*
