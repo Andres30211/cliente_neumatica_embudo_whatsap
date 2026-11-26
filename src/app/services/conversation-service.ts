@@ -169,8 +169,17 @@ export class ConversationService {
     const formData = new FormData();
 
     // Agregar archivo
-    formData.append('file', file, file.name);
+    const archivoBlob = file.slice(
+  0,
+  file.size,
+  file.type
+);
 
+formData.append(
+  'file',
+  archivoBlob,
+  file.name
+);
     // Agregar descripción si existe
     if (caption?.trim()) {
       formData.append('caption', caption.trim());
