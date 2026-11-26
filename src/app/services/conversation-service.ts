@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { NotificationServices } from './notification-services';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,8 @@ export class ConversationService {
 
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private notificationService: NotificationServices
   ) {}
 
 
@@ -74,14 +76,18 @@ export class ConversationService {
    * ENVIAR IMAGEN / DOCUMENTO
    * =====================================================
    */
-  public sendMedia(
-    conversationId: string,
-    file: File,
-    caption?: string | null
-  ): Observable<any> {
+  public sendMedia(conversationId: string, file: File, caption?: string | null): Observable<any> {
 
-    const formData =
-      new FormData();
+    this.notificationService.info("ARCHIVO ANTES DE ENVIAR",
+      `
+       'Nombre:', ${file.name}
+       'Tipo:', ${file.type || 'No identificado'}
+       'Tamaño:', ${file.size}
+       'Última modificación:', ${file.lastModified}
+      `
+    );
+
+    const formData = new FormData();
 
     /*
      * IMPORTANTE:
@@ -89,33 +95,18 @@ export class ConversationService {
      * Este nombre debe coincidir exactamente
      * con @RequestParam("file") de Spring.
      */
-    formData.append(
-      'file',
-      file,
-      file.name
-    );
-
+    formData.append('file', file, file.name);
 
     /*
      * Caption opcional.
      */
-    if (
-      caption &&
-      caption.trim()
-    ) {
+    if (caption && caption.trim()) {
 
-      formData.append(
-        'caption',
-        caption.trim()
-      );
+      formData.append('caption', caption.trim());
 
     }
 
-
-    return this.http.post<any>(
-      `${this.urlApi}/${conversationId}/media`,
-      formData
-    );
+    return this.http.post<any>(`${this.urlApi}/${conversationId}/media`, formData);
 
   }
 
@@ -123,19 +114,13 @@ export class ConversationService {
   /**
    * Envía un audio grabado a una conversación.
    */
-  public sendAudio(
-    conversationId: string,
-    file: File
-  ): Observable<any> {
+  public sendAudio(conversationId: string, file: File): Observable<any> {
 
     const formData = new FormData();
 
     formData.append('file', file, file.name);
 
-    return this.http.post<any>(
-      `${this.urlApi}/${conversationId}/media`,
-      formData
-    );
+    return this.http.post<any>(`${this.urlApi}/${conversationId}/media`, formData);
   }
 
 

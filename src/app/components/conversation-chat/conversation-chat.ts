@@ -37,6 +37,7 @@ import {
   ConversationSummaryResponse
 } from '../../interfaces/ConversationSummaryResponse';
 import { TokensServices } from '../../services/tokens-services';
+import { NotificationServices } from '../../services/notification-services';
 
 
 @Component({
@@ -150,7 +151,8 @@ export class ConversationChat implements OnChanges, OnDestroy {
     private servicesWhatsapp: ServicesWhatsapp,
     private elementRef: ElementRef,
     private cd: ChangeDetectorRef,
-    private tokenServices: TokensServices) { }
+    private tokenServices: TokensServices,
+    private notificationService: NotificationServices) { }
 
   // =========================================================
   // CAMBIO DE CONVERSACIÓN
@@ -1648,6 +1650,17 @@ export class ConversationChat implements OnChanges, OnDestroy {
     }
 
     const file = input.files[0];
+
+    this.notificationService.info(
+    'Datos del archivo desde iPhone',
+    `
+      Nombre: ${file.name}
+      Tipo MIME: ${file.type || 'No identificado'}
+      Tamaño: ${file.size} bytes
+      Última modificación: ${file.lastModified}
+      ¿Es File?: ${file instanceof File}
+      ¿Es Blob?: ${file instanceof Blob}
+    `);
 
     /*
     * Enviamos el archivo al método común
