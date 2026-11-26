@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NotificationServices } from './notification-services';
+import { TokensServices } from './tokens-services';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,8 @@ export class ConversationService {
 
   constructor(
     private http: HttpClient,
-    private notificationService: NotificationServices
+    private notificationService: NotificationServices,
+    private tokensServices: TokensServices
   ) {}
 
 
@@ -109,7 +111,7 @@ export class ConversationService {
 
     return this.http.post<any>(`${this.urlApi}/${conversationId}/media`, formData);
 
-  }*/
+  }
 
   public sendMedia(
     conversationId: string,
@@ -154,7 +156,127 @@ export class ConversationService {
       `${this.urlApi}/${conversationId}/media`,
       formData
     );
-  }
+  }*/
+
+    public sendMediaXHR(
+  conversationId: string,
+  file: File,
+  caption?: string | null
+): Observable<any> {
+
+  return new Observable(observer => {
+
+    const formData = new FormData();
+
+    // Agregar archivo
+    formData.append('file', file, file.name);
+
+    // Agregar descripción si existe
+    if (caption?.trim()) {
+      formData.append('caption', caption.trim());
+    }
+
+    // Crear petición nativa del navegador
+    const xhr = new XMLHttpRequest();
+
+    xhr.open(
+      'POST',
+      `${this.urlApi}/${conversationId}/media`,
+      true
+    );
+
+    // Obtener token utilizando tu TokensServices
+    const token = this.tokensServices.getAccesToken();
+
+    if (!token) {
+      observer.error({
+        status: 401,
+        message: 'No se encontró el token de autenticación.'
+      });
+
+      return;
+    }
+
+    // Agregar autenticación
+    xhr.setRequestHeader(
+      'Authorization',
+      `Bearer ${token}`
+    );
+
+    // Diagnóstico temporal para iOS
+    this.notificationService.info(
+      'DIAGNÓSTICO XHR iOS',
+      `
+      Método: POST
+      URL: ${xhr.responseURL || this.urlApi + '/' + conversationId + '/media'}
+
+      Archivo: ${file.name}
+      MIME: ${file.type}
+      Tamaño: ${file.size} bytes
+
+      FormData tiene archivo: ${formData.has('file')}
+
+      Authorization: ${token ? 'PRESENTE' : 'AUSENTE'}
+
+      Transporte: XMLHttpRequest
+      `
+    );
+
+    xhr.onload = () => {
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+
+        try {
+          const response = xhr.responseText
+            ? JSON.parse(xhr.responseText)
+            : null;
+
+          observer.next(response);
+          observer.complete();
+
+        } catch (error) {
+          observer.error({
+            status: xhr.status,
+            message: 'No fue posible interpretar la respuesta del servidor.',
+            response: xhr.responseText
+          });
+        }
+
+      } else {
+
+        observer.error({
+          status: xhr.status,
+          message: xhr.responseText || 'Error enviando archivo.'
+        });
+
+      }
+    };
+
+    xhr.onerror = () => {
+      observer.error({
+        status: xhr.status,
+        message: 'Error de conexión durante el envío multimedia.'
+      });
+    };
+
+    xhr.onabort = () => {
+      observer.error({
+        status: xhr.status,
+        message: 'El envío del archivo fue cancelado.'
+      });
+    };
+
+    // Enviar FormData sin configurar Content-Type
+    xhr.send(formData);
+
+    return () => {
+      if (xhr.readyState !== XMLHttpRequest.DONE) {
+        xhr.abort();
+      }
+    };
+
+  });
+}
 
   
   /**

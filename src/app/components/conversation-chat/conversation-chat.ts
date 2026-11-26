@@ -2079,7 +2079,7 @@ export class ConversationChat implements OnChanges, OnDestroy {
     this.errorMessage = null;
 
     this.conversationService
-      .sendMedia(
+      .sendMediaXHR(
         conversationId,
         file,
         caption
